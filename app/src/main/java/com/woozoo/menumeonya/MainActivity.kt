@@ -1,12 +1,18 @@
 package com.woozoo.menumeonya
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.woozoo.menumeonya.R
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import net.daum.mf.map.api.MapView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val mapView = MapView(this)
+        val mapViewContainer = findViewById<View>(R.id.map_view_layout) as ViewGroup
+        mapViewContainer.addView(mapView)
     }
 }
