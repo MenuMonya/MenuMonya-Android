@@ -1,4 +1,4 @@
-package com.zzanzu.menumeonya
+package com.woozoo.menumeonya
 
 import org.junit.Test
 

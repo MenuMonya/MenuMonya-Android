@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.zzanzu.menumeonya'
+    namespace 'com.woozoo.menumeonya'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.zzanzu.menumeonya"
+        applicationId "com.woozoo.menumeonya"
         minSdk 24
         targetSdk 33
         versionCode 1
