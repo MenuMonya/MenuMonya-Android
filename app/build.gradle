@@ -23,7 +23,6 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            resValue "string", "KAKAO_KEY", localProperties['KAKAO_KEY_DEV']
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
         }
         release {
@@ -51,8 +50,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation files('libs/libDaumMapAndroid.jar')
 
     // 지도 관련 라이브러리
     implementation('com.naver.maps:map-sdk:3.16.2') {

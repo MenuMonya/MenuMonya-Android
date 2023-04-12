@@ -29,13 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
 
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="@string/KAKAO_KEY" />
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="@string/NAVER_CLIENT_ID" />
