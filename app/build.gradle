@@ -54,7 +54,9 @@ dependencies {
 
     implementation files('libs/libDaumMapAndroid.jar')
 
+    // 지도 관련 라이브러리
     implementation('com.naver.maps:map-sdk:3.16.2') {
         exclude group: 'com.android.support'
     }
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 }
