@@ -52,7 +52,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             val currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             if (currentLocation != null) {
-                moveCamera(currentLocation!!)
+                moveCamera(currentLocation)
+            } else {
+                showToast("위치 정보를 불러오지 못했어요")
             }
         }
     }
@@ -69,11 +71,16 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.scrollTo(coord))
     }
 
+    private fun showToast(text: String) {
+        event(Event.ShowToast(text))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
          *
          * (ex) data class ShowToast(val text: String) : Event()
          */
+        data class ShowToast(val text: String): Event()
     }
 }

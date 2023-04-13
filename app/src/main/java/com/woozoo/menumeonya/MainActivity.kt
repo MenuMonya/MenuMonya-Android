@@ -1,9 +1,11 @@
 package com.woozoo.menumeonya
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.naver.maps.map.MapView
+import com.woozoo.menumeonya.MainViewModel.Event
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         repeatOnStarted {
-//            viewModel.eventFlow.collect { event -> handleEvent(event) }
+            viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
         mapView = findViewById(R.id.naver_map)
@@ -27,11 +29,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun handleEvent(event: MainViewModel.Event) = when (event) {
-        /**
-         * is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
-         */
-//    }
+    private fun handleEvent(event: Event) = when (event) {
+        is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onStart() {
         super.onStart()
         mapView.onStart()
