@@ -28,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
             if (!checkPermission()) {
                 requestPermission()
             } else {
-                startActivity(Intent(this, NaverActivity::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
         }
@@ -79,7 +79,7 @@ class SplashActivity : AppCompatActivity() {
                     showDialogForLocationServiceSetting()
                 }
 
-                startActivity(Intent(this, NaverActivity::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
                 Toast.makeText(this, "위치 권한이 거절되었습니다", Toast.LENGTH_SHORT).show()
