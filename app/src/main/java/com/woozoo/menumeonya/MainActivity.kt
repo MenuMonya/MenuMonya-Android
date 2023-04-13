@@ -6,6 +6,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.naver.maps.geometry.LatLng
@@ -16,6 +18,8 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 
 class MainActivity : AppCompatActivity(), LocationListener {
+
+    val viewModel: MainViewModel by viewModels()
 
     private lateinit var mapView: MapView
     private lateinit var locationSource: FusedLocationSource
@@ -30,6 +34,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        repeatOnStarted {
+//            viewModel.eventFlow.collect { event -> handleEvent(event) }
+        }
 
         mapView = findViewById(R.id.naver_map)
         mapView.onCreate(savedInstanceState)
@@ -53,6 +61,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
     }
+
+//    private fun handleEvent(event: MainViewModel.Event) = when (event) {
+        /**
+         * is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+         */
+//    }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
