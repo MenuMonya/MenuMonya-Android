@@ -26,7 +26,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     val eventFlow = _eventFlow.asSharedFlow()
 
     private lateinit var naverMap: NaverMap
-    private lateinit var locationManager: LocationManager
+    private var locationManager: LocationManager
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
