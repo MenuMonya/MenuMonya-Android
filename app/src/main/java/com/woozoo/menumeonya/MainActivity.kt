@@ -15,7 +15,7 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.util.FusedLocationSource
 
-class NaverActivity : AppCompatActivity(), LocationListener {
+class MainActivity : AppCompatActivity(), LocationListener {
 
     private lateinit var mapView: MapView
     private lateinit var locationSource: FusedLocationSource
@@ -29,7 +29,7 @@ class NaverActivity : AppCompatActivity(), LocationListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_naver)
+        setContentView(R.layout.activity_main)
 
         mapView = findViewById(R.id.naver_map)
         mapView.onCreate(savedInstanceState)
