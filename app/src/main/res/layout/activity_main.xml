@@ -15,11 +15,13 @@
         >
 
         <Button
+            android:id="@+id/location_gn_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="강남" />
 
         <Button
+            android:id="@+id/location_ys_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="역삼" />

@@ -1,6 +1,7 @@
 package com.woozoo.menumeonya
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,8 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     private lateinit var mapView: MapView
+    private lateinit var locationGnButton: Button
+    private lateinit var locationYsButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +22,15 @@ class MainActivity : AppCompatActivity() {
 
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
+        }
+
+        locationGnButton = findViewById(R.id.location_gn_btn)
+        locationYsButton = findViewById(R.id.location_ys_btn)
+        locationGnButton.setOnClickListener {
+
+        }
+        locationYsButton.setOnClickListener {
+
         }
 
         mapView = findViewById(R.id.naver_map)
