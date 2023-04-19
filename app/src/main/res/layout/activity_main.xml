@@ -28,10 +28,25 @@
 
     </LinearLayout>
 
-    <com.naver.maps.map.MapView
-        android:id="@+id/naver_map"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+
+        <com.naver.maps.map.MapView
+            android:id="@+id/naver_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        
+        <androidx.viewpager2.widget.ViewPager2
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="28dp"
+            />
+
+    </FrameLayout>
 
 </LinearLayout>
