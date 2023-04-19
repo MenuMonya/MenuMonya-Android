@@ -123,27 +123,26 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     private fun setMarkers(restaurantInfo: ArrayList<Restaurant>) {
         if (restaurantInfo.size > 0) {
+            // 마커 표시 초기화
             for (marker in markerList) {
                 marker.map = null
             }
-
             markerList = ArrayList()
-            val latLngList = ArrayList<LatLng>()
 
-            restaurantInfo.forEachIndexed { index, restaurant ->
+            // 마커 표시
+            restaurantInfo.forEach { restaurant ->
                 val latitude = parseDouble(restaurant.location.coord.latitude)
                 val longitude = parseDouble(restaurant.location.coord.longitude)
+                val latLng = LatLng(latitude, longitude)
 
-                latLngList.add(LatLng(latitude, longitude))
-            }
-
-            latLngList.forEach {
                 val marker = Marker()
-                marker.position = it
+                marker.position = latLng
+                marker.captionText = restaurant.name
+
                 markerList.add(marker)
             }
 
-            markerList.forEachIndexed { index, marker ->
+            markerList.forEach { marker ->
                 marker.map = naverMap
             }
         }
