@@ -131,8 +131,8 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             val latLngList = ArrayList<LatLng>()
 
             restaurantInfo.forEachIndexed { index, restaurant ->
-                val latitude = parseDouble(restaurant.location.coord.longitude)
-                val longitude = parseDouble(restaurant.location.coord.latitude)
+                val latitude = parseDouble(restaurant.location.coord.latitude)
+                val longitude = parseDouble(restaurant.location.coord.longitude)
 
                 latLngList.add(LatLng(latitude, longitude))
             }
