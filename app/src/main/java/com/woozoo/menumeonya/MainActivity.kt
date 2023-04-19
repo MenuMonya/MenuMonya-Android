@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
         binding.locationYsBtn.setOnClickListener {
             viewModel.showLocationInfo("역삼")
+            viewModel.getRestaurantInfo("역삼")
         }
 
         // 좌우로 item이 보이도록 설정
