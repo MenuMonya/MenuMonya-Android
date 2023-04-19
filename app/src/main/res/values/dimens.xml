@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pageMargin">15dp</dimen>
+    <dimen name="offset">15dp</dimen>
+    <dimen name="pageMarginAndOffset">30dp</dimen> <!--pageMargin과 offset의 합이어야 함-->
+</resources>

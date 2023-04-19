@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.woozoo.menumeonya.MainViewModel.Event
 import com.woozoo.menumeonya.databinding.ActivityMainBinding
 
@@ -23,9 +24,25 @@ class MainActivity : AppCompatActivity() {
 
         binding.locationGnBtn.setOnClickListener {
             viewModel.showLocationInfo("강남")
+            viewModel.getRestaurantInfo("강남")
         }
         binding.locationYsBtn.setOnClickListener {
             viewModel.showLocationInfo("역삼")
+        }
+
+        // 좌우로 item이 보이도록 설정
+        binding.restaurantViewPager.apply {
+            clipChildren = false
+            clipToPadding = false
+            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
+            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
+
+            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
+            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
+            binding.restaurantViewPager.setPageTransformer { page, position ->
+                val offset = position * -(2 * offsetPx + pageMarginPx)
+                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
+            }
         }
 
         binding.naverMap.onCreate(savedInstanceState)
@@ -35,6 +52,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+        is Event.ShowRestaurantView -> {
+            binding.restaurantViewPager.adapter = RestaurantAdapter(event.data)
+        }
     }
 
     override fun onStart() {

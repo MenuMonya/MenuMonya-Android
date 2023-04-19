@@ -89,7 +89,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.withParams(cameraUpdateParams))
     }
 
-    private suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
+    suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
         return viewModelScope.async {
             val restaurantInfoArray = ArrayList<Restaurant>()
             val db = Firebase.firestore
@@ -105,6 +105,14 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             }
 
             restaurantInfoArray
+        }
+    }
+
+    fun getRestaurantInfo(location: String) {
+        viewModelScope.launch {
+            val data = getRestaurantInfoAsync(location).await()
+
+            showRestaurantView(data)
         }
     }
 
@@ -153,6 +161,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.ShowToast(text))
     }
 
+    private fun showRestaurantView(data: ArrayList<Restaurant>) {
+        event(Event.ShowRestaurantView(data))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -160,5 +172,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>): Event()
     }
 }
