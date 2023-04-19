@@ -14,6 +14,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.woozoo.menumeonya.Application.Companion.context
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
@@ -92,6 +93,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
+            naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.Easing))
         }
     }
