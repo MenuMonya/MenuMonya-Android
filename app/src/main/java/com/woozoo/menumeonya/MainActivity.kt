@@ -67,6 +67,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+        is Event.OnMarkerClicked -> {
+            if (viewPager.adapter != null) {
+                viewPager.currentItem = event.markerIndex
+            } else {
+                viewModel.showLocationViewPager(event.location, event.markerIndex)
+            }
+        }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
                 viewPager.adapter = RestaurantAdapter(event.data)
@@ -74,13 +81,6 @@ class MainActivity : AppCompatActivity() {
                     viewPager.currentItem = event.markerIndex
                 } else { }
             } else { }
-        }
-        is Event.OnMarkerClicked -> {
-            if (viewPager.adapter != null) {
-                viewPager.currentItem = event.markerIndex
-            } else {
-                viewModel.showLocationViewPager(event.location, event.markerIndex)
-            }
         }
     }
 
