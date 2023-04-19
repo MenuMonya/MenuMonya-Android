@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumeonya.MainViewModel.Event
 import com.woozoo.menumeonya.databinding.ActivityMainBinding
 
@@ -43,6 +44,12 @@ class MainActivity : AppCompatActivity() {
                 val offset = position * -(2 * offsetPx + pageMarginPx)
                 page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
             }
+
+            registerOnPageChangeCallback(object: OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    viewModel.moveCameraToMarker(position)
+                }
+            })
         }
 
         binding.naverMap.onCreate(savedInstanceState)

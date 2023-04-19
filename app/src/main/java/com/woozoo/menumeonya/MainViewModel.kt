@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context.LOCATION_SERVICE
-import android.location.Location
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +36,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
 
+    private var restaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
 
     init {
@@ -67,16 +67,33 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
-    fun moveCamera(location: Location) {
-        val coord = LatLng(location)
+    fun moveCameraToMarker(markerIndex: Int) {
+        if (restaurantInfoArray.size > 0) {
+            val latitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.latitude)
+            val longitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.longitude)
 
-        naverMap.locationOverlay.apply {
-            isVisible = true
-            position = coord
-            bearing = location.bearing
+            val coord = LatLng(latitude, longitude)
+
+            naverMap.locationOverlay.apply {
+                isVisible = false
+                position = coord
+            }
+
+            // 마커 설정 초기화
+            for (marker in markerList) {
+                marker.width = Marker.SIZE_AUTO
+                marker.height = Marker.SIZE_AUTO
+                marker.zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+            }
+            // 선택된 마커 확대
+            markerList[markerIndex].apply {
+                width = 100
+                height = 130
+                zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+            }
+
+            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.Easing))
         }
-
-        naverMap.moveCamera(CameraUpdate.scrollTo(coord))
     }
 
     private fun moveCameraCoord(latitude: Double, longitude: Double) {
@@ -91,7 +108,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
         return viewModelScope.async {
-            val restaurantInfoArray = ArrayList<Restaurant>()
+            val restaurantInfo = ArrayList<Restaurant>()
             val db = Firebase.firestore
             val restaurantRef = db.collection("restaurants")
             val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
@@ -101,18 +118,18 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             for (document in documents) {
                 val restaurant = document.toObject<Restaurant>()
-                if (restaurant != null) restaurantInfoArray.add(restaurant)
+                if (restaurant != null) restaurantInfo.add(restaurant)
             }
 
-            restaurantInfoArray
+            restaurantInfo
         }
     }
 
     fun getRestaurantInfo(location: String) {
         viewModelScope.launch {
-            val data = getRestaurantInfoAsync(location).await()
+            restaurantInfoArray = getRestaurantInfoAsync(location).await()
 
-            showRestaurantView(data)
+            showRestaurantView(restaurantInfoArray)
         }
     }
 
@@ -123,9 +140,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            val restaurantInfo = getRestaurantInfoAsync(location).await()
+            restaurantInfoArray = getRestaurantInfoAsync(location).await()
 
-            setMarkers(restaurantInfo)
+            setMarkers(restaurantInfoArray)
         }
     }
 
