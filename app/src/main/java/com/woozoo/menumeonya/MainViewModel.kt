@@ -89,7 +89,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.scrollTo(coord))
     }
 
-    private suspend fun getRestaurantInfo(location: String): Deferred<ArrayList<Restaurant>> {
+    private suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
         return viewModelScope.async {
             val restaurantInfoArray = ArrayList<Restaurant>()
             val db = Firebase.firestore
@@ -101,7 +101,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             for (document in documents) {
                 val restaurant = document.toObject<Restaurant>()
-                restaurantInfoArray.add(restaurant!!)
+                if (restaurant != null) restaurantInfoArray.add(restaurant)
             }
 
             restaurantInfoArray
@@ -115,7 +115,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            val restaurantInfo = getRestaurantInfo(location).await()
+            val restaurantInfo = getRestaurantInfoAsync(location).await()
 
             setMarkers(restaurantInfo)
         }
