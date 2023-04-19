@@ -63,12 +63,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 uiSettings.isLocationButtonEnabled = true
             }
 
-            val currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            if (currentLocation != null) {
-                moveCamera(currentLocation)
-            } else {
-                showToast("위치 정보를 불러오지 못했어요")
-            }
+            moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
         }
     }
 
