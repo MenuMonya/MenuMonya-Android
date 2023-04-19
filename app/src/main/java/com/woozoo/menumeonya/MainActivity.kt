@@ -36,9 +36,7 @@ class MainActivity : AppCompatActivity() {
         mapView = findViewById(R.id.naver_map)
         mapView.onCreate(savedInstanceState)
 
-        viewModel.initializeMapView(mapView, this) {
-            viewModel.moveCamera(it)
-        }
+        viewModel.initializeMapView(mapView, this)
     }
 
     private fun handleEvent(event: Event) = when (event) {

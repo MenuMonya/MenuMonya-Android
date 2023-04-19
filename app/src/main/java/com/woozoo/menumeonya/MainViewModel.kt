@@ -14,6 +14,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.CameraUpdateParams
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
@@ -21,6 +22,8 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
+import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
+import com.woozoo.menumeonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumeonya.model.Restaurant
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -52,7 +55,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView, activity: Activity, listener: LocationListener) {
+    fun initializeMapView(mapView: MapView, activity: Activity) {
         mapView.getMapAsync {
             naverMap = it.apply {
                 locationSource = FusedLocationSource(
@@ -61,9 +64,11 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 )
                 locationTrackingMode = LocationTrackingMode.NoFollow
                 uiSettings.isLocationButtonEnabled = true
+                minZoom = MAP_MIN_ZOOM
             }
 
             moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+            showLocationInfo("강남")
         }
     }
 
@@ -81,7 +86,12 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     private fun moveCameraCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
-        naverMap.moveCamera(CameraUpdate.scrollTo(coord))
+        val cameraUpdateParams = CameraUpdateParams().apply {
+            scrollTo(coord)
+            zoomTo(MAP_DEFAULT_ZOOM)
+        }
+
+        naverMap.moveCamera(CameraUpdate.withParams(cameraUpdateParams))
     }
 
     private suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
@@ -133,6 +143,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 val marker = Marker()
                 marker.position = latLng
                 marker.captionText = restaurant.name
+                marker.isHideCollidedSymbols = true
 
                 markerList.add(marker)
             }
