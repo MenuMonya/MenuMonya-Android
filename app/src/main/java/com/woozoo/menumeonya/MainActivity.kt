@@ -1,42 +1,36 @@
 package com.woozoo.menumeonya
 
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.naver.maps.map.MapView
 import com.woozoo.menumeonya.MainViewModel.Event
+import com.woozoo.menumeonya.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
-
-    private lateinit var mapView: MapView
-    private lateinit var locationGnButton: Button
-    private lateinit var locationYsButton: Button
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        locationGnButton = findViewById(R.id.location_gn_btn)
-        locationYsButton = findViewById(R.id.location_ys_btn)
-        locationGnButton.setOnClickListener {
+        binding.locationGnBtn.setOnClickListener {
             viewModel.showLocationInfo("강남")
         }
-        locationYsButton.setOnClickListener {
+        binding.locationYsBtn.setOnClickListener {
             viewModel.showLocationInfo("역삼")
         }
 
-        mapView = findViewById(R.id.naver_map)
-        mapView.onCreate(savedInstanceState)
+        binding.naverMap.onCreate(savedInstanceState)
 
-        viewModel.initializeMapView(mapView, this)
+        viewModel.initializeMapView(binding.naverMap, this)
     }
 
     private fun handleEvent(event: Event) = when (event) {
@@ -45,36 +39,36 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        mapView.onStart()
+        binding.naverMap.onStart()
     }
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        binding.naverMap.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+        binding.naverMap.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState)
+        binding.naverMap.onSaveInstanceState(outState)
     }
 
     override fun onStop() {
         super.onStop()
-        mapView.onStop()
+        binding.naverMap.onStop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView.onDestroy()
+        binding.naverMap.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView.onLowMemory()
+        binding.naverMap.onLowMemory()
     }
 }
