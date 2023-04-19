@@ -9,15 +9,26 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
+import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
+import com.woozoo.menumeonya.model.Restaurant
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.lang.Double.parseDouble
 
 class MainViewModel(application: Application): AndroidViewModel(Application()) {
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
@@ -25,8 +36,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     private val _eventFlow = MutableSharedFlow<Event>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private lateinit var naverMap: NaverMap
+    lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
+
+    private var markerList: ArrayList<Marker> = ArrayList()
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -69,6 +82,71 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
 
         naverMap.moveCamera(CameraUpdate.scrollTo(coord))
+    }
+
+    private fun moveCameraCoord(latitude: Double, longitude: Double) {
+        val coord = LatLng(latitude, longitude)
+        naverMap.moveCamera(CameraUpdate.scrollTo(coord))
+    }
+
+    private suspend fun getRestaurantInfo(location: String): Deferred<ArrayList<Restaurant>> {
+        return viewModelScope.async {
+            val restaurantInfoArray = ArrayList<Restaurant>()
+            val db = Firebase.firestore
+            val restaurantRef = db.collection("restaurants")
+            val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
+
+            val result = query.get().await()
+            val documents = result.documents
+
+            for (document in documents) {
+                val restaurant = document.toObject<Restaurant>()
+                restaurantInfoArray.add(restaurant!!)
+            }
+
+            restaurantInfoArray
+        }
+    }
+
+    fun showLocationInfo(location: String) {
+        viewModelScope.launch {
+            when (location) {
+                "강남" -> moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+                "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
+            }
+
+            val restaurantInfo = getRestaurantInfo(location).await()
+
+            setMarkers(restaurantInfo)
+        }
+    }
+
+    private fun setMarkers(restaurantInfo: ArrayList<Restaurant>) {
+        if (restaurantInfo.size > 0) {
+            for (marker in markerList) {
+                marker.map = null
+            }
+
+            markerList = ArrayList()
+            val latLngList = ArrayList<LatLng>()
+
+            restaurantInfo.forEachIndexed { index, restaurant ->
+                val latitude = parseDouble(restaurant.location.coord.longitude)
+                val longitude = parseDouble(restaurant.location.coord.latitude)
+
+                latLngList.add(LatLng(latitude, longitude))
+            }
+
+            latLngList.forEach {
+                val marker = Marker()
+                marker.position = it
+                markerList.add(marker)
+            }
+
+            markerList.forEachIndexed { index, marker ->
+                marker.map = naverMap
+            }
+        }
     }
 
     private fun showToast(text: String) {

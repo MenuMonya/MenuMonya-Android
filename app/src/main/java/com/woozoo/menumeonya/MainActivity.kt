@@ -27,10 +27,10 @@ class MainActivity : AppCompatActivity() {
         locationGnButton = findViewById(R.id.location_gn_btn)
         locationYsButton = findViewById(R.id.location_ys_btn)
         locationGnButton.setOnClickListener {
-
+            viewModel.showLocationInfo("강남")
         }
         locationYsButton.setOnClickListener {
-
+            viewModel.showLocationInfo("역삼")
         }
 
         mapView = findViewById(R.id.naver_map)
