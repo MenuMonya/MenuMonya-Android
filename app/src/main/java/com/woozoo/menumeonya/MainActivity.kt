@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumeonya.MainViewModel.Event
 import com.woozoo.menumeonya.databinding.ActivityMainBinding
@@ -14,26 +15,32 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var viewPager: ViewPager2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewPager = binding.restaurantViewPager
 
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
         binding.locationGnBtn.setOnClickListener {
+            viewPager.invalidate()
+            viewPager.adapter = null
             viewModel.showLocationInfo("강남")
-            viewModel.getRestaurantInfo("강남")
         }
         binding.locationYsBtn.setOnClickListener {
+            viewPager.invalidate()
+            viewPager.adapter = null
             viewModel.showLocationInfo("역삼")
-            viewModel.getRestaurantInfo("역삼")
         }
 
         // 좌우로 item이 보이도록 설정
-        binding.restaurantViewPager.apply {
+        viewPager.apply {
             clipChildren = false
             clipToPadding = false
             offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
@@ -41,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
             val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
             val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
-            binding.restaurantViewPager.setPageTransformer { page, position ->
+            viewPager.setPageTransformer { page, position ->
                 val offset = position * -(2 * offsetPx + pageMarginPx)
                 page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
             }
@@ -61,10 +68,19 @@ class MainActivity : AppCompatActivity() {
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.ShowRestaurantView -> {
-            binding.restaurantViewPager.adapter = RestaurantAdapter(event.data)
+            if (viewPager.adapter == null) {
+                viewPager.adapter = RestaurantAdapter(event.data)
+                if (event.markerIndex != -1) {
+                    viewPager.currentItem = event.markerIndex
+                } else { }
+            } else { }
         }
         is Event.OnMarkerClicked -> {
-            binding.restaurantViewPager.currentItem = event.markerIndex
+            if (viewPager.adapter != null) {
+                viewPager.currentItem = event.markerIndex
+            } else {
+                viewModel.showLocationViewPager(event.location, event.markerIndex)
+            }
         }
     }
 

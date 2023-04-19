@@ -39,6 +39,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     private var restaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
+    private var selectedLocation: String = ""
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -127,22 +128,24 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
-    fun getRestaurantInfo(location: String) {
+    fun showLocationViewPager(location: String, markerIndex: Int = -1) {
         viewModelScope.launch {
             restaurantInfoArray = getRestaurantInfoAsync(location).await()
 
-            showRestaurantView(restaurantInfoArray)
+            showRestaurantView(restaurantInfoArray, markerIndex)
         }
     }
 
     fun showLocationInfo(location: String) {
         viewModelScope.launch {
-            when (location) {
+            selectedLocation = location
+
+            when (selectedLocation) {
                 "강남" -> moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            restaurantInfoArray = getRestaurantInfoAsync(location).await()
+            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await()
 
             setMarkers(restaurantInfoArray)
         }
@@ -167,7 +170,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
                     setOnClickListener {
-                        onMarkerClicked(index)
+                        onMarkerClicked(index, selectedLocation)
                         true
                     }
                 }
@@ -185,12 +188,12 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.ShowToast(text))
     }
 
-    private fun showRestaurantView(data: ArrayList<Restaurant>) {
-        event(Event.ShowRestaurantView(data))
+    private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
+        event(Event.ShowRestaurantView(data, markerIndex))
     }
 
-    private fun onMarkerClicked(markerIndex: Int) {
-        event(Event.OnMarkerClicked(markerIndex))
+    private fun onMarkerClicked(markerIndex: Int, location: String) {
+        event(Event.OnMarkerClicked(markerIndex, location))
     }
 
     sealed class Event {
@@ -200,7 +203,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
-        data class ShowRestaurantView(val data: ArrayList<Restaurant>): Event()
-        data class OnMarkerClicked(val markerIndex: Int): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
+        data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
     }
 }
