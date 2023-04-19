@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
         is Event.ShowRestaurantView -> {
             binding.restaurantViewPager.adapter = RestaurantAdapter(event.data)
         }
+        is Event.OnMarkerClicked -> {
+            binding.restaurantViewPager.currentItem = event.markerIndex
+        }
     }
 
     override fun onStart() {

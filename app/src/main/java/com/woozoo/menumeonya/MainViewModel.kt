@@ -157,15 +157,20 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             markerList = ArrayList()
 
             // 마커 표시
-            restaurantInfo.forEach { restaurant ->
+            restaurantInfo.forEachIndexed { index, restaurant ->
                 val latitude = parseDouble(restaurant.location.coord.latitude)
                 val longitude = parseDouble(restaurant.location.coord.longitude)
                 val latLng = LatLng(latitude, longitude)
 
-                val marker = Marker()
-                marker.position = latLng
-                marker.captionText = restaurant.name
-                marker.isHideCollidedSymbols = true
+                val marker = Marker().apply {
+                    position = latLng
+                    captionText = restaurant.name
+                    isHideCollidedSymbols = true
+                    setOnClickListener {
+                        onMarkerClicked(index)
+                        true
+                    }
+                }
 
                 markerList.add(marker)
             }
@@ -184,6 +189,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.ShowRestaurantView(data))
     }
 
+    private fun onMarkerClicked(markerIndex: Int) {
+        event(Event.OnMarkerClicked(markerIndex))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -192,5 +201,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
          */
         data class ShowToast(val text: String): Event()
         data class ShowRestaurantView(val data: ArrayList<Restaurant>): Event()
+        data class OnMarkerClicked(val markerIndex: Int): Event()
     }
 }
