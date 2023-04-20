@@ -132,6 +132,12 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         viewModelScope.launch {
             restaurantInfoArray = getRestaurantInfoAsync(location).await()
 
+            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
+            for (restaurantInfo in restaurantInfoArray) {
+                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
+            }
+            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
+
             showRestaurantView(restaurantInfoArray, markerIndex)
         }
     }
