@@ -12,19 +12,34 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="horizontal"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="14dp"
         >
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_gn_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="강남" />
+            android:layout_width="50dp"
+            android:layout_height="24dp"
+            android:background="@drawable/selector_location_button"
+            android:layout_marginRight="8dp"
+            android:text="강남"
+            android:textSize="12dp"
+            android:textColor="@color/gray600"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_ys_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="역삼" />
+            android:layout_width="50dp"
+            android:layout_height="24dp"
+            android:background="@drawable/selector_location_button"
+            android:text="역삼"
+            android:textSize="12dp"
+            android:textColor="@color/gray600"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            />
 
     </LinearLayout>
 

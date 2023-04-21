@@ -1,6 +1,7 @@
 package com.woozoo.menumeonya
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumeonya.MainViewModel.Event
 import com.woozoo.menumeonya.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -28,16 +29,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.locationGnBtn.setOnClickListener {
-            viewPager.invalidate()
-            viewPager.adapter = null
-            viewModel.showLocationInfo("강남")
-        }
-        binding.locationYsBtn.setOnClickListener {
-            viewPager.invalidate()
-            viewPager.adapter = null
-            viewModel.showLocationInfo("역삼")
-        }
+        binding.locationGnBtn.setOnClickListener(this)
+        binding.locationYsBtn.setOnClickListener(this)
 
         // 좌우로 item이 보이도록 설정
         viewPager.apply {
@@ -117,5 +110,28 @@ class MainActivity : AppCompatActivity() {
     override fun onLowMemory() {
         super.onLowMemory()
         binding.naverMap.onLowMemory()
+    }
+
+    override fun onClick(v: View?) {
+        when (v!!.id) {
+            R.id.location_gn_btn -> {
+                viewPager.invalidate()
+                viewPager.adapter = null
+                viewModel.showLocationInfo("강남")
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
+                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+            }
+            R.id.location_ys_btn -> {
+                viewPager.invalidate()
+                viewPager.adapter = null
+                viewModel.showLocationInfo("역삼")
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
+                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+            }
+        }
     }
 }
