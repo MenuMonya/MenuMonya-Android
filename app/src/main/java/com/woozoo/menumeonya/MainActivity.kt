@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
+        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
+        binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
         binding.locationGnBtn.setOnClickListener(this)
         binding.locationYsBtn.setOnClickListener(this)
 

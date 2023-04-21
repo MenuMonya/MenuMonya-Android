@@ -13,6 +13,7 @@ import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumeonya.Application.Companion.context
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
@@ -83,14 +84,16 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             // 마커 설정 초기화
             for (marker in markerList) {
-                marker.width = Marker.SIZE_AUTO
-                marker.height = Marker.SIZE_AUTO
-                marker.zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+                marker.apply {
+                    width = Marker.SIZE_AUTO
+                    height = Marker.SIZE_AUTO
+                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                }
             }
-            // 선택된 마커 확대
+            // 선택된 마커 아이콘 변경
             markerList[markerIndex].apply {
-                width = 100
-                height = 130
+                icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
@@ -124,6 +127,12 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 if (restaurant != null) restaurantInfo.add(restaurant)
             }
 
+            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
+            for (restaurant in restaurantInfo) {
+                restaurant.locationCategoryOrder.removeAll { !it.contains(location) }
+            }
+            restaurantInfo.sortBy { it.locationCategoryOrder[0] }
+
             restaurantInfo
         }
     }
@@ -131,12 +140,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     fun showLocationViewPager(location: String, markerIndex: Int = -1) {
         viewModelScope.launch {
             restaurantInfoArray = getRestaurantInfoAsync(location).await()
-
-            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
-            for (restaurantInfo in restaurantInfoArray) {
-                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
-            }
-            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
 
             showRestaurantView(restaurantInfoArray, markerIndex)
         }
@@ -152,12 +155,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             }
 
             restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
-
-            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
-            for (restaurantInfo in restaurantInfoArray) {
-                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
-            }
-            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
 
             setMarkers(restaurantInfoArray)
         }
@@ -181,6 +178,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
                         true

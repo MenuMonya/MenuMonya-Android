@@ -2,7 +2,6 @@ package com.woozoo.menumeonya
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.marginStart
 import androidx.recyclerview.widget.RecyclerView
 import com.woozoo.menumeonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumeonya.model.Restaurant
