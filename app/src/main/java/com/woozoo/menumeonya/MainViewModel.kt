@@ -151,7 +151,13 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await()
+            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
+
+            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
+            for (restaurantInfo in restaurantInfoArray) {
+                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
+            }
+            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
 
             setMarkers(restaurantInfoArray)
         }
