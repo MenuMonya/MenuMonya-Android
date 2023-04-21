@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context.LOCATION_SERVICE
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,13 +11,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.CameraUpdateParams
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapView
-import com.naver.maps.map.NaverMap
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.woozoo.menumeonya.Application.Companion.context
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
@@ -42,7 +37,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
 
+    private var restaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
+    private var selectedLocation: String = ""
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -72,16 +69,34 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
-    fun moveCamera(location: Location) {
-        val coord = LatLng(location)
+    fun moveCameraToMarker(markerIndex: Int) {
+        if (restaurantInfoArray.size > 0) {
+            val latitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.latitude)
+            val longitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.longitude)
 
-        naverMap.locationOverlay.apply {
-            isVisible = true
-            position = coord
-            bearing = location.bearing
+            val coord = LatLng(latitude, longitude)
+
+            naverMap.locationOverlay.apply {
+                isVisible = false
+                position = coord
+            }
+
+            // 마커 설정 초기화
+            for (marker in markerList) {
+                marker.width = Marker.SIZE_AUTO
+                marker.height = Marker.SIZE_AUTO
+                marker.zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+            }
+            // 선택된 마커 확대
+            markerList[markerIndex].apply {
+                width = 100
+                height = 130
+                zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+            }
+
+            naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
+            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.Easing))
         }
-
-        naverMap.moveCamera(CameraUpdate.scrollTo(coord))
     }
 
     private fun moveCameraCoord(latitude: Double, longitude: Double) {
@@ -94,9 +109,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.withParams(cameraUpdateParams))
     }
 
-    private suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
+    suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
         return viewModelScope.async {
-            val restaurantInfoArray = ArrayList<Restaurant>()
+            val restaurantInfo = ArrayList<Restaurant>()
             val db = Firebase.firestore
             val restaurantRef = db.collection("restaurants")
             val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
@@ -106,23 +121,39 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             for (document in documents) {
                 val restaurant = document.toObject<Restaurant>()
-                if (restaurant != null) restaurantInfoArray.add(restaurant)
+                if (restaurant != null) restaurantInfo.add(restaurant)
             }
 
-            restaurantInfoArray
+            restaurantInfo
+        }
+    }
+
+    fun showLocationViewPager(location: String, markerIndex: Int = -1) {
+        viewModelScope.launch {
+            restaurantInfoArray = getRestaurantInfoAsync(location).await()
+
+            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
+            for (restaurantInfo in restaurantInfoArray) {
+                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
+            }
+            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
+
+            showRestaurantView(restaurantInfoArray, markerIndex)
         }
     }
 
     fun showLocationInfo(location: String) {
         viewModelScope.launch {
-            when (location) {
+            selectedLocation = location
+
+            when (selectedLocation) {
                 "강남" -> moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            val restaurantInfo = getRestaurantInfoAsync(location).await()
+            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await()
 
-            setMarkers(restaurantInfo)
+            setMarkers(restaurantInfoArray)
         }
     }
 
@@ -135,15 +166,20 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             markerList = ArrayList()
 
             // 마커 표시
-            restaurantInfo.forEach { restaurant ->
+            restaurantInfo.forEachIndexed { index, restaurant ->
                 val latitude = parseDouble(restaurant.location.coord.latitude)
                 val longitude = parseDouble(restaurant.location.coord.longitude)
                 val latLng = LatLng(latitude, longitude)
 
-                val marker = Marker()
-                marker.position = latLng
-                marker.captionText = restaurant.name
-                marker.isHideCollidedSymbols = true
+                val marker = Marker().apply {
+                    position = latLng
+                    captionText = restaurant.name
+                    isHideCollidedSymbols = true
+                    setOnClickListener {
+                        onMarkerClicked(index, selectedLocation)
+                        true
+                    }
+                }
 
                 markerList.add(marker)
             }
@@ -158,6 +194,14 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.ShowToast(text))
     }
 
+    private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
+        event(Event.ShowRestaurantView(data, markerIndex))
+    }
+
+    private fun onMarkerClicked(markerIndex: Int, location: String) {
+        event(Event.OnMarkerClicked(markerIndex, location))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -165,5 +209,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
+        data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
     }
 }
