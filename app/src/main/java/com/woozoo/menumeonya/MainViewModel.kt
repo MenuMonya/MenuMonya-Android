@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context.LOCATION_SERVICE
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +23,8 @@ import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumeonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumeonya.model.Restaurant
+import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkLocationPermission
+import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkGpsPermission
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -56,10 +60,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     fun initializeMapView(mapView: MapView, activity: Activity) {
         mapView.getMapAsync {
             naverMap = it.apply {
-                locationSource = FusedLocationSource(
-                    activity,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
+//                locationSource = FusedLocationSource(
+//                    activity,
+//                    LOCATION_PERMISSION_REQUEST_CODE
+//                )
                 locationTrackingMode = LocationTrackingMode.NoFollow
                 uiSettings.apply {
                     isLocationButtonEnabled = false
@@ -197,6 +201,29 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
+    fun getCurrentLocation(activity: Activity) {
+        if (!checkGpsPermission()) {
+            showGpsPermissionAlert()
+        } else {
+            if (!checkLocationPermission()) {
+                requestLocationPermission()
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10f, object: LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        moveCameraCoord(location.latitude, location.longitude)
+                        naverMap.apply {
+                            locationSource = FusedLocationSource(
+                                activity,
+                                LOCATION_PERMISSION_REQUEST_CODE
+                            )
+                            locationTrackingMode = LocationTrackingMode.Follow
+                        }
+                    }
+                })
+            }
+        }
+    }
+
     private fun showToast(text: String) {
         event(Event.ShowToast(text))
     }
@@ -209,6 +236,14 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.OnMarkerClicked(markerIndex, location))
     }
 
+    private fun requestLocationPermission() {
+        event(Event.RequestLocationPermission(""))
+    }
+
+    private fun showGpsPermissionAlert() {
+        event(Event.ShowGpsPermissionAlert(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -218,5 +253,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         data class ShowToast(val text: String): Event()
         data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
+        data class RequestLocationPermission(val data: String): Event()
+        data class ShowGpsPermissionAlert(val data: String): Event()
     }
 }
