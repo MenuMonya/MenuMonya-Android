@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewPager.setPageTransformer { page, position ->
                 val offset = position * -(2 * offsetPx + pageMarginPx)
                 page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
+
+                updatePagerHeightForChild(page, viewPager)
             }
 
             registerOnPageChangeCallback(object: OnPageChangeCallback() {
@@ -58,6 +60,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.naverMap.onCreate(savedInstanceState)
 
         viewModel.initializeMapView(binding.naverMap, this)
+    }
+
+    private fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
+        view.post {
+            val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
+            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            view.measure(wMeasureSpec, hMeasureSpec)
+            pager.layoutParams = (pager.layoutParams).also { lp -> lp.height = view.measuredHeight }
+            pager.invalidate()
+        }
     }
 
     private fun handleEvent(event: Event) = when (event) {
