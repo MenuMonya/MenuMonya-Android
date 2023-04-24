@@ -61,7 +61,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     LOCATION_PERMISSION_REQUEST_CODE
                 )
                 locationTrackingMode = LocationTrackingMode.NoFollow
-                uiSettings.isLocationButtonEnabled = true
+                uiSettings.apply {
+                    isLocationButtonEnabled = false
+                    isZoomControlEnabled = false
+                }
                 minZoom = MAP_MIN_ZOOM
             }
 
