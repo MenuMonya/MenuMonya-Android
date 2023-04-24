@@ -22,14 +22,24 @@
         app:layout_constraintStart_toStartOf="parent"
         tool:text="식당 이름" />
 
-    <ImageView
-        android:id="@+id/restaurant_image"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/restaurant_cv"
         android:layout_width="@dimen/restaurant_info_image_size"
         android:layout_height="@dimen/restaurant_info_image_size"
-        android:src="@drawable/restaurant_marker"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        >
+
+        <ImageView
+            android:id="@+id/restaurant_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            />
+
+    </androidx.cardview.widget.CardView>
 
     <!--가격-->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
         app:layout_constraintBottom_toTopOf="@+id/restaurant_time_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_image"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -72,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
         app:layout_constraintBottom_toTopOf="@+id/restaurant_phone_number_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_image"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -106,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
         app:layout_constraintBottom_toTopOf="@+id/restaurant_location_description_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_image"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -140,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_image"
+        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
         app:layout_constraintStart_toStartOf="parent"
         >
 

@@ -3,6 +3,10 @@ package com.woozoo.menumeonya
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.woozoo.menumeonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
+import com.woozoo.menumeonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumeonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumeonya.model.Restaurant
 
@@ -18,6 +22,13 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) 
             binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
             binding.restaurantPhoneNumberTv.text = "02-3301-6148"
             binding.restaurantLocationDescriptionTv.text = data.location.description
+
+            Glide.with(binding.root)
+                .load(data.imgUrl)
+                .placeholder(R.drawable.restaurant_default_image)
+                .override(GLIDE_IMAGE_SIZE_WIDTH, GLIDE_IMAGE_SIZE_HEIGHT)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(binding.restaurantIv)
         }
     }
 
