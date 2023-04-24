@@ -108,8 +108,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 dialog.dismiss()
             }
             builder.setPositiveButton("확인") { dialog, which ->
-                val callGPSSettingIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE)
+                val gpsPermissionIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivityForResult(gpsPermissionIntent, GPS_ENABLE_REQUEST_CODE)
+                dialog.dismiss()
             }
             builder.create().show()
         }
@@ -178,14 +179,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == GPS_ENABLE_REQUEST_CODE) {
-            Toast.makeText(this, "GPS 권한 승인 결과 $grantResults", Toast.LENGTH_SHORT).show()
-        } else if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+        if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 viewModel.getCurrentLocation(this)
             } else {
                 Toast.makeText(this, "위치 권한을 허용해주세요", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GPS_ENABLE_REQUEST_CODE) {
+            viewModel.getCurrentLocation(this)
         }
     }
 }
