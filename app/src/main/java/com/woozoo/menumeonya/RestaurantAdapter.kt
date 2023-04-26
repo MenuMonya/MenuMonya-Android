@@ -2,8 +2,11 @@ package com.woozoo.menumeonya
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.marginStart
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.woozoo.menumeonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
+import com.woozoo.menumeonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumeonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumeonya.model.Restaurant
 
@@ -15,6 +18,17 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) 
     class ItemViewHolder(val binding: ItemRestaurantBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
+            binding.restaurantPriceTv.text = data.price.cardPrice + "원"
+            binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
+            binding.restaurantPhoneNumberTv.text = data.phoneNumber
+            binding.restaurantLocationDescriptionTv.text = data.location.description
+
+            Glide.with(binding.root)
+                .load(data.imgUrl)
+                .placeholder(R.drawable.restaurant_default_image)
+                .override(GLIDE_IMAGE_SIZE_WIDTH, GLIDE_IMAGE_SIZE_HEIGHT)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(binding.restaurantIv)
         }
     }
 

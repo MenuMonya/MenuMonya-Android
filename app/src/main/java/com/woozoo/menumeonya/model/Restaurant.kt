@@ -10,6 +10,7 @@ data class Restaurant(
     val locationCategoryOrder: ArrayList<String> = ArrayList<String>(),
     val price: Price = Price(),
     val time: Time = Time(),
+    val phoneNumber: String = "",
     val updatedTime: String = ""
 )
 

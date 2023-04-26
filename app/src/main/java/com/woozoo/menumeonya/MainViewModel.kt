@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context.LOCATION_SERVICE
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumeonya.Application.Companion.context
 import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
@@ -20,6 +23,8 @@ import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumeonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumeonya.model.Restaurant
+import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkLocationPermission
+import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkGpsPermission
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,12 +60,15 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     fun initializeMapView(mapView: MapView, activity: Activity) {
         mapView.getMapAsync {
             naverMap = it.apply {
-                locationSource = FusedLocationSource(
-                    activity,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
+//                locationSource = FusedLocationSource(
+//                    activity,
+//                    LOCATION_PERMISSION_REQUEST_CODE
+//                )
                 locationTrackingMode = LocationTrackingMode.NoFollow
-                uiSettings.isLocationButtonEnabled = true
+                uiSettings.apply {
+                    isLocationButtonEnabled = false
+                    isZoomControlEnabled = false
+                }
                 minZoom = MAP_MIN_ZOOM
             }
 
@@ -83,14 +91,16 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             // 마커 설정 초기화
             for (marker in markerList) {
-                marker.width = Marker.SIZE_AUTO
-                marker.height = Marker.SIZE_AUTO
-                marker.zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+                marker.apply {
+                    width = Marker.SIZE_AUTO
+                    height = Marker.SIZE_AUTO
+                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                }
             }
-            // 선택된 마커 확대
+            // 선택된 마커 아이콘 변경
             markerList[markerIndex].apply {
-                width = 100
-                height = 130
+                icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
@@ -124,6 +134,12 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 if (restaurant != null) restaurantInfo.add(restaurant)
             }
 
+            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
+            for (restaurant in restaurantInfo) {
+                restaurant.locationCategoryOrder.removeAll { !it.contains(location) }
+            }
+            restaurantInfo.sortBy { it.locationCategoryOrder[0] }
+
             restaurantInfo
         }
     }
@@ -131,12 +147,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     fun showLocationViewPager(location: String, markerIndex: Int = -1) {
         viewModelScope.launch {
             restaurantInfoArray = getRestaurantInfoAsync(location).await()
-
-            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
-            for (restaurantInfo in restaurantInfoArray) {
-                restaurantInfo.locationCategoryOrder.removeAll { !it.contains(location) }
-            }
-            restaurantInfoArray.sortBy { it.locationCategoryOrder[0] }
 
             showRestaurantView(restaurantInfoArray, markerIndex)
         }
@@ -151,7 +161,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await()
+            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
 
             setMarkers(restaurantInfoArray)
         }
@@ -175,6 +185,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
                         true
@@ -186,6 +197,29 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             markerList.forEach { marker ->
                 marker.map = naverMap
+            }
+        }
+    }
+
+    fun getCurrentLocation(activity: Activity) {
+        if (!checkGpsPermission()) {
+            showGpsPermissionAlert()
+        } else {
+            if (!checkLocationPermission()) {
+                requestLocationPermission()
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10f, object: LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        moveCameraCoord(location.latitude, location.longitude)
+                        naverMap.apply {
+                            locationSource = FusedLocationSource(
+                                activity,
+                                LOCATION_PERMISSION_REQUEST_CODE
+                            )
+                            locationTrackingMode = LocationTrackingMode.Follow
+                        }
+                    }
+                })
             }
         }
     }
@@ -202,6 +236,14 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.OnMarkerClicked(markerIndex, location))
     }
 
+    private fun requestLocationPermission() {
+        event(Event.RequestLocationPermission(""))
+    }
+
+    private fun showGpsPermissionAlert() {
+        event(Event.ShowGpsPermissionAlert(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -211,5 +253,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         data class ShowToast(val text: String): Event()
         data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
+        data class RequestLocationPermission(val data: String): Event()
+        data class ShowGpsPermissionAlert(val data: String): Event()
     }
 }
