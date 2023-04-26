@@ -12,9 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumeonya.R
 import com.woozoo.menumonya.MainViewModel.Event
-import com.woozoo.menumeonya.databinding.ActivityMainBinding
+import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
 import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
 

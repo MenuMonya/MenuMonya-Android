@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.woozoo.menumeonya.R
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
-import com.woozoo.menumeonya.databinding.ItemRestaurantBinding
+import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) :

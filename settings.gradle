@@ -16,5 +16,5 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "Menu Meonya"
+rootProject.name = "Menu Monya"
 include ':app'
