@@ -18,7 +18,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) 
     class ItemViewHolder(val binding: ItemRestaurantBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
-            binding.restaurantPriceTv.text = data.price.cardPrice
+            binding.restaurantPriceTv.text = data.price.cardPrice + "원"
             binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
             binding.restaurantPhoneNumberTv.text = "02-3301-6148"
             binding.restaurantLocationDescriptionTv.text = data.location.description
