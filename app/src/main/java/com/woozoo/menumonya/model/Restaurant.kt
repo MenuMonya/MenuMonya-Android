@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya.model
+package com.woozoo.menumonya.model
 
 
 data class Restaurant(

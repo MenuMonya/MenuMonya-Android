@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya
+package com.woozoo.menumonya
 
 import android.app.Application
 import android.content.Context

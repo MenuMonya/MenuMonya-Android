@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya.util
+package com.woozoo.menumonya.util
 
 import android.Manifest
 import android.app.Activity
@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.woozoo.menumeonya.Application.Companion.context
+import com.woozoo.menumonya.Application.Companion.context
 
 class PermissionUtils {
 

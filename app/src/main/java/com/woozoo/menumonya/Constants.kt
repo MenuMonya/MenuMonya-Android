@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya
+package com.woozoo.menumonya
 
 import com.naver.maps.geometry.LatLng
 

@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya.util
+package com.woozoo.menumonya.util
 
 import android.content.Context
 import android.location.LocationManager

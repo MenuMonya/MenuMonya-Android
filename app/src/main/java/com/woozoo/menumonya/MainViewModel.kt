@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya
+package com.woozoo.menumonya
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -17,14 +17,15 @@ import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-import com.woozoo.menumeonya.Application.Companion.context
-import com.woozoo.menumeonya.Constants.Companion.LATLNG_GN
-import com.woozoo.menumeonya.Constants.Companion.LATLNG_YS
-import com.woozoo.menumeonya.Constants.Companion.MAP_DEFAULT_ZOOM
-import com.woozoo.menumeonya.Constants.Companion.MAP_MIN_ZOOM
-import com.woozoo.menumeonya.model.Restaurant
-import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkLocationPermission
-import com.woozoo.menumeonya.util.PermissionUtils.Companion.checkGpsPermission
+import com.woozoo.menumeonya.R
+import com.woozoo.menumonya.Application.Companion.context
+import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
+import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
+import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
+import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
+import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.util.PermissionUtils.Companion.checkLocationPermission
+import com.woozoo.menumonya.util.PermissionUtils.Companion.checkGpsPermission
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya
+package com.woozoo.menumonya
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,10 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumeonya.MainViewModel.Event
+import com.woozoo.menumeonya.R
+import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumeonya.databinding.ActivityMainBinding
-import com.woozoo.menumeonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
-import com.woozoo.menumeonya.util.PermissionUtils.Companion.requestLocationPermission
+import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
+import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val GPS_ENABLE_REQUEST_CODE = 2000

@@ -1,4 +1,4 @@
-package com.woozoo.menumeonya
+package com.woozoo.menumonya
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
