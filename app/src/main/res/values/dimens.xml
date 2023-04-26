@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pageMargin">15dp</dimen>
+    <dimen name="offset">15dp</dimen>
+    <dimen name="pageMarginAndOffset">30dp</dimen> <!--pageMargin과 offset의 합이어야 함-->
+
+    <!--식당 정보 아이템 관련-->
+    <dimen name="restaurant_item_height">150dp</dimen>
+    <dimen name="restaurant_item_elevation">4dp</dimen>
+    <dimen name="restaurant_info_text_size">10sp</dimen>
+    <dimen name="restaurant_info_text_margin_bottom">2.5sp</dimen>
+    <dimen name="restaurant_info_image_size">66dp</dimen>
+    <dimen name="restaurant_info_margin_size_8dp">8dp</dimen>
+    <dimen name="restaurant_info_padding_size_8dp">8dp</dimen>
+</resources>
