@@ -26,6 +26,10 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) 
 
             if (data.todayMenu.main != "") {
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
+                binding.restaurantMenuMoreTv.visibility = View.VISIBLE
+                binding.restaurantMenuMoreTv.setOnClickListener {
+                    // TODO: 다이얼로그 표시
+                }
 
                 binding.restaurantMenuMainTv.text = data.todayMenu.main.replace(",", ", ")
                 binding.restaurantMenuSideTv.text = data.todayMenu.side.replace(",", ", ")
