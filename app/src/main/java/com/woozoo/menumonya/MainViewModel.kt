@@ -22,6 +22,7 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
+import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.util.PermissionUtils.Companion.checkGpsPermission
 import com.woozoo.menumonya.util.PermissionUtils.Companion.checkLocationPermission
@@ -131,7 +132,13 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             for (document in documents) {
                 val restaurant = document.toObject<Restaurant>()
-                if (restaurant != null) restaurantInfo.add(restaurant)
+                if (restaurant != null) {
+                    // 메뉴 정보 조회
+                    val menu = getMenuAsync(document.id)?.await()
+                    restaurant.todayMenu = menu?.date?.get("2023-04-24")!! // TODO: 조회 날짜로 변경
+
+                    restaurantInfo.add(restaurant)
+                }
             }
 
             // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
@@ -141,6 +148,25 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             restaurantInfo.sortBy { it.locationCategoryOrder[0] }
 
             restaurantInfo
+        }
+    }
+
+    suspend fun getMenuAsync(restaurantId: String): Deferred<Menu>? {
+        return viewModelScope.async {
+            var menu = Menu()
+
+            val db = Firebase.firestore
+            val menuRef = db.collection("menus")
+            val query = menuRef.whereEqualTo("restaurantId", restaurantId)
+
+            val result = query.get().await()
+            val documents = result.documents
+
+            if (documents.size > 0) {
+                menu = documents[0].toObject<Menu>()!!
+            }
+
+            menu
         }
     }
 
