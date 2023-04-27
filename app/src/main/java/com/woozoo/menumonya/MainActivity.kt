@@ -54,12 +54,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewPager.setPageTransformer { page, position ->
                 val offset = position * -(2 * offsetPx + pageMarginPx)
                 page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
-
-                updatePagerHeightForChild(page, viewPager)
             }
 
             registerOnPageChangeCallback(object: OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
+                    // height를 wrap_content가 되도록 설정
+                    val view = (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
+                    view?.post {
+                        val wMeasureSpec =
+                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
+                        val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                        view.measure(wMeasureSpec, hMeasureSpec)
+                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
+                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
+                                lp.height = view.measuredHeight
+                            }
+                        }
+                    }
+
+                    // 마커로 카메라 이동
                     viewModel.moveCameraToMarker(position)
                 }
             })
