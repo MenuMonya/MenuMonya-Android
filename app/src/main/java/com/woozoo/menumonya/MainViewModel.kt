@@ -43,7 +43,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
 
-    private var restaurantInfoArray: ArrayList<Restaurant> = ArrayList()
+    private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
     private var selectedLocation: String = ""
 
@@ -79,9 +79,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     fun moveCameraToMarker(markerIndex: Int) {
-        if (restaurantInfoArray.size > 0) {
-            val latitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.latitude)
-            val longitude = parseDouble(restaurantInfoArray[markerIndex].location.coord.longitude)
+        if (mRestaurantInfoArray.size > 0) {
+            val latitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.latitude)
+            val longitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.longitude)
 
             val coord = LatLng(latitude, longitude)
 
@@ -106,7 +106,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             }
 
             naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
-            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.Easing))
+            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
         }
     }
 
@@ -170,11 +170,13 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
+    /**
+     * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
+     * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
+     */
     fun showLocationViewPager(location: String, markerIndex: Int = -1) {
-        viewModelScope.launch {
-            restaurantInfoArray = getRestaurantInfoAsync(location).await()
-
-            showRestaurantView(restaurantInfoArray, markerIndex)
+        if (mRestaurantInfoArray.size > 0) {
+            showRestaurantView(mRestaurantInfoArray, markerIndex)
         }
     }
 
@@ -187,9 +189,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            restaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
+            mRestaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
 
-            setMarkers(restaurantInfoArray)
+            setMarkers(mRestaurantInfoArray)
         }
     }
 
