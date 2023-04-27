@@ -1,6 +1,7 @@
 package com.woozoo.menumonya
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -22,6 +23,14 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>) 
             binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
             binding.restaurantPhoneNumberTv.text = data.phoneNumber
             binding.restaurantLocationDescriptionTv.text = data.location.description
+
+            if (data.todayMenu.main != "") {
+                binding.restaurantMenuLayout.visibility = View.VISIBLE
+
+                binding.restaurantMenuMainTv.text = data.todayMenu.main.replace(",", ", ")
+                binding.restaurantMenuSideTv.text = data.todayMenu.side.replace(",", ", ")
+                binding.restaurantMenuDessertTv.text = data.todayMenu.dessert.replace(",", ", ")
+            }
 
             Glide.with(binding.root)
                 .load(data.imgUrl)
