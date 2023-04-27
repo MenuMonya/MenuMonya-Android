@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                viewPager.adapter = RestaurantAdapter(event.data)
+                viewPager.adapter = RestaurantAdapter(event.data, this)
                 if (event.markerIndex != -1) {
                     viewPager.currentItem = event.markerIndex
                 } else { }

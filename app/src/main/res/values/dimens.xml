@@ -13,4 +13,8 @@
     <dimen name="restaurant_info_image_size">66dp</dimen>
     <dimen name="restaurant_info_margin_size_8dp">8dp</dimen>
     <dimen name="restaurant_info_padding_size_8dp">8dp</dimen>
+    
+    <!--메뉴 정보 다이얼로그 관련-->
+    <dimen name="menu_title_text_size">16sp</dimen>
+    <dimen name="menu_content_text_size">14sp</dimen>
 </resources>
