@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="top"
-            android:weightSum="12"
+            android:weightSum="14"
             >
 
             <TextView
@@ -39,7 +39,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:layout_gravity="top"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:textSize="@dimen/menu_content_text_size"
                 android:textColor="@color/gray900"
                 android:layout_gravity="top"
-                android:layout_weight="9"
+                android:layout_weight="10"
                 />
 
         </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="12"
+            android:weightSum="14"
             >
 
             <TextView
@@ -79,7 +79,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:layout_gravity="top"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 />
 
             <TextView
@@ -90,7 +90,7 @@
                 android:textSize="@dimen/menu_content_text_size"
                 android:textColor="@color/gray900"
                 android:layout_gravity="top"
-                android:layout_weight="9"
+                android:layout_weight="10"
                 />
 
         </LinearLayout>
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="top"
-            android:weightSum="12"
+            android:weightSum="14"
             >
 
             <TextView
@@ -120,7 +120,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:layout_gravity="top"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 />
 
             <TextView
@@ -131,7 +131,7 @@
                 android:textSize="@dimen/menu_content_text_size"
                 android:textColor="@color/gray900"
                 android:layout_gravity="top"
-                android:layout_weight="9"
+                android:layout_weight="10"
                 />
 
         </LinearLayout>
