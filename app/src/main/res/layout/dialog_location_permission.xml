@@ -14,7 +14,6 @@
         android:id="@+id/permission_description_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="편리한 뷔페 검색을 위해 위치 서비스 사용에 동의 하시겠습니까?"
         android:textColor="@color/gray700"
         android:gravity="center"
         android:layout_marginBottom="16dp"
