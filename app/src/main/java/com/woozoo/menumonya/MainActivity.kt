@@ -124,18 +124,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             locationPermissionDialog.show()
         }
         is Event.ShowGpsPermissionAlert -> {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("현재 위치를 찾을 수 없습니다.\n위치 서비스를 켜주세요.")
-            builder.setCancelable(true)
-            builder.setNegativeButton("취소") { dialog, which ->
-                dialog.dismiss()
-            }
-            builder.setPositiveButton("확인") { dialog, which ->
-                val gpsPermissionIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivityForResult(gpsPermissionIntent, GPS_ENABLE_REQUEST_CODE)
-                dialog.dismiss()
-            }
-            builder.create().show()
+            AlertDialog.Builder(this).apply {
+                setMessage("현재 위치를 찾을 수 없습니다.\n위치 서비스를 켜주세요.")
+                setCancelable(true)
+                setNegativeButton("취소") { dialog, which ->
+                    dialog.dismiss()
+                }
+                setPositiveButton("확인") { dialog, which ->
+                    val gpsPermissionIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivityForResult(gpsPermissionIntent, GPS_ENABLE_REQUEST_CODE)
+                    dialog.dismiss()
+                }
+            }.create().show()
         }
     }
 
