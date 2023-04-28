@@ -11,5 +11,7 @@ class Constants {
 
         val GLIDE_IMAGE_SIZE_WIDTH = 100
         val GLIDE_IMAGE_SIZE_HEIGHT = 100
+
+        val FEEDBACK_URL = "https://forms.gle/Emcodxf3ngNqLCHs7"
     }
 }

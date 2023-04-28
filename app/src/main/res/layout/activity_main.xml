@@ -3,15 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.woozoo.menumonya.MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/location_select_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:orientation="horizontal"
         android:paddingVertical="8dp"
         android:paddingHorizontal="14dp"
         >
@@ -21,12 +21,14 @@
             android:layout_width="50dp"
             android:layout_height="24dp"
             android:background="@drawable/selector_location_button"
-            android:layout_marginRight="8dp"
             android:text="강남"
             android:textSize="12dp"
             android:textColor="@color/gray600"
             android:textStyle="bold"
             android:stateListAnimator="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -39,9 +41,24 @@
             android:textColor="@color/gray600"
             android:textStyle="bold"
             android:stateListAnimator="@null"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/location_gn_btn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/feedback_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_feedback"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

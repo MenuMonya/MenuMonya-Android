@@ -1,7 +1,9 @@
 package com.woozoo.menumonya
 
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.woozoo.menumonya.Constants.Companion.FEEDBACK_URL
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
         binding.locationGnBtn.setOnClickListener(this)
         binding.locationYsBtn.setOnClickListener(this)
+        binding.feedbackIv.setOnClickListener(this)
         binding.currentLocationBtn.setOnClickListener(this)
 
         // 좌우로 item이 보이도록 설정
@@ -183,6 +187,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+            }
+            R.id.feedback_iv -> {
+                val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
+                startActivity(intent)
             }
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(this)
