@@ -14,7 +14,7 @@ class PermissionUtils {
     companion object {
         val ACCESS_FINE_LOCATION_REQUEST_CODE = 1000
 
-        fun checkLocationPermission(): Boolean {
+        fun isLocationPermissionAllowed(): Boolean {
             return ContextCompat.checkSelfPermission(context(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_DENIED
         }
@@ -29,7 +29,7 @@ class PermissionUtils {
         /**
          * GPS 또는 네트워크를 통한 위치 추적 권한 설정 여부 체크
          */
-        fun checkGpsPermission(): Boolean {
+        fun isGpsPermissionAllowed(): Boolean {
             val lm: LocationManager = context().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
             return lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || lm.isProviderEnabled(
