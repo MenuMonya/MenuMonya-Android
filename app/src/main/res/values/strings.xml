@@ -9,4 +9,6 @@
     <string name="restaurant_info_location_description">위치</string>
 
     <string name="location_permission_dialog_description">편리한 뷔페 검색을 위해 위치 서비스 사용에 동의 하시겠습니까?</string>
+    <string name="location_permission_denied_toast">위치 권한을 허용해주세요</string>
+    <string name="location_permission_denied_forever_toast">[설정 > 애플리케이션 > 메뉴머냐]에서 위치 권한을 허용해주세요</string>
 </resources>

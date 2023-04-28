@@ -1,5 +1,6 @@
 package com.woozoo.menumonya
 
+import android.Manifest
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
@@ -207,10 +208,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+            // (1) 권한 허용 여부 체크
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 viewModel.getCurrentLocation(this)
             } else {
-                Toast.makeText(this, "위치 권한을 허용해주세요", Toast.LENGTH_SHORT).show()
+                // (2) '다시는 보지 않음' 클릭 여부 체크
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(this, R.string.location_permission_denied_toast,
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.location_permission_denied_forever_toast,
+                        Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
