@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.woozoo.menumonya.MainActivity">
 
@@ -12,104 +12,94 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingVertical="8dp"
         android:paddingHorizontal="14dp"
-        >
+        android:paddingVertical="8dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_gn_btn"
             android:layout_width="50dp"
             android:layout_height="24dp"
             android:background="@drawable/selector_location_button"
-            android:text="강남"
-            android:textSize="12dp"
-            android:textColor="@color/gray600"
-            android:textStyle="bold"
             android:stateListAnimator="@null"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:text="강남"
+            android:textColor="@color/gray600"
+            android:textSize="12dp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_ys_btn"
             android:layout_width="50dp"
             android:layout_height="24dp"
-            android:background="@drawable/selector_location_button"
-            android:text="역삼"
-            android:textSize="12dp"
-            android:textColor="@color/gray600"
-            android:textStyle="bold"
-            android:stateListAnimator="@null"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@id/location_gn_btn"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/selector_location_button"
+            android:stateListAnimator="@null"
+            android:text="역삼"
+            android:textColor="@color/gray600"
+            android:textSize="12dp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintStart_toEndOf="@id/location_gn_btn"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/feedback_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_feedback"
             android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/icon_feedback"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <com.naver.maps.map.MapView
             android:id="@+id/naver_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
 
         <!--'내 주변' 버튼-->
         <LinearLayout
             android:id="@+id/current_location_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_gravity="top|right"
+            android:layout_margin="16dp"
             android:background="@drawable/current_location_button"
             android:gravity="center_vertical"
-            android:layout_gravity="top|right"
-            android:paddingVertical="6dp"
+            android:orientation="horizontal"
             android:paddingHorizontal="8dp"
-            android:layout_margin="16dp"
-            >
+            android:paddingVertical="6dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/current_location_icon"
                 android:layout_marginEnd="4dp"
-                />
+                android:src="@drawable/current_location_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="내 주변"
-                android:textSize="12dp"
-                android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
-                />
+                android:textSize="12dp"
+                android:textStyle="bold" />
 
         </LinearLayout>
-        
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/restaurant_view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="28dp"
-            />
+            android:layout_marginBottom="14dp" />
 
     </FrameLayout>
 

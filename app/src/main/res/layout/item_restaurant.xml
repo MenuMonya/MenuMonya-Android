@@ -1,333 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
-    android:background="@drawable/restaurant_item_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/restaurant_info_padding_size_8dp"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="@dimen/restaurant_item_corner_radius"
     android:elevation="@dimen/restaurant_item_elevation"
     android:layout_marginHorizontal="@dimen/pageMarginAndOffset"
     >
 
-    <LinearLayout
-        android:id="@+id/restaurant_menu_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="10sp"
-        app:layout_constraintBottom_toTopOf="@+id/restaurant_name_tv"
-        android:visibility="gone"
-        tool:visibility="visible"
+        android:layout_height="match_parent"
+        android:padding="@dimen/restaurant_info_padding_size_8dp"
         >
 
-        <!--메인 메뉴-->
         <LinearLayout
+            android:id="@+id/restaurant_menu_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top"
-            android:weightSum="10"
+            android:orientation="vertical"
+            android:layout_marginBottom="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_name_tv"
+            android:visibility="gone"
+            tool:visibility="visible"
             >
 
-            <TextView
-                android:layout_width="0dp"
+            <!--메인 메뉴-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="메인 메뉴"
-                android:textSize="@dimen/restaurant_info_text_size"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:gravity="top"
+                android:weightSum="10"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="메인 메뉴"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="2"
+                    />
+
+                <TextView
+                    android:id="@+id/restaurant_menu_main_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tool:text="카레 염지 순살치킨, 제육볶음, 알리오 올리오 스파게티, 닭강정, 봉황 감자탕"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textColor="@color/gray900"
+                    android:layout_weight="8"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
                 />
 
-            <TextView
-                android:id="@+id/restaurant_menu_main_tv"
-                android:layout_width="0dp"
+            <!--사이드 메뉴-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tool:text="카레 염지 순살치킨, 제육볶음, 알리오 올리오 스파게티, 닭강정, 봉황 감자탕"
-                android:textSize="@dimen/restaurant_info_text_size"
-                android:textColor="@color/gray900"
-                android:layout_weight="8"
+                android:orientation="horizontal"
+                android:gravity="top"
+                android:weightSum="10"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="사이드 메뉴"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="2"
+                    />
+
+                <TextView
+                    android:id="@+id/restaurant_menu_side_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tool:text="반찬 3종, 김치, 샐러드"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textColor="@color/gray900"
+                    android:layout_weight="8"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                />
+
+            <!--후식-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="top"
+                android:weightSum="10"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="후식"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_weight="2"
+                    />
+
+                <TextView
+                    android:id="@+id/restaurant_menu_dessert_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tool:text="토스트(누텔라, 딸기잼), 매실차"
+                    android:textSize="@dimen/restaurant_info_text_size"
+                    android:textColor="@color/gray900"
+                    android:layout_weight="8"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                android:layout_marginTop="4dp"
                 />
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/borderGray"
+        <TextView
+            android:id="@+id/restaurant_menu_more_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/restaurant_info_menu_more"
+            android:textColor="@color/gray500"
+            android:textSize="@dimen/restaurant_info_text_size_8sp"
+            android:textStyle="bold"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="6dp"
+            android:paddingBottom="6dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/restaurant_menu_layout"
+            android:visibility="gone"
+            tool:visibility="visible"
             />
 
-        <!--사이드 메뉴-->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/restaurant_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="4sp"
+            android:textColor="@color/gray900"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_price_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            tool:text="식당 이름" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/restaurant_cv"
+            android:layout_width="@dimen/restaurant_info_image_size"
+            android:layout_height="@dimen/restaurant_info_image_size"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <ImageView
+                android:id="@+id/restaurant_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+        <!--가격-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/restaurant_price_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top"
-            android:weightSum="10"
+            android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
+            android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_time_layout"
+            app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_info_price"
+                android:textColor="@color/gray800"
+                android:textSize="@dimen/restaurant_info_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/restaurant_price_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tool:text="8,000원"
+                android:textColor="@color/gray900"
+                android:textSize="@dimen/restaurant_info_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--운영 시간-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/restaurant_time_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
+            android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_phone_number_layout"
+            app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_info_time"
+                android:textColor="@color/gray800"
+                android:textSize="@dimen/restaurant_info_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/restaurant_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11:00 ~ 14:00"
+                android:textColor="@color/gray900"
+                android:textSize="@dimen/restaurant_info_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--전화번호-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/restaurant_phone_number_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
+            android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_location_description_layout"
+            app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restaurant_info_phone_number"
+                android:textColor="@color/gray800"
+                android:textSize="@dimen/restaurant_info_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/restaurant_phone_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="02-950-2345"
+                android:textColor="@color/gray900"
+                android:textSize="@dimen/restaurant_info_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--위치-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/restaurant_location_description_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
+            app:layout_constraintStart_toStartOf="parent"
             >
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="사이드 메뉴"
+                android:text="@string/restaurant_info_location_description"
+                android:textColor="@color/gray800"
                 android:textSize="@dimen/restaurant_info_text_size"
                 android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                android:layout_weight="2"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/restaurant_menu_side_tv"
-                android:layout_width="0dp"
+                android:id="@+id/restaurant_location_description_tv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tool:text="반찬 3종, 김치, 샐러드"
-                android:textSize="@dimen/restaurant_info_text_size"
+                android:text="서울 서초구 서초대로78길 38, 지하 1층"
                 android:textColor="@color/gray900"
-                android:layout_weight="8"
-                />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/borderGray"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="6dp"
-            />
-
-        <!--후식-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top"
-            android:weightSum="10"
-            >
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="후식"
                 android:textSize="@dimen/restaurant_info_text_size"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"
-                android:layout_weight="2"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/restaurant_menu_dessert_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                tool:text="토스트(누텔라, 딸기잼), 매실차"
-                android:textSize="@dimen/restaurant_info_text_size"
-                android:textColor="@color/gray900"
-                android:layout_weight="8"
-                />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/borderGray"
-            android:layout_marginTop="4dp"
-            />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/restaurant_menu_more_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/restaurant_info_menu_more"
-        android:textColor="@color/gray500"
-        android:textSize="@dimen/restaurant_info_text_size_8sp"
-        android:textStyle="bold"
-        android:layout_marginTop="4dp"
-        android:paddingBottom="6dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restaurant_menu_layout"
-        android:visibility="gone"
-        tool:visibility="visible"
-        />
-
-    <TextView
-        android:id="@+id/restaurant_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="4sp"
-        android:textColor="@color/gray900"
-        android:textSize="12dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/restaurant_price_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        tool:text="식당 이름" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/restaurant_cv"
-        android:layout_width="@dimen/restaurant_info_image_size"
-        android:layout_height="@dimen/restaurant_info_image_size"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-
-        <ImageView
-            android:id="@+id/restaurant_iv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            />
-
-    </androidx.cardview.widget.CardView>
-
-    <!--가격-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/restaurant_price_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
-        android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
-        app:layout_constraintBottom_toTopOf="@+id/restaurant_time_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_info_price"
-            android:textColor="@color/gray800"
-            android:textSize="@dimen/restaurant_info_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/restaurant_price_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tool:text="8,000원"
-            android:textColor="@color/gray900"
-            android:textSize="@dimen/restaurant_info_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--운영 시간-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/restaurant_time_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
-        android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
-        app:layout_constraintBottom_toTopOf="@+id/restaurant_phone_number_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_info_time"
-            android:textColor="@color/gray800"
-            android:textSize="@dimen/restaurant_info_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/restaurant_time_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="11:00 ~ 14:00"
-            android:textColor="@color/gray900"
-            android:textSize="@dimen/restaurant_info_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--전화번호-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/restaurant_phone_number_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
-        android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
-        app:layout_constraintBottom_toTopOf="@+id/restaurant_location_description_layout"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_info_phone_number"
-            android:textColor="@color/gray800"
-            android:textSize="@dimen/restaurant_info_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/restaurant_phone_number_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="02-950-2345"
-            android:textColor="@color/gray900"
-            android:textSize="@dimen/restaurant_info_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--위치-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/restaurant_location_description_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/restaurant_info_margin_size_8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-        app:layout_constraintStart_toStartOf="parent"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/restaurant_info_location_description"
-            android:textColor="@color/gray800"
-            android:textSize="@dimen/restaurant_info_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/restaurant_location_description_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="서울 서초구 서초대로78길 38, 지하 1층"
-            android:textColor="@color/gray900"
-            android:textSize="@dimen/restaurant_info_text_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
