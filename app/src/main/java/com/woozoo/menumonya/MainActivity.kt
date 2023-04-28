@@ -1,5 +1,6 @@
 package com.woozoo.menumonya
 
+import android.Manifest
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var viewPager: ViewPager2
+    private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
+        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
         binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
         binding.locationGnBtn.setOnClickListener(this)
         binding.locationYsBtn.setOnClickListener(this)
@@ -115,21 +117,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else { }
         }
         is Event.RequestLocationPermission -> {
-            requestLocationPermission(this)
+            locationPermissionDialog = LocationPermissionDialog(this) {
+                requestLocationPermission(this)
+                locationPermissionDialog.dismiss()
+            }
+            locationPermissionDialog.show()
         }
         is Event.ShowGpsPermissionAlert -> {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("현재 위치를 찾을 수 없습니다.\n위치 서비스를 켜주세요.")
-            builder.setCancelable(true)
-            builder.setNegativeButton("취소") { dialog, which ->
-                dialog.dismiss()
-            }
-            builder.setPositiveButton("확인") { dialog, which ->
-                val gpsPermissionIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                startActivityForResult(gpsPermissionIntent, GPS_ENABLE_REQUEST_CODE)
-                dialog.dismiss()
-            }
-            builder.create().show()
+            AlertDialog.Builder(this).apply {
+                setMessage("현재 위치를 찾을 수 없습니다.\n위치 서비스를 켜주세요.")
+                setCancelable(true)
+                setNegativeButton("취소") { dialog, which ->
+                    dialog.dismiss()
+                }
+                setPositiveButton("확인") { dialog, which ->
+                    val gpsPermissionIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivityForResult(gpsPermissionIntent, GPS_ENABLE_REQUEST_CODE)
+                    dialog.dismiss()
+                }
+            }.create().show()
         }
     }
 
@@ -174,8 +180,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("강남")
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
             }
@@ -183,8 +189,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("역삼")
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
             }
@@ -192,6 +198,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
                 startActivity(intent)
             }
+            // '내 주변' 버튼 클릭
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(this)
             }
@@ -201,10 +208,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ACCESS_FINE_LOCATION_REQUEST_CODE) {
+            // (1) 권한 허용 여부 체크
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 viewModel.getCurrentLocation(this)
             } else {
-                Toast.makeText(this, "위치 권한을 허용해주세요", Toast.LENGTH_SHORT).show()
+                // (2) '다시는 보지 않음' 클릭 여부 체크
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(this, R.string.location_permission_denied_toast,
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.location_permission_denied_forever_toast,
+                        Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

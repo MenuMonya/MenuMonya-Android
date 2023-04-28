@@ -12,7 +12,7 @@ class MenuDialog(context: Context, val data: Restaurant) : Dialog(context) {
     private lateinit var binding: DialogMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // xml의 background 적용되도록 함.
 
         super.onCreate(savedInstanceState)
         binding = DialogMenuBinding.inflate(layoutInflater)

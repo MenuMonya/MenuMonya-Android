@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context.LOCATION_SERVICE
-import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
@@ -24,8 +23,9 @@ import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.util.PermissionUtils.Companion.checkGpsPermission
-import com.woozoo.menumonya.util.PermissionUtils.Companion.checkLocationPermission
+import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
+import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
+import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -229,25 +229,30 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
+    /**
+     * - 내 위치를 획득하기 위해서는 두가지 상태여야 함.
+     *   (1) '기기'의 GPS 기능이 켜져있는 상태
+     *   (2) '앱'의 위치 권한이 허용되어있는 상태
+     *
+     * - 두 상태를 체크하고, 상태에 따라 사용자에게 허용/켜짐을 요청함.
+     */
     fun getCurrentLocation(activity: Activity) {
-        if (!checkGpsPermission()) {
+        if (!isGpsPermissionAllowed()) {
             showGpsPermissionAlert()
         } else {
-            if (!checkLocationPermission()) {
+            if (!isLocationPermissionAllowed()) {
                 requestLocationPermission()
             } else {
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10f, object: LocationListener {
-                    override fun onLocationChanged(location: Location) {
+                requestLocationUpdateOnce(
+                    locationManager,
+                    LocationListener { location ->
+                        // 내 위치로 카메라 이동, 내 위치 표시
                         moveCameraCoord(location.latitude, location.longitude)
                         naverMap.apply {
-                            locationSource = FusedLocationSource(
-                                activity,
-                                LOCATION_PERMISSION_REQUEST_CODE
-                            )
+                            locationSource = FusedLocationSource(activity, LOCATION_PERMISSION_REQUEST_CODE)
                             locationTrackingMode = LocationTrackingMode.Follow
                         }
-                    }
-                })
+                    })
             }
         }
     }
