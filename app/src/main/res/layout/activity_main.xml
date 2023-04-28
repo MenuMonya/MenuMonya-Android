@@ -89,7 +89,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/restaurant_view_pager"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/restaurant_item_height"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="28dp"
             />

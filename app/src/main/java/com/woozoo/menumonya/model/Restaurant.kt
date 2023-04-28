@@ -11,6 +11,7 @@ data class Restaurant(
     val price: Price = Price(),
     val time: Time = Time(),
     val phoneNumber: String = "",
+    var todayMenu: Food = Food(),
     val updatedTime: String = ""
 )
 
