@@ -18,7 +18,6 @@ import com.woozoo.menumonya.Constants.Companion.FEEDBACK_URL
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
-import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val GPS_ENABLE_REQUEST_CODE = 2000
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
+        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
         binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
         binding.locationGnBtn.setOnClickListener(this)
         binding.locationYsBtn.setOnClickListener(this)
@@ -115,7 +114,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else { }
         }
         is Event.RequestLocationPermission -> {
-            requestLocationPermission(this)
+            val dialog = LocationPermissionDialog(this)
+            dialog.show()
+//            requestLocationPermission(this)
         }
         is Event.ShowGpsPermissionAlert -> {
             val builder = AlertDialog.Builder(this)
@@ -174,8 +175,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("강남")
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
             }
@@ -183,8 +184,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("역삼")
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button_selected)
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.selector_location_button)
+                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
             }
