@@ -18,6 +18,7 @@ import com.woozoo.menumonya.Constants.Companion.FEEDBACK_URL
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
+import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val GPS_ENABLE_REQUEST_CODE = 2000
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var viewPager: ViewPager2
+    private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,9 +116,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else { }
         }
         is Event.RequestLocationPermission -> {
-            val dialog = LocationPermissionDialog(this)
-            dialog.show()
-//            requestLocationPermission(this)
+            locationPermissionDialog = LocationPermissionDialog(this) {
+                requestLocationPermission(this)
+                locationPermissionDialog.dismiss()
+            }
+            locationPermissionDialog.show()
         }
         is Event.ShowGpsPermissionAlert -> {
             val builder = AlertDialog.Builder(this)
@@ -193,6 +197,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
                 startActivity(intent)
             }
+            // '내 주변' 버튼 클릭
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(this)
             }

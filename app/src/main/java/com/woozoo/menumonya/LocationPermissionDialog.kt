@@ -16,12 +16,13 @@ import android.view.View
 import android.view.View.OnClickListener
 import com.woozoo.menumonya.databinding.DialogLocationPermissionBinding
 
-class LocationPermissionDialog(context: Context) : Dialog(context), OnClickListener {
+class LocationPermissionDialog(context: Context, private val listener: OnClickListener)
+    : Dialog(context), OnClickListener {
     private lateinit var binding: DialogLocationPermissionBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // xml의 background 적용되도록 함.
-        window?.setGravity(BOTTOM)
+        window?.setGravity(BOTTOM) // 다이얼로그가 하단에 표시되도록 설정
 
         super.onCreate(savedInstanceState)
         binding = DialogLocationPermissionBinding.inflate(layoutInflater)
@@ -30,16 +31,13 @@ class LocationPermissionDialog(context: Context) : Dialog(context), OnClickListe
         binding.permissionDescriptionTv.text = getSpannableText()
 
         binding.negativeBtn.setOnClickListener(this)
-        binding.positiveBtn.setOnClickListener(this)
+        binding.positiveBtn.setOnClickListener(listener)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.negative_btn -> {
                 dismiss()
-            }
-            R.id.positive_btn -> {
-
             }
         }
     }
