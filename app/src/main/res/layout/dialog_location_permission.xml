@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gray700"
+        android:textSize="@dimen/location_permission_description_text_size"
         android:gravity="center"
         android:layout_marginBottom="16dp"
         />
@@ -31,7 +32,7 @@
             android:layout_height="30dp"
             android:stateListAnimator="@null"
             android:text="취소"
-            android:textSize="14sp"
+            android:textSize="@dimen/location_permission_button_text_size"
             android:textColor="@color/gray600"
             android:background="@drawable/white_button_background"
             android:layout_marginEnd="16dp"
@@ -43,7 +44,7 @@
             android:layout_height="30dp"
             android:stateListAnimator="@null"
             android:text="동의"
-            android:textSize="14sp"
+            android:textSize="14dp"
             android:textColor="@color/white"
             android:background="@drawable/color_button_background"
             />

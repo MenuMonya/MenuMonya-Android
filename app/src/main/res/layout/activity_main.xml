@@ -12,18 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingHorizontal="14dp"
-        android:paddingVertical="8dp">
+        android:paddingHorizontal="@dimen/location_select_layout_padding_horizontal"
+        android:paddingVertical="@dimen/location_select_layout_padding_vertical">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_gn_btn"
-            android:layout_width="50dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/location_select_button_width"
+            android:layout_height="@dimen/location_select_button_height"
             android:background="@drawable/white_button_background"
             android:stateListAnimator="@null"
             android:text="강남"
             android:textColor="@color/gray600"
-            android:textSize="12dp"
+            android:textSize="@dimen/location_select_button_text"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,14 +31,14 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/location_ys_btn"
-            android:layout_width="50dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="@dimen/location_select_button_width"
+            android:layout_height="@dimen/location_select_button_height"
+            android:layout_marginStart="@dimen/location_select_button_margin_start"
             android:background="@drawable/white_button_background"
             android:stateListAnimator="@null"
             android:text="역삼"
             android:textColor="@color/gray600"
-            android:textSize="12dp"
+            android:textSize="@dimen/location_select_button_text"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/location_gn_btn"
@@ -48,7 +48,7 @@
             android:id="@+id/feedback_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:padding="@dimen/location_select_layout_feedback_button_padding"
             android:src="@drawable/icon_feedback"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,39 +58,42 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <com.naver.maps.map.MapView
             android:id="@+id/naver_map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            />
 
         <!--'내 주변' 버튼-->
         <LinearLayout
             android:id="@+id/current_location_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/current_location_width"
+            android:layout_height="@dimen/current_location_height"
             android:layout_gravity="top|right"
             android:layout_margin="16dp"
             android:background="@drawable/current_location_button"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp">
+            >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/current_location_icon" />
+                android:layout_marginEnd="@dimen/current_location_image_margin_end"
+                android:src="@drawable/current_location_icon"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="내 주변"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12dp"
-                android:textStyle="bold" />
+                android:textColor="@color/colorSecondary"
+                android:textSize="@dimen/current_location_text_size"
+                android:textStyle="bold"
+                />
 
         </LinearLayout>
 
@@ -99,7 +102,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="14dp" />
+            android:layout_marginBottom="14dp"
+            />
 
     </FrameLayout>
 
