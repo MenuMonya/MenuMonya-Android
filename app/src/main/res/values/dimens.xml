@@ -11,6 +11,12 @@
     <dimen name="location_select_button_text">12dp</dimen>
     <dimen name="location_select_button_margin_start">8dp</dimen>
 
+    <!--'내 주변' 버튼 관련-->
+    <dimen name="current_location_width">60dp</dimen>
+    <dimen name="current_location_height">24dp</dimen>
+    <dimen name="current_location_image_margin_end">2dp</dimen>
+    <dimen name="current_location_text_size">10dp</dimen>
+
     <dimen name="pageMargin">1dp</dimen>
     <dimen name="offset">10dp</dimen>
     <dimen name="pageMarginAndOffset">11dp</dimen> <!--pageMargin과 offset의 합이어야 함-->

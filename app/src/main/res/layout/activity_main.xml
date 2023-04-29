@@ -68,28 +68,28 @@
         <!--'내 주변' 버튼-->
         <LinearLayout
             android:id="@+id/current_location_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/current_location_width"
+            android:layout_height="@dimen/current_location_height"
             android:layout_gravity="top|right"
             android:layout_margin="16dp"
             android:background="@drawable/current_location_button"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="6dp">
+            >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/current_location_icon" />
+                android:layout_marginEnd="@dimen/current_location_image_margin_end"
+                android:src="@drawable/current_location_icon"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="내 주변"
                 android:textColor="@color/colorPrimary"
-                android:textSize="12dp"
+                android:textSize="@dimen/current_location_text_size"
                 android:textStyle="bold" />
 
         </LinearLayout>
