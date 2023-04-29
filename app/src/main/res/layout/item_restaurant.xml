@@ -14,7 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/restaurant_info_padding_size_8dp"
+        android:padding="@dimen/restaurant_info_padding_size"
         >
 
         <!--메뉴 레이아웃-->
@@ -147,6 +147,7 @@
 
         </LinearLayout>
 
+        <!--'자세히 보기' 버튼-->
         <TextView
             android:id="@+id/restaurant_menu_more_tv"
             android:layout_width="wrap_content"
@@ -165,17 +166,19 @@
             tool:visibility="visible"
             />
 
+        <!--식당 이름-->
         <TextView
             android:id="@+id/restaurant_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="@dimen/restaurant_info_name_margin_bottom"
             android:textColor="@color/gray900"
             android:textSize="@dimen/restaurant_info_text_size_name"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/restaurant_price_layout"
             app:layout_constraintStart_toStartOf="parent"
-            tool:text="식당 이름" />
+            tool:text="식당 이름"
+            />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/restaurant_cv"
@@ -205,7 +208,8 @@
             android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
             app:layout_constraintBottom_toTopOf="@+id/restaurant_time_layout"
             app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -216,7 +220,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <TextView
                 android:id="@+id/restaurant_price_tv"
@@ -227,7 +232,8 @@
                 android:textSize="@dimen/restaurant_info_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -240,7 +246,8 @@
             android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
             app:layout_constraintBottom_toTopOf="@+id/restaurant_phone_number_layout"
             app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -251,7 +258,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <TextView
                 android:id="@+id/restaurant_time_tv"
@@ -262,7 +270,8 @@
                 android:textSize="@dimen/restaurant_info_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -275,7 +284,8 @@
             android:layout_marginBottom="@dimen/restaurant_info_text_margin_bottom"
             app:layout_constraintBottom_toTopOf="@+id/restaurant_location_description_layout"
             app:layout_constraintEnd_toStartOf="@+id/restaurant_cv"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -286,7 +296,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <TextView
                 android:id="@+id/restaurant_phone_number_tv"
@@ -297,7 +308,8 @@
                 android:textSize="@dimen/restaurant_info_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -321,7 +333,8 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
             <TextView
                 android:id="@+id/restaurant_location_description_tv"
@@ -332,11 +345,11 @@
                 android:textSize="@dimen/restaurant_info_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.cardview.widget.CardView>
