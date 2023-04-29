@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="top"
-                android:weightSum="10"
+                android:weightSum="@dimen/restaurant_info_menu_weight_sum"
                 >
 
                 <TextView
@@ -45,7 +45,7 @@
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="2"
+                    android:layout_weight="@dimen/restaurant_info_menu_title_weight"
                     />
 
                 <TextView
@@ -55,7 +55,7 @@
                     tool:text="카레 염지 순살치킨, 제육볶음, 알리오 올리오 스파게티, 닭강정, 봉황 감자탕"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textColor="@color/gray900"
-                    android:layout_weight="8"
+                    android:layout_weight="@dimen/restaurant_info_menu_content_weight"
                     />
 
             </LinearLayout>
@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="top"
-                android:weightSum="10"
+                android:weightSum="@dimen/restaurant_info_menu_weight_sum"
                 >
 
                 <TextView
@@ -84,7 +84,7 @@
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="2"
+                    android:layout_weight="@dimen/restaurant_info_menu_title_weight"
                     />
 
                 <TextView
@@ -94,7 +94,7 @@
                     tool:text="반찬 3종, 김치, 샐러드"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textColor="@color/gray900"
-                    android:layout_weight="8"
+                    android:layout_weight="@dimen/restaurant_info_menu_content_weight"
                     />
 
             </LinearLayout>
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="top"
-                android:weightSum="10"
+                android:weightSum="@dimen/restaurant_info_menu_weight_sum"
                 >
 
                 <TextView
@@ -123,7 +123,7 @@
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="2"
+                    android:layout_weight="@dimen/restaurant_info_menu_title_weight"
                     />
 
                 <TextView
@@ -133,7 +133,7 @@
                     tool:text="토스트(누텔라, 딸기잼), 매실차"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
                     android:textColor="@color/gray900"
-                    android:layout_weight="8"
+                    android:layout_weight="@dimen/restaurant_info_menu_content_weight"
                     />
 
             </LinearLayout>

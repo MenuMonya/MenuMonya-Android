@@ -20,6 +20,9 @@
     <dimen name="restaurant_item_elevation">4dp</dimen>
     <dimen name="restaurant_item_corner_radius">10dp</dimen>
     <dimen name="restaurant_info_menu_text_size">10dp</dimen> <!--메뉴 제목/내용-->
+    <dimen name="restaurant_info_menu_weight_sum">10</dimen>
+    <dimen name="restaurant_info_menu_title_weight">2</dimen>
+    <dimen name="restaurant_info_menu_content_weight">8</dimen>
     <dimen name="restaurant_info_text_size_name">12dp</dimen>
     <dimen name="restaurant_info_name_margin_bottom">4dp</dimen>
     <dimen name="restaurant_info_text_size">8dp</dimen>
