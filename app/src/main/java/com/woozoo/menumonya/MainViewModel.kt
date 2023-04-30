@@ -23,6 +23,7 @@ import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -120,7 +121,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.withParams(cameraUpdateParams))
     }
 
-    suspend fun getRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
+    suspend fun getTodayRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
         return viewModelScope.async {
             val restaurantInfo = ArrayList<Restaurant>()
             val db = Firebase.firestore
@@ -135,7 +136,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 if (restaurant != null) {
                     // 메뉴 정보 조회
                     val menu = getMenuAsync(document.id)?.await()
-                    restaurant.todayMenu = menu?.date?.get("2023-04-24")!! // TODO: 조회 날짜로 변경
+
+                    val todayMenu = menu?.date?.get(getTodayDate())
+                    if (todayMenu != null) restaurant.todayMenu =  todayMenu
 
                     restaurantInfo.add(restaurant)
                 }
@@ -189,7 +192,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = getRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
+            mRestaurantInfoArray = getTodayRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
 
             setMarkers(mRestaurantInfoArray)
         }
