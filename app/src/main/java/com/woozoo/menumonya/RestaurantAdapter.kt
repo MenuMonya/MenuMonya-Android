@@ -13,6 +13,7 @@ import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
+
     RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding

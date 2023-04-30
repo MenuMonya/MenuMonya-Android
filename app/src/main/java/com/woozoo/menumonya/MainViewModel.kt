@@ -26,6 +26,7 @@ import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
+
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -133,6 +134,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
             for (document in documents) {
                 val restaurant = document.toObject<Restaurant>()
+                
                 if (restaurant != null) {
                     // 메뉴 정보 조회
                     val menu = getMenuAsync(document.id)?.await()

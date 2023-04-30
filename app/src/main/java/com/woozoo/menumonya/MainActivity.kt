@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.net.Ur
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("강남")
+                
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
                 binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
@@ -189,6 +190,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("역삼")
+                
                 binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
