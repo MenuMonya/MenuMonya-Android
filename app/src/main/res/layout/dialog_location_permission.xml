@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/menu_dialog_background"
+    android:orientation="vertical"
+    android:paddingVertical="30dp"
+    android:paddingHorizontal="30dp"
+    android:layout_margin="50dp"
+    android:gravity="center"
+    >
+
+    <TextView
+        android:id="@+id/permission_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:textColor="@color/gray700"
+        android:textSize="@dimen/location_permission_description_text_size"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/negative_btn"
+            android:layout_width="78dp"
+            android:layout_height="30dp"
+            android:stateListAnimator="@null"
+            android:text="취소"
+            android:fontFamily="@font/pretendard_regular"
+            android:textSize="@dimen/location_permission_button_text_size"
+            android:textColor="@color/gray600"
+            android:background="@drawable/white_button_background"
+            android:layout_marginEnd="16dp"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/positive_btn"
+            android:layout_width="78dp"
+            android:layout_height="30dp"
+            android:stateListAnimator="@null"
+            android:text="동의"
+            android:fontFamily="@font/pretendard_regular"
+            android:textSize="14dp"
+            android:textColor="@color/white"
+            android:background="@drawable/color_button_background"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>

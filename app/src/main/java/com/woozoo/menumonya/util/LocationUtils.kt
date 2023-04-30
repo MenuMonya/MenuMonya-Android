@@ -1,6 +1,8 @@
 package com.woozoo.menumonya.util
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.location.LocationListener
 import android.location.LocationManager
 
 class LocationUtils {
@@ -19,6 +21,22 @@ class LocationUtils {
             val networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
             return isGpsEnabled || networkEnabled
+        }
+
+        /**
+         * 내 위치를 한 번만 조회함.
+         * @param listener : 위치 조회시 수행되는 로직
+         */
+        @SuppressLint("MissingPermission")
+        fun requestLocationUpdateOnce(locationManager: LocationManager, listener: LocationListener) {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                1000,
+                10f,
+                listener.apply {
+                    locationManager.removeUpdates(this) // 위치 업데이트를 반복하지 않도록 리스너 제거
+                }
+            )
         }
     }
 

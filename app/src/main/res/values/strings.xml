@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">메뉴머냐</string>
+    <string name="app_name_debug">[개발] 메뉴머냐</string>
+
+    <string name="restaurant_info_menu_more"><u>자세히 보기</u></string>
     <string name="restaurant_info_price">가격</string>
     <string name="restaurant_info_time">점심 운영시간</string>
     <string name="restaurant_info_phone_number">전화번호</string>
     <string name="restaurant_info_location_description">위치</string>
+
+    <string name="location_permission_dialog_description">편리한 뷔페 검색을 위해 위치 서비스 사용에 동의 하시겠습니까?</string>
+    <string name="location_permission_denied_toast">위치 권한을 허용해주세요</string>
+    <string name="location_permission_denied_forever_toast">[설정 > 애플리케이션 > 메뉴머냐]에서 위치 권한을 허용해주세요</string>
 </resources>

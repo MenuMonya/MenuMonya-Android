@@ -10,7 +10,10 @@
     <color name="colorPrimary">#FE7235</color>
     <color name="colorSecondary">#FCF5EF</color>
     <color name="lightGray">#E0E0E0</color>
+    <color name="borderGray">#EEEEEE</color>
+    <color name="gray500">#9E9E9E</color>
     <color name="gray600">#757575</color>
+    <color name="gray700">#616161</color>
     <color name="gray800">#424242</color>
     <color name="gray900">#212121</color>
 </resources>
