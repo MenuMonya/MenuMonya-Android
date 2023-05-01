@@ -257,6 +257,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                             locationSource = FusedLocationSource(activity, LOCATION_PERMISSION_REQUEST_CODE)
                             locationTrackingMode = LocationTrackingMode.Follow
                         }
+                        moveToCurrentLocation()
                     })
             }
         }
@@ -281,6 +282,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     private fun showGpsPermissionAlert() {
         event(Event.ShowGpsPermissionAlert(""))
     }
+    private fun moveToCurrentLocation() {
+        event(Event.MoveToCurrentLocation(""))
+    }
 
     sealed class Event {
         /**
@@ -293,5 +297,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
         data class RequestLocationPermission(val data: String): Event()
         data class ShowGpsPermissionAlert(val data: String): Event()
+        data class MoveToCurrentLocation(val data: String): Event()
     }
 }

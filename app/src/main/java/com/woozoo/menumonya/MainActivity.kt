@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
-import android.net.Ur
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -137,6 +137,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }.create().show()
         }
+        is Event.MoveToCurrentLocation -> {
+            binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button_selected)
+            binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorSecondary))
+            binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorSecondary))
+        }
     }
 
     override fun onStart() {
@@ -185,6 +190,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+
+                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.location_ys_btn -> {
                 viewPager.invalidate()
@@ -195,6 +204,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+
+                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.feedback_iv -> {
                 val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
