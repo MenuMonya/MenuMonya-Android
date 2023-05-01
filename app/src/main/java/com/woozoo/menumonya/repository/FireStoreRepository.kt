@@ -13,12 +13,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 object FireStoreRepository {
-    private val db = Firebase.firestore
 
     private lateinit var restaurantCollectionName: String
     private lateinit var menuCollectionName: String
 
     suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
+        val db = Firebase.firestore
+
         restaurantCollectionName = getRestaurantsCollectionNameConfig()
 
         val restaurantInfo = ArrayList<Restaurant>()
@@ -52,6 +53,8 @@ object FireStoreRepository {
     }
 
     suspend fun getMenu(restaurantId: String) = withContext(Dispatchers.IO) {
+        val db = Firebase.firestore
+
         menuCollectionName = getMenuCollectionNameConfig()
 
         var menu = Menu()

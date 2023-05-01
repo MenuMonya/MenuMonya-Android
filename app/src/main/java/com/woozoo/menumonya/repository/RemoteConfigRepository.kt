@@ -10,13 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object RemoteConfigRepository {
-    private val remoteConfig = FirebaseRemoteConfig.getInstance()
 
     private val configSettings = remoteConfigSettings {
         minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
     }
 
     init {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
@@ -29,6 +30,8 @@ object RemoteConfigRepository {
     }
 
     suspend fun getRestaurantsCollectionNameConfig() = withContext(Dispatchers.IO) {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("RESTAURANT_COLLECTION_DEV")
         } else {
@@ -37,6 +40,8 @@ object RemoteConfigRepository {
     }
 
     suspend fun getMenuCollectionNameConfig() = withContext(Dispatchers.IO) {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("MENU_COLLECTION_DEV")
         } else {
@@ -45,6 +50,8 @@ object RemoteConfigRepository {
     }
 
     fun getFeedbackUrlConfig(): String {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         return if (BuildConfig.DEBUG) {
             remoteConfig.getString("FEEDBACK_URL_DEV")
         } else {
