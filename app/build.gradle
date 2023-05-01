@@ -26,12 +26,14 @@ android {
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
+            resValue "string", "AMPLITUDE_APP_ID", localProperties['AMPLITUDE_APP_ID']
             manifestPlaceholders = [app_name: "@string/app_name_debug"]
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
+            resValue "string", "AMPLITUDE_APP_ID", localProperties['AMPLITUDE_APP_ID']
             manifestPlaceholders = [app_name: "@string/app_name"]
         }
     }
@@ -83,4 +85,7 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
+
+    // Amplitude
+    implementation 'com.amplitude:analytics-android:1.8.2'
 }
