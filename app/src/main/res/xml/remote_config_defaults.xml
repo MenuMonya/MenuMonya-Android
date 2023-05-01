@@ -14,7 +14,7 @@
   </entry>
   <entry>
     <key>RESTAURANT_COLLECTION_DEV</key>
-    <value>restaurants-dev</value>
+    <value>restaurants</value>
   </entry>
   <entry>
     <key>RESTAURANT_COLLECTION_PROD</key>
