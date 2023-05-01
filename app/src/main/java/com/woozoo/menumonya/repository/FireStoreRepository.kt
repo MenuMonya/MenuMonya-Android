@@ -5,6 +5,8 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.repository.RemoteConfigRepository.getMenuCollectionName
+import com.woozoo.menumonya.repository.RemoteConfigRepository.getRestaurantsCollectionName
 import com.woozoo.menumonya.util.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -12,7 +14,6 @@ import kotlinx.coroutines.withContext
 
 class FireStoreRepository {
     private val db = Firebase.firestore
-    private var remoteConfigRepository = RemoteConfigRepository.get()
 
     private lateinit var restaurantCollectionName: String
     private lateinit var menuCollectionName: String
@@ -32,7 +33,7 @@ class FireStoreRepository {
     }
 
     suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
-        restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionName()
+        restaurantCollectionName = getRestaurantsCollectionName()
 
         val restaurantInfo = ArrayList<Restaurant>()
         val restaurantRef = db.collection(restaurantCollectionName)
@@ -65,7 +66,7 @@ class FireStoreRepository {
     }
 
     suspend fun getMenu(restaurantId: String) = withContext(Dispatchers.IO) {
-        menuCollectionName = remoteConfigRepository.getMenuCollectionName()
+        menuCollectionName = getMenuCollectionName()
 
         var menu = Menu()
 

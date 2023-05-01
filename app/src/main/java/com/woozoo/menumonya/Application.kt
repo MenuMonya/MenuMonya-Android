@@ -23,7 +23,6 @@ class Application: Application() {
         super.onCreate()
 
         // 종속 관계 때문에 초기화 순서 중요함
-        RemoteConfigRepository.initialize()
         FireStoreRepository.initialize()
     }
 }

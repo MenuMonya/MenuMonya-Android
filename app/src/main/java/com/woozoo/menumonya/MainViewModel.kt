@@ -39,7 +39,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     private var locationManager: LocationManager
 
     private var firestoreRepository = FireStoreRepository.get()
-    private var remoteConfigRepository = RemoteConfigRepository.get()
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
@@ -203,7 +202,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     fun getFeedbackUrl(): String {
-        return remoteConfigRepository.getFeedbackUrl()
+        return RemoteConfigRepository.getFeedbackUrl()
     }
 
     private fun showToast(text: String) {

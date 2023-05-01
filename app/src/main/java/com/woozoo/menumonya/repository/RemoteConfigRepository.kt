@@ -9,22 +9,8 @@ import com.woozoo.menumonya.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RemoteConfigRepository {
+object RemoteConfigRepository {
     private val remoteConfig = FirebaseRemoteConfig.getInstance()
-
-    companion object {
-        private var instance: RemoteConfigRepository? = null
-
-        fun initialize() {
-            if (instance == null) {
-                instance = RemoteConfigRepository()
-            }
-        }
-
-        fun get(): RemoteConfigRepository {
-            return instance ?: throw java.lang.IllegalStateException("RemoteConfigRepository must be initialized")
-        }
-    }
 
     private val configSettings = remoteConfigSettings {
         minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
