@@ -1,5 +1,6 @@
 package com.woozoo.menumonya.repository
 
+import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -12,10 +13,16 @@ import kotlinx.coroutines.withContext
 
 class FireStoreRepository {
     private val db = Firebase.firestore
+    private val remoteConfigRepository = RemoteConfigRepository()
+
+    lateinit var restaurantCollectionName: String
+    lateinit var menuCollectionName: String
 
     suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
+        restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionName()
+
         val restaurantInfo = ArrayList<Restaurant>()
-        val restaurantRef = db.collection("restaurants")
+        val restaurantRef = db.collection(restaurantCollectionName)
         val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
 
         val result = query.get().await()
@@ -45,9 +52,12 @@ class FireStoreRepository {
     }
 
     suspend fun getMenu(restaurantId: String) = withContext(Dispatchers.IO) {
+        menuCollectionName = remoteConfigRepository.getMenuCollectionName()
+        Log.d("zzanzu", "getMenu: $menuCollectionName")
+
         var menu = Menu()
 
-        val menuRef = db.collection("menus")
+        val menuRef = db.collection(menuCollectionName)
         val query = menuRef.whereEqualTo("restaurantId", restaurantId)
 
         val result = query.get().await()
