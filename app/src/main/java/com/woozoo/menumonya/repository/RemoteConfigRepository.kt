@@ -9,16 +9,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RemoteConfigRepository {
-    private val instance = FirebaseRemoteConfig.getInstance()
+    private val remoteConfig = FirebaseRemoteConfig.getInstance()
+
+    companion object {
+        private var instance: RemoteConfigRepository? = null
+
+        fun initialize() {
+            if (instance == null) {
+                instance = RemoteConfigRepository()
+            }
+        }
+
+        fun get(): RemoteConfigRepository {
+            return instance ?: throw java.lang.IllegalStateException("RemoteConfigRepository must be initialized")
+        }
+    }
 
     private val configSettings = remoteConfigSettings {
         minimumFetchIntervalInSeconds = 60 * 1 // 1분마다 업데이트 함
     }
 
     init {
-        instance.setDefaultsAsync(R.xml.remote_config_defaults)
-        instance.setConfigSettingsAsync(configSettings)
-        instance.fetchAndActivate().addOnCompleteListener { task ->
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.d("zzanzu", "remote config fetch successful")
             } else {
@@ -29,17 +43,25 @@ class RemoteConfigRepository {
 
     suspend fun getRestaurantsCollectionName() = withContext(Dispatchers.IO) {
         if (BuildConfig.DEBUG) {
-            instance.getString("RESTAURANT_COLLECTION_DEV")
+            remoteConfig.getString("RESTAURANT_COLLECTION_DEV")
         } else {
-            instance.getString("RESTAURANT_COLLECTION_PROD")
+            remoteConfig.getString("RESTAURANT_COLLECTION_PROD")
         }
     }
 
     suspend fun getMenuCollectionName() = withContext(Dispatchers.IO) {
         if (BuildConfig.DEBUG) {
-            instance.getString("MENU_COLLECTION_DEV")
+            remoteConfig.getString("MENU_COLLECTION_DEV")
         } else {
-            instance.getString("MENU_COLLECTION_PROD")
+            remoteConfig.getString("MENU_COLLECTION_PROD")
+        }
+    }
+
+    fun getFeedbackUrl(): String {
+        return if (BuildConfig.DEBUG) {
+            remoteConfig.getString("FEEDBACK_URL_DEV")
+        } else {
+            remoteConfig.getString("FEEDBACK_URL_PROD")
         }
     }
 }

@@ -20,6 +20,7 @@ import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -37,6 +38,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
     private var firestoreRepository: FireStoreRepository
+    private var remoteConfigRepository: RemoteConfigRepository = RemoteConfigRepository.get()
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
@@ -54,13 +56,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView, activity: Activity) {
+    fun initializeMapView(mapView: MapView) {
         mapView.getMapAsync {
             naverMap = it.apply {
-//                locationSource = FusedLocationSource(
-//                    activity,
-//                    LOCATION_PERMISSION_REQUEST_CODE
-//                )
                 locationTrackingMode = LocationTrackingMode.NoFollow
                 uiSettings.apply {
                     isLocationButtonEnabled = false
@@ -202,6 +200,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     })
             }
         }
+    }
+
+    fun getFeedbackUrl(): String {
+        return remoteConfigRepository.getFeedbackUrl()
     }
 
     private fun showToast(text: String) {
