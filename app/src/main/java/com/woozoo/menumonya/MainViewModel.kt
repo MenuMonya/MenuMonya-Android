@@ -8,9 +8,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -21,19 +18,15 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
-import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
+import com.woozoo.menumonya.repository.FireStoreRepository
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
-
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.lang.Double.parseDouble
 
 class MainViewModel(application: Application): AndroidViewModel(Application()) {
@@ -44,6 +37,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
+
+    private var firestoreRepository = FireStoreRepository.get()
+    private var remoteConfigRepository = RemoteConfigRepository.get()
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
@@ -60,13 +56,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView, activity: Activity) {
+    fun initializeMapView(mapView: MapView) {
         mapView.getMapAsync {
             naverMap = it.apply {
-//                locationSource = FusedLocationSource(
-//                    activity,
-//                    LOCATION_PERMISSION_REQUEST_CODE
-//                )
                 locationTrackingMode = LocationTrackingMode.NoFollow
                 uiSettings.apply {
                     isLocationButtonEnabled = false
@@ -122,59 +114,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         naverMap.moveCamera(CameraUpdate.withParams(cameraUpdateParams))
     }
 
-    suspend fun getTodayRestaurantInfoAsync(location: String): Deferred<ArrayList<Restaurant>> {
-        return viewModelScope.async {
-            val restaurantInfo = ArrayList<Restaurant>()
-            val db = Firebase.firestore
-            val restaurantRef = db.collection("restaurants")
-            val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
-
-            val result = query.get().await()
-            val documents = result.documents
-
-            for (document in documents) {
-                val restaurant = document.toObject<Restaurant>()
-                
-                if (restaurant != null) {
-                    // 메뉴 정보 조회
-                    val menu = getMenuAsync(document.id)?.await()
-
-                    val todayMenu = menu?.date?.get(getTodayDate())
-                    if (todayMenu != null) restaurant.todayMenu =  todayMenu
-
-                    restaurantInfo.add(restaurant)
-                }
-            }
-
-            // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
-            for (restaurant in restaurantInfo) {
-                restaurant.locationCategoryOrder.removeAll { !it.contains(location) }
-            }
-            restaurantInfo.sortBy { it.locationCategoryOrder[0] }
-
-            restaurantInfo
-        }
-    }
-
-    suspend fun getMenuAsync(restaurantId: String): Deferred<Menu>? {
-        return viewModelScope.async {
-            var menu = Menu()
-
-            val db = Firebase.firestore
-            val menuRef = db.collection("menus")
-            val query = menuRef.whereEqualTo("restaurantId", restaurantId)
-
-            val result = query.get().await()
-            val documents = result.documents
-
-            if (documents.size > 0) {
-                menu = documents[0].toObject<Menu>()!!
-            }
-
-            menu
-        }
-    }
-
     /**
      * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
      * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
@@ -194,7 +133,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = getTodayRestaurantInfoAsync(selectedLocation).await() // TODO: 정렬 안돼있음
+            mRestaurantInfoArray = firestoreRepository.getRestaurantInLocation(location)
 
             setMarkers(mRestaurantInfoArray)
         }
@@ -261,6 +200,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                     })
             }
         }
+    }
+
+    fun getFeedbackUrl(): String {
+        return remoteConfigRepository.getFeedbackUrl()
     }
 
     private fun showToast(text: String) {

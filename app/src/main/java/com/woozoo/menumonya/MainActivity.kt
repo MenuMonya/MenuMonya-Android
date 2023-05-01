@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumonya.Constants.Companion.FEEDBACK_URL
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
@@ -86,17 +85,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.naverMap.onCreate(savedInstanceState)
 
-        viewModel.initializeMapView(binding.naverMap, this)
-    }
-
-    private fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
-        view.post {
-            val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            view.measure(wMeasureSpec, hMeasureSpec)
-            pager.layoutParams = (pager.layoutParams).also { lp -> lp.height = view.measuredHeight }
-            pager.invalidate()
-        }
+        viewModel.initializeMapView(binding.naverMap)
     }
 
     private fun handleEvent(event: Event) = when (event) {
@@ -210,7 +199,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.feedback_iv -> {
-                val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
+                val feedbackUrl = viewModel.getFeedbackUrl()
+                val intent = Intent(ACTION_VIEW, Uri.parse(feedbackUrl))
                 startActivity(intent)
             }
             // '내 주변' 버튼 클릭

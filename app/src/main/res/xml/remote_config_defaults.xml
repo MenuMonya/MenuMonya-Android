@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<defaults>
+  <entry>
+    <key>FEEDBACK_URL</key>
+    <value>https://bit.ly/3oDijQp</value>
+  </entry>
+  <entry>
+    <key>MENU_COLLECTION_DEV</key>
+    <value>menus-dev</value>
+  </entry>
+  <entry>
+    <key>MENU_COLLECTION_PROD</key>
+    <value>menus</value>
+  </entry>
+  <entry>
+    <key>RESTAURANT_COLLECTION_DEV</key>
+    <value>restaurants</value>
+  </entry>
+  <entry>
+    <key>RESTAURANT_COLLECTION_PROD</key>
+    <value>restaurants</value>
+  </entry>
+</defaults>
