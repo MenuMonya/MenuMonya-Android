@@ -28,7 +28,7 @@ object RemoteConfigRepository {
         }
     }
 
-    suspend fun getRestaurantsCollectionName() = withContext(Dispatchers.IO) {
+    suspend fun getRestaurantsCollectionNameConfig() = withContext(Dispatchers.IO) {
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("RESTAURANT_COLLECTION_DEV")
         } else {
@@ -36,7 +36,7 @@ object RemoteConfigRepository {
         }
     }
 
-    suspend fun getMenuCollectionName() = withContext(Dispatchers.IO) {
+    suspend fun getMenuCollectionNameConfig() = withContext(Dispatchers.IO) {
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("MENU_COLLECTION_DEV")
         } else {
@@ -44,7 +44,7 @@ object RemoteConfigRepository {
         }
     }
 
-    fun getFeedbackUrl(): String {
+    fun getFeedbackUrlConfig(): String {
         return if (BuildConfig.DEBUG) {
             remoteConfig.getString("FEEDBACK_URL_DEV")
         } else {
