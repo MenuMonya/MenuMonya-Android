@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
-import android.net.Ur
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumonya.Constants.Companion.FEEDBACK_URL
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
@@ -86,17 +85,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.naverMap.onCreate(savedInstanceState)
 
-        viewModel.initializeMapView(binding.naverMap, this)
-    }
-
-    private fun updatePagerHeightForChild(view: View, pager: ViewPager2) {
-        view.post {
-            val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            view.measure(wMeasureSpec, hMeasureSpec)
-            pager.layoutParams = (pager.layoutParams).also { lp -> lp.height = view.measuredHeight }
-            pager.invalidate()
-        }
+        viewModel.initializeMapView(binding.naverMap)
     }
 
     private fun handleEvent(event: Event) = when (event) {
@@ -136,6 +125,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     dialog.dismiss()
                 }
             }.create().show()
+        }
+        is Event.MoveToCurrentLocation -> {
+            binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button_selected)
+            binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorSecondary))
+            binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorSecondary))
         }
     }
 
@@ -185,6 +179,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+
+                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.location_ys_btn -> {
                 viewPager.invalidate()
@@ -195,9 +193,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
                 binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
                 binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+
+                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.feedback_iv -> {
-                val intent = Intent(ACTION_VIEW, Uri.parse(FEEDBACK_URL))
+                val feedbackUrl = viewModel.getFeedbackUrl()
+                val intent = Intent(ACTION_VIEW, Uri.parse(feedbackUrl))
                 startActivity(intent)
             }
             // '내 주변' 버튼 클릭

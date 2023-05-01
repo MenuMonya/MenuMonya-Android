@@ -82,6 +82,7 @@
             >
 
             <ImageView
+                android:id="@+id/current_location_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/current_location_image_margin_end"
@@ -89,11 +90,12 @@
                 />
 
             <TextView
+                android:id="@+id/current_location_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="내 주변"
                 android:fontFamily="@font/pretendard_bold"
-                android:textColor="@color/colorSecondary"
+                android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/current_location_text_size"
                 android:textStyle="bold"
                 />

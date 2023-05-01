@@ -12,6 +12,6 @@ class Constants {
         val GLIDE_IMAGE_SIZE_WIDTH = 100
         val GLIDE_IMAGE_SIZE_HEIGHT = 100
 
-        val FEEDBACK_URL = "https://forms.gle/Emcodxf3ngNqLCHs7"
+        val REMOTE_CONFIG_FETCH_INTERVAL: Long = 60 * 1  // 1분마다 업데이트 함
     }
 }
