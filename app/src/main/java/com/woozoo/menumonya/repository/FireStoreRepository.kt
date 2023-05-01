@@ -17,6 +17,20 @@ class FireStoreRepository {
     private lateinit var restaurantCollectionName: String
     private lateinit var menuCollectionName: String
 
+    companion object {
+        private var instance: FireStoreRepository? = null
+
+        fun initialize() {
+            if (instance == null) {
+                instance = FireStoreRepository()
+            }
+        }
+
+        fun get(): FireStoreRepository {
+            return instance ?: throw java.lang.IllegalStateException("FireStoreRepository must be initialized")
+        }
+    }
+
     suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
         restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionName()
 

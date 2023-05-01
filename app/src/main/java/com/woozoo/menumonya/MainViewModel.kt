@@ -37,8 +37,9 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     lateinit var naverMap: NaverMap
     private var locationManager: LocationManager
-    private var firestoreRepository: FireStoreRepository
-    private var remoteConfigRepository: RemoteConfigRepository = RemoteConfigRepository.get()
+
+    private var firestoreRepository = FireStoreRepository.get()
+    private var remoteConfigRepository = RemoteConfigRepository.get()
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
@@ -46,7 +47,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
-        firestoreRepository = FireStoreRepository()
     }
 
     private fun event(event: Event) {
