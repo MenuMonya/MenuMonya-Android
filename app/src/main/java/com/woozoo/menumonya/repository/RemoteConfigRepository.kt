@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.woozoo.menumonya.BuildConfig
+import com.woozoo.menumonya.Constants.Companion.REMOTE_CONFIG_FETCH_INTERVAL
 import com.woozoo.menumonya.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +27,7 @@ class RemoteConfigRepository {
     }
 
     private val configSettings = remoteConfigSettings {
-        minimumFetchIntervalInSeconds = 60 * 1 // 1분마다 업데이트 함
+        minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
     }
 
     init {
