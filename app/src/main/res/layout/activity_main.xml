@@ -110,6 +110,26 @@
             android:layout_marginBottom="14dp"
             />
 
+        <!--로딩 화면(평상시에는 GONE)-->
+        <LinearLayout
+            android:id="@+id/loading_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/blackTransparent"
+            android:gravity="center"
+            >
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:lottie_rawRes="@raw/loading"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                />
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </LinearLayout>
