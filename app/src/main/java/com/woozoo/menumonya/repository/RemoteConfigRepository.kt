@@ -11,13 +11,18 @@ import kotlinx.coroutines.withContext
 
 object RemoteConfigRepository {
 
-    private val configSettings = remoteConfigSettings {
-        minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
-    }
-
-    init {
+    /**
+     * Firebase Remote Config 관련 초기화 작업
+     * - Application.kt의 onCreate()에서 호출함.
+     * - 해당 로직이 실행되지 않은 상태에서 getString()을 호출할 경우 오류가 발생함.
+     *   - setDefaultAsnyc()가 호출되지 않았기 때문.
+     * - TODO : 추후 스플래시 화면이 생긴다면 호출 타이밍을 변경해야 함.
+     */
+    fun initializeRemoteConfig() {
         val remoteConfig = FirebaseRemoteConfig.getInstance()
-
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
+        }
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->

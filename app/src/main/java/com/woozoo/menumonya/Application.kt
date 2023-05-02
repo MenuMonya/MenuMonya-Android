@@ -2,6 +2,7 @@ package com.woozoo.menumonya
 
 import android.app.Application
 import android.content.Context
+import com.woozoo.menumonya.repository.RemoteConfigRepository.initializeRemoteConfig
 
 class Application: Application() {
 
@@ -15,5 +16,11 @@ class Application: Application() {
         fun context(): Context {
             return instance!!.applicationContext
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        initializeRemoteConfig()
     }
 }
