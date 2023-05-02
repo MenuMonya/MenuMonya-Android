@@ -29,13 +29,10 @@ class LocationUtils {
          */
         @SuppressLint("MissingPermission")
         fun requestLocationUpdateOnce(locationManager: LocationManager, listener: LocationListener) {
-            locationManager.requestLocationUpdates(
+            locationManager.requestSingleUpdate(
                 LocationManager.NETWORK_PROVIDER,
-                1000,
-                10f,
-                listener.apply {
-                    locationManager.removeUpdates(this) // 위치 업데이트를 반복하지 않도록 리스너 제거
-                }
+                listener,
+                null
             )
         }
     }
