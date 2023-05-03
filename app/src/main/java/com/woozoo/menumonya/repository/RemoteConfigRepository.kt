@@ -9,28 +9,20 @@ import com.woozoo.menumonya.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RemoteConfigRepository {
-    private val remoteConfig = FirebaseRemoteConfig.getInstance()
+object RemoteConfigRepository {
 
-    companion object {
-        private var instance: RemoteConfigRepository? = null
-
-        fun initialize() {
-            if (instance == null) {
-                instance = RemoteConfigRepository()
-            }
+    /**
+     * Firebase Remote Config 관련 초기화 작업
+     * - Application.kt의 onCreate()에서 호출함.
+     * - 해당 로직이 실행되지 않은 상태에서 getString()을 호출할 경우 오류가 발생함.
+     *   - setDefaultAsnyc()가 호출되지 않았기 때문.
+     * - TODO : 추후 스플래시 화면이 생긴다면 호출 타이밍을 변경해야 함.
+     */
+    fun initializeRemoteConfig() {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
         }
-
-        fun get(): RemoteConfigRepository {
-            return instance ?: throw java.lang.IllegalStateException("RemoteConfigRepository must be initialized")
-        }
-    }
-
-    private val configSettings = remoteConfigSettings {
-        minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
-    }
-
-    init {
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
@@ -42,7 +34,9 @@ class RemoteConfigRepository {
         }
     }
 
-    suspend fun getRestaurantsCollectionName() = withContext(Dispatchers.IO) {
+    suspend fun getRestaurantsCollectionNameConfig() = withContext(Dispatchers.IO) {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("RESTAURANT_COLLECTION_DEV")
         } else {
@@ -50,7 +44,9 @@ class RemoteConfigRepository {
         }
     }
 
-    suspend fun getMenuCollectionName() = withContext(Dispatchers.IO) {
+    suspend fun getMenuCollectionNameConfig() = withContext(Dispatchers.IO) {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("MENU_COLLECTION_DEV")
         } else {
@@ -58,7 +54,9 @@ class RemoteConfigRepository {
         }
     }
 
-    fun getFeedbackUrl(): String {
+    fun getFeedbackUrlConfig(): String {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
         return if (BuildConfig.DEBUG) {
             remoteConfig.getString("FEEDBACK_URL_DEV")
         } else {

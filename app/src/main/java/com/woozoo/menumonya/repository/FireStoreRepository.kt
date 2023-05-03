@@ -5,34 +5,22 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.repository.RemoteConfigRepository.getMenuCollectionNameConfig
+import com.woozoo.menumonya.repository.RemoteConfigRepository.getRestaurantsCollectionNameConfig
 import com.woozoo.menumonya.util.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class FireStoreRepository {
-    private val db = Firebase.firestore
-    private var remoteConfigRepository = RemoteConfigRepository.get()
+object FireStoreRepository {
 
     private lateinit var restaurantCollectionName: String
     private lateinit var menuCollectionName: String
 
-    companion object {
-        private var instance: FireStoreRepository? = null
-
-        fun initialize() {
-            if (instance == null) {
-                instance = FireStoreRepository()
-            }
-        }
-
-        fun get(): FireStoreRepository {
-            return instance ?: throw java.lang.IllegalStateException("FireStoreRepository must be initialized")
-        }
-    }
-
     suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
-        restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionName()
+        val db = Firebase.firestore
+
+        restaurantCollectionName = getRestaurantsCollectionNameConfig()
 
         val restaurantInfo = ArrayList<Restaurant>()
         val restaurantRef = db.collection(restaurantCollectionName)
@@ -65,7 +53,9 @@ class FireStoreRepository {
     }
 
     suspend fun getMenu(restaurantId: String) = withContext(Dispatchers.IO) {
-        menuCollectionName = remoteConfigRepository.getMenuCollectionName()
+        val db = Firebase.firestore
+
+        menuCollectionName = getMenuCollectionNameConfig()
 
         var menu = Menu()
 

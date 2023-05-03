@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <defaults>
   <entry>
-    <key>FEEDBACK_URL</key>
+    <key>FEEDBACK_URL_DEV</key>
+    <value>https://bit.ly/3oDijQp</value>
+  </entry>
+  <entry>
+    <key>FEEDBACK_URL_PROD</key>
     <value>https://bit.ly/3oDijQp</value>
   </entry>
   <entry>

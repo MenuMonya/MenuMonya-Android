@@ -15,4 +15,8 @@
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="custom_style_dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+    </style>
 </resources>
