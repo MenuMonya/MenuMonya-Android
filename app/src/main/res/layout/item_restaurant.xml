@@ -18,6 +18,64 @@
         android:background="@color/white"
         >
 
+        <!--메뉴 제보하기 레이아웃-->
+        <LinearLayout
+            android:id="@+id/menu_report_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/restaurant_info_layout"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            tool:visibility="visible"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:text="내가 먼저 메뉴 제보하기"
+                android:textSize="14dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/pretendard_semibold"
+                android:background="@drawable/color_button_background"
+                android:paddingVertical="0dp"
+                android:paddingHorizontal="36dp"
+                android:layout_marginVertical="16dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                android:layout_marginBottom="6dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="메뉴는 매일 11시에 업데이트됩니다."
+                android:layout_gravity="center"
+                android:textSize="10dp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_regular"
+                android:layout_marginBottom="6dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/borderGray"
+                />
+
+        </LinearLayout>
+
         <!--메뉴 레이아웃-->
         <LinearLayout
             android:id="@+id/restaurant_menu_layout"
@@ -27,7 +85,7 @@
             app:layout_constraintBottom_toTopOf="@+id/restaurant_info_layout"
             android:layout_marginBottom="10dp"
             android:visibility="gone"
-            tool:visibility="visible"
+            tool:visibility="gone"
             >
 
             <!--메인 메뉴-->

@@ -27,10 +27,10 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
             binding.restaurantLocationDescriptionTv.text = data.location.description
 
             if (data.todayMenu.main != "") {
+                binding.menuReportLayout.visibility = View.GONE
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
                 binding.restaurantMenuMoreTv.visibility = View.VISIBLE
                 binding.restaurantMenuMoreTv.setOnClickListener {
-                    // TODO: 다이얼로그 표시
                     val menuDialog = MenuDialog(context, data)
                     menuDialog.show()
                 }
@@ -38,6 +38,10 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuMainTv.text = data.todayMenu.main.replace(",", ", ")
                 binding.restaurantMenuSideTv.text = data.todayMenu.side.replace(",", ", ")
                 binding.restaurantMenuDessertTv.text = data.todayMenu.dessert.replace(",", ", ")
+            } else {
+                binding.menuReportLayout.visibility = View.VISIBLE
+                binding.restaurantMenuLayout.visibility = View.GONE
+                binding.restaurantMenuMoreTv.visibility = View.GONE
             }
 
             Glide.with(binding.root)
