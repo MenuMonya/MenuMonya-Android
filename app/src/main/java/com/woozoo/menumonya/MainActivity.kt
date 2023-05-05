@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.locationYsBtn.setOnClickListener(this)
         binding.feedbackIv.setOnClickListener(this)
         binding.currentLocationBtn.setOnClickListener(this)
+        binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
 
         // 좌우로 item이 보이도록 설정
         viewPager.apply {
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             if (viewPager.adapter != null) {
                 viewPager.currentItem = event.markerIndex
             } else {
-                viewModel.showLocationViewPager(event.location, event.markerIndex)
+                viewModel.showLocationViewPager(event.markerIndex)
             }
         }
         is Event.ShowRestaurantView -> {
@@ -130,6 +131,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button_selected)
             binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorSecondary))
             binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorSecondary))
+        }
+        is Event.ShowLoading -> {
+            if (event.visibility) {
+                binding.loadingView.visibility = View.VISIBLE
+            } else {
+                binding.loadingView.visibility = View.GONE
+            }
         }
     }
 

@@ -20,7 +20,6 @@ import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository.getRestaurantInLocation
-import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getFeedbackUrlConfig
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
@@ -116,7 +115,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
      * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
      * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
      */
-    fun showLocationViewPager(location: String, markerIndex: Int = -1) {
+    fun showLocationViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
             showRestaurantView(mRestaurantInfoArray, markerIndex)
         }
@@ -185,6 +184,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
             if (!isLocationPermissionAllowed()) {
                 requestLocationPermission()
             } else {
+                showLoading(true)
                 requestLocationUpdateOnce(
                     locationManager,
                     LocationListener { location ->
@@ -195,6 +195,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                             locationTrackingMode = LocationTrackingMode.Follow
                         }
                         moveToCurrentLocation()
+                        showLoading(false)
                     })
             }
         }
@@ -227,6 +228,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.MoveToCurrentLocation(""))
     }
 
+    private fun showLoading(visibility: Boolean) {
+        event(Event.ShowLoading(visibility))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -239,5 +244,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         data class RequestLocationPermission(val data: String): Event()
         data class ShowGpsPermissionAlert(val data: String): Event()
         data class MoveToCurrentLocation(val data: String): Event()
+        data class ShowLoading(val visibility: Boolean): Event()
     }
 }

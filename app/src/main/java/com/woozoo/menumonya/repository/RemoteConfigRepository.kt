@@ -63,4 +63,10 @@ object RemoteConfigRepository {
             remoteConfig.getString("FEEDBACK_URL_PROD")
         }
     }
+
+    fun getReportMenuUrlConfig(): String {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
+        return remoteConfig.getString("REPORT_MENU_URL")
+    }
 }
