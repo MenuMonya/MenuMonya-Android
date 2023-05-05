@@ -7,7 +7,7 @@ import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getMenuCollectionNameConfig
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getRestaurantsCollectionNameConfig
-import com.woozoo.menumonya.util.DateUtils
+import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -36,7 +36,7 @@ object FireStoreRepository {
                 // 메뉴 정보 조회
                 val menu = getMenu(document.id)
 
-                val todayMenu = menu.date.get(DateUtils.getTodayDate())
+                val todayMenu = menu.date.get(getTodayDate())
                 if (todayMenu != null) restaurant.todayMenu =  todayMenu
 
                 restaurantInfo.add(restaurant)
