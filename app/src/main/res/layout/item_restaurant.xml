@@ -37,6 +37,7 @@
                 />
 
             <Button
+                android:id="@+id/menu_report_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_gravity="center"

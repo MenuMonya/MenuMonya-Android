@@ -24,4 +24,9 @@
     <key>RESTAURANT_COLLECTION_PROD</key>
     <value>restaurants</value>
   </entry>
+  <entry>
+    <key>REPORT_MENU_URL</key>
+    <value>https://open.kakao.com/o/gKPs3pif</value>
+  </entry>
+
 </defaults>
