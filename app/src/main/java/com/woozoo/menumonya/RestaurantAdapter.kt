@@ -1,6 +1,8 @@
 package com.woozoo.menumonya
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
 
@@ -27,10 +30,11 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
             binding.restaurantLocationDescriptionTv.text = data.location.description
 
             if (data.todayMenu.main != "") {
+                // (1) 메뉴 레이아웃 표시
+                binding.menuReportLayout.visibility = View.GONE
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
                 binding.restaurantMenuMoreTv.visibility = View.VISIBLE
                 binding.restaurantMenuMoreTv.setOnClickListener {
-                    // TODO: 다이얼로그 표시
                     val menuDialog = MenuDialog(context, data)
                     menuDialog.show()
                 }
@@ -38,6 +42,16 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuMainTv.text = data.todayMenu.main.replace(",", ", ")
                 binding.restaurantMenuSideTv.text = data.todayMenu.side.replace(",", ", ")
                 binding.restaurantMenuDessertTv.text = data.todayMenu.dessert.replace(",", ", ")
+            } else {
+                // (2) 제보하기 레이아웃 표시
+                binding.menuReportLayout.visibility = View.VISIBLE
+                binding.restaurantMenuLayout.visibility = View.GONE
+                binding.restaurantMenuMoreTv.visibility = View.GONE
+                binding.menuReportBtn.setOnClickListener {
+                    val menuReportUrl = RemoteConfigRepository.getReportMenuUrlConfig()
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
+                    context.startActivity(intent)
+                }
             }
 
             Glide.with(binding.root)

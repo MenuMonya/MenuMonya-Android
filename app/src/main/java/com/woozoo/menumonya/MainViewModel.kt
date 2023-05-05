@@ -116,7 +116,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
      * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
      * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
      */
-    fun showLocationViewPager(location: String, markerIndex: Int = -1) {
+    fun showLocationViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
             showRestaurantView(mRestaurantInfoArray, markerIndex)
         }
