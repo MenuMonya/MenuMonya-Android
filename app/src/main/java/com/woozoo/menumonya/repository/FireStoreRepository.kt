@@ -36,7 +36,7 @@ object FireStoreRepository {
                 // 메뉴 정보 조회
                 val menu = getMenu(document.id)
 
-                val todayMenu = menu.date.get(getTodayDate())
+                val todayMenu = menu.date.get("2023-05-04")
                 if (todayMenu != null) restaurant.todayMenu =  todayMenu
 
                 restaurantInfo.add(restaurant)

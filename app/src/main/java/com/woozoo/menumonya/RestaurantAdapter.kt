@@ -16,7 +16,6 @@ import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
-
     RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding

@@ -12,9 +12,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
@@ -26,15 +26,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var viewPager: ViewPager2
+    private lateinit var recyclerView: RecyclerView
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewPager = binding.restaurantViewPager
 
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
@@ -48,41 +46,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.currentLocationBtn.setOnClickListener(this)
         binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
 
-        // 좌우로 item이 보이도록 설정
-        viewPager.apply {
-            clipChildren = false
-            clipToPadding = false
-            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
-
-            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
-            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
-            viewPager.setPageTransformer { page, position ->
-                val offset = position * -(2 * offsetPx + pageMarginPx)
-                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
-            }
-
-            registerOnPageChangeCallback(object: OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    // height를 wrap_content가 되도록 설정
-                    val view = (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
-                    view?.post {
-                        val wMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-                        val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                        view.measure(wMeasureSpec, hMeasureSpec)
-                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
-                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
-                                lp.height = view.measuredHeight
-                            }
-                        }
-                    }
-
-                    // 마커로 카메라 이동
-                    viewModel.moveCameraToMarker(position)
-                }
-            })
-        }
+        recyclerView = binding.restaurantRv
+        recyclerView.setHasFixedSize(false)
+        recyclerView.itemAnimator = null
+        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+//        recyclerView.layoutManager = StaggeredGridLayoutManager(2, 0)
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
 
         binding.naverMap.onCreate(savedInstanceState)
 
@@ -92,17 +62,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.OnMarkerClicked -> {
-            if (viewPager.adapter != null) {
-                viewPager.currentItem = event.markerIndex
+            if (recyclerView.adapter != null) {
+                recyclerView.layoutManager?.scrollToPosition(event.markerIndex)
             } else {
                 viewModel.showLocationViewPager(event.markerIndex)
             }
         }
         is Event.ShowRestaurantView -> {
-            if (viewPager.adapter == null) {
-                viewPager.adapter = RestaurantAdapter(event.data, this)
+            if (recyclerView.adapter == null) {
+                recyclerView.adapter = RestaurantAdapter(event.data, this)
                 if (event.markerIndex != -1) {
-                    viewPager.currentItem = event.markerIndex
+                    recyclerView.layoutManager?.scrollToPosition(event.markerIndex)
                 } else { }
             } else { }
         }
@@ -179,8 +149,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.location_gn_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
+                recyclerView.invalidate()
+                recyclerView.adapter = null
                 viewModel.showLocationInfo("강남")
                 
                 binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
@@ -193,8 +163,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
             }
             R.id.location_ys_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
+                recyclerView.invalidate()
+                recyclerView.adapter = null
                 viewModel.showLocationInfo("역삼")
                 
                 binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
