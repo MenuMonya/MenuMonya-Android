@@ -1,6 +1,7 @@
 package com.woozoo.menumonya
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
@@ -139,6 +140,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 binding.loadingView.visibility = View.GONE
             }
         }
+        is Event.ShowUpdateDialog -> {
+            AlertDialog.Builder(this).apply {
+                setMessage(resources.getString(R.string.latest_app_version_update_message))
+                setCancelable(false)
+                setPositiveButton("확인") { dialog, _ ->
+                    try {
+                        startActivity(Intent(ACTION_VIEW,
+                            Uri.parse(resources.getString(R.string.google_play_store_link))))
+                    } catch (e: ActivityNotFoundException) {
+                        startActivity(Intent(ACTION_VIEW,
+                            Uri.parse(resources.getString(R.string.google_play_store_link_web))))
+                    }
+                    dialog.dismiss()
+                }
+            }.create().show()
+        }
     }
 
     override fun onStart() {
@@ -149,6 +166,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         binding.naverMap.onResume()
+
+        viewModel.checkLatestAppVersion()
     }
 
     override fun onPause() {

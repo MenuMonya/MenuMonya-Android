@@ -21,6 +21,7 @@ import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository.getRestaurantInLocation
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getFeedbackUrlConfig
+import com.woozoo.menumonya.repository.RemoteConfigRepository.getLatestAppVersionConfig
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -201,6 +202,15 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         }
     }
 
+    fun checkLatestAppVersion() {
+        val latestAppVersion = getLatestAppVersionConfig()
+        val currentAppVersion = BuildConfig.VERSION_CODE
+
+        if (latestAppVersion.toInt() > currentAppVersion) {
+            showUpdateDialog()
+        }
+    }
+
     fun getFeedbackUrl(): String {
         return getFeedbackUrlConfig()
     }
@@ -232,6 +242,10 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         event(Event.ShowLoading(visibility))
     }
 
+    private fun showUpdateDialog() {
+        event(Event.ShowUpdateDialog(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -245,5 +259,6 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
         data class ShowGpsPermissionAlert(val data: String): Event()
         data class MoveToCurrentLocation(val data: String): Event()
         data class ShowLoading(val visibility: Boolean): Event()
+        data class ShowUpdateDialog(val data: String): Event()
     }
 }
