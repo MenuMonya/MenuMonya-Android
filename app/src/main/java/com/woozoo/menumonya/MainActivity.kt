@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         is Event.ShowUpdateDialog -> {
             AlertDialog.Builder(this).apply {
                 setMessage(resources.getString(R.string.latest_app_version_update_message))
-                setCancelable(false)
+                setCancelable(true)
                 setPositiveButton("확인") { dialog, _ ->
                     try {
                         startActivity(Intent(ACTION_VIEW,
