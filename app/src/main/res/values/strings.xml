@@ -2,6 +2,7 @@
     <string name="app_name">메뉴머냐</string>
     <string name="app_name_debug">[개발] 메뉴머냐</string>
 
+    <string name="restaurant_info_menu_provider">제공해주신 분 : %s님</string>
     <string name="restaurant_info_menu_more"><u>자세히 보기</u></string>
     <string name="restaurant_info_price">가격</string>
     <string name="restaurant_info_time">점심 운영시간</string>

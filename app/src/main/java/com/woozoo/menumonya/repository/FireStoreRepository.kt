@@ -3,6 +3,7 @@ package com.woozoo.menumonya.repository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.woozoo.menumonya.model.Food
 import com.woozoo.menumonya.model.Menu
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getMenuCollectionNameConfig
@@ -36,7 +37,7 @@ object FireStoreRepository {
                 // 메뉴 정보 조회
                 val menu = getMenu(document.id)
 
-                val todayMenu = menu.date.get(getTodayDate())
+                val todayMenu: Food? = menu.date.get(getTodayDate())
                 if (todayMenu != null) restaurant.todayMenu =  todayMenu
 
                 restaurantInfo.add(restaurant)

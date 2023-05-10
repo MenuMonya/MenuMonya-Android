@@ -14,6 +14,7 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
 
@@ -37,6 +38,14 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuMoreTv.setOnClickListener {
                     val menuDialog = MenuDialog(context, data)
                     menuDialog.show()
+                }
+
+                binding.menuDateTv.text = getTodayMenuDateText()
+                if (data.todayMenu.provider != "") {
+                    binding.menuProviderTv.text = String.format(
+                        context.resources.getString(R.string.restaurant_info_menu_provider),
+                        data.todayMenu.provider
+                    )
                 }
 
                 binding.restaurantMenuMainTv.text = data.todayMenu.main.replace(",", ", ")
