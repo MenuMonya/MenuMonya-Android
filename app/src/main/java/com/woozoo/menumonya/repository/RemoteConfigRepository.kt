@@ -69,4 +69,14 @@ object RemoteConfigRepository {
 
         return remoteConfig.getString("REPORT_MENU_URL")
     }
+
+    fun getLatestAppVersionConfig(): Long {
+        val remoteConfig = FirebaseRemoteConfig.getInstance()
+
+        return if (BuildConfig.DEBUG) {
+            remoteConfig.getLong("LATEST_APP_VERSION_AOS_DEV")
+        } else {
+            remoteConfig.getLong("LATEST_APP_VERSION_AOS_PROD")
+        }
+    }
 }
