@@ -28,5 +28,13 @@
     <key>REPORT_MENU_URL</key>
     <value>https://open.kakao.com/o/gKPs3pif</value>
   </entry>
+  <entry>
+    <key>LATEST_APP_VERSION_AOS_DEV</key>
+    <value>1</value>
+  </entry>
+  <entry>
+    <key>LATEST_APP_VERSION_AOS_PROD</key>
+    <value>1</value>
+  </entry>
 
 </defaults>
