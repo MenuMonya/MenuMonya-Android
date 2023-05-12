@@ -19,7 +19,7 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.FireStoreRepository.getRestaurantInLocation
+import com.woozoo.menumonya.repository.FireStoreRepositoryImpl.getRestaurantInLocation
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getFeedbackUrlConfig
 import com.woozoo.menumonya.repository.RemoteConfigRepository.getLatestAppVersionConfig
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
