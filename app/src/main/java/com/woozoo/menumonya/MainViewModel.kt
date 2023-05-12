@@ -32,10 +32,11 @@ import java.lang.Double.parseDouble
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(application: Application): AndroidViewModel(Application()) {
-
-    @Inject lateinit var fireStoreRepository: FireStoreRepositoryImpl
-    @Inject lateinit var remoteConfigRepository: RemoteConfigRepositoryImpl
+class MainViewModel @Inject constructor(
+    application: Application,
+    private val fireStoreRepository: FireStoreRepositoryImpl,
+    private val remoteConfigRepository: RemoteConfigRepositoryImpl
+): AndroidViewModel(Application()) {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
