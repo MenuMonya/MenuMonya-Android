@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class FireStoreRepositoryImpl @Inject constructor(
     private val db: FirebaseFirestore,
-    private val remoteConfigRepository: RemoteConfigRepositoryImpl
+    private val remoteConfigRepository: RemoteConfigRepository
 ): FireStoreRepository {
 
     private lateinit var restaurantCollectionName: String

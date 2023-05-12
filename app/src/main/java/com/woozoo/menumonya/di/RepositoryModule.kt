@@ -16,9 +16,9 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindFireStoreRepository(repository: FireStoreRepositoryImpl): FireStoreRepository
+    abstract fun bindFireStoreRepository(impl: FireStoreRepositoryImpl): FireStoreRepository
 
     @Singleton
     @Binds
-    abstract fun bindRemoteConfigRepository(repository: RemoteConfigRepositoryImpl): RemoteConfigRepository
+    abstract fun bindRemoteConfigRepository(impl: RemoteConfigRepositoryImpl): RemoteConfigRepository
 }

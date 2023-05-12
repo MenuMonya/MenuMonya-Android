@@ -18,12 +18,16 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
 import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+    @Inject lateinit var remoteConfigRepository: RemoteConfigRepository
+
     private val GPS_ENABLE_REQUEST_CODE = 2000
 
     private val viewModel: MainViewModel by viewModels()
@@ -103,7 +107,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                viewPager.adapter = RestaurantAdapter(event.data, this)
+                viewPager.adapter = RestaurantAdapter(event.data, this, remoteConfigRepository)
                 if (event.markerIndex != -1) {
                     viewPager.currentItem = event.markerIndex
                 } else { }

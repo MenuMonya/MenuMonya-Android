@@ -13,18 +13,20 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
-import javax.inject.Inject
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
-                        private val context: Context) : RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
+                        private val context: Context,
+                        private val remoteConfigRepository: RemoteConfigRepository
+) : RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding
 
-    class ItemViewHolder(val binding: ItemRestaurantBinding, private val context: Context): RecyclerView.ViewHolder(binding.root) {
-
-        @Inject lateinit var remoteConfigRepository: RemoteConfigRepositoryImpl
+    class ItemViewHolder(val binding: ItemRestaurantBinding,
+                         private val context: Context,
+                         private val remoteConfigRepository: RemoteConfigRepository
+    ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
@@ -80,7 +82,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
         viewType: Int
     ): ItemViewHolder {
         binding = ItemRestaurantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding, context)
+        return ItemViewHolder(binding, context, remoteConfigRepository)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

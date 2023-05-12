@@ -19,8 +19,8 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.FireStoreRepositoryImpl
-import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl
+import com.woozoo.menumonya.repository.FireStoreRepository
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -34,8 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     application: Application,
-    private val fireStoreRepository: FireStoreRepositoryImpl,
-    private val remoteConfigRepository: RemoteConfigRepositoryImpl
+    private val fireStoreRepository: FireStoreRepository,
+    private val remoteConfigRepository: RemoteConfigRepository
 ): AndroidViewModel(Application()) {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
