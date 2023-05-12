@@ -20,8 +20,8 @@ import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepositoryImpl.getRestaurantInLocation
-import com.woozoo.menumonya.repository.RemoteConfigRepository.getFeedbackUrlConfig
-import com.woozoo.menumonya.repository.RemoteConfigRepository.getLatestAppVersionConfig
+import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl.getFeedbackUrlConfig
+import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl.getLatestAppVersionConfig
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed

@@ -13,7 +13,7 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl.getReportMenuUrlConfig
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
@@ -57,7 +57,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuLayout.visibility = View.GONE
                 binding.restaurantMenuMoreTv.visibility = View.GONE
                 binding.menuReportBtn.setOnClickListener {
-                    val menuReportUrl = RemoteConfigRepository.getReportMenuUrlConfig()
+                    val menuReportUrl = getReportMenuUrlConfig()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
                     context.startActivity(intent)
                 }
