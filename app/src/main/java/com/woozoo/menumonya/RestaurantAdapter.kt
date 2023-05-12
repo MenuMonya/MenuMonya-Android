@@ -13,16 +13,19 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl.getReportMenuUrlConfig
+import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
+import javax.inject.Inject
 
-class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
-
-    RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
+class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
+                        private val context: Context) : RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding
 
     class ItemViewHolder(val binding: ItemRestaurantBinding, private val context: Context): RecyclerView.ViewHolder(binding.root) {
+
+        @Inject lateinit var remoteConfigRepository: RemoteConfigRepositoryImpl
+
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
             binding.restaurantPriceTv.text = data.price.cardPrice + "원"
@@ -57,7 +60,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuLayout.visibility = View.GONE
                 binding.restaurantMenuMoreTv.visibility = View.GONE
                 binding.menuReportBtn.setOnClickListener {
-                    val menuReportUrl = getReportMenuUrlConfig()
+                    val menuReportUrl = remoteConfigRepository.getReportMenuUrlConfig()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
                     context.startActivity(intent)
                 }

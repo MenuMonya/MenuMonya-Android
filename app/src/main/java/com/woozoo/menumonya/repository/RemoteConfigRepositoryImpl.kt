@@ -8,8 +8,13 @@ import com.woozoo.menumonya.Constants.Companion.REMOTE_CONFIG_FETCH_INTERVAL
 import com.woozoo.menumonya.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object RemoteConfigRepositoryImpl: RemoteConfigRepository {
+@Singleton
+class RemoteConfigRepositoryImpl @Inject constructor(
+    private val remoteConfig: FirebaseRemoteConfig
+    ) : RemoteConfigRepository {
 
     /**
      * Firebase Remote Config 관련 초기화 작업
@@ -19,7 +24,6 @@ object RemoteConfigRepositoryImpl: RemoteConfigRepository {
      * - TODO : 추후 스플래시 화면이 생긴다면 호출 타이밍을 변경해야 함.
      */
     override fun initializeRemoteConfig() {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
         val configSettings = remoteConfigSettings {
             minimumFetchIntervalInSeconds = REMOTE_CONFIG_FETCH_INTERVAL
         }
@@ -35,8 +39,6 @@ object RemoteConfigRepositoryImpl: RemoteConfigRepository {
     }
 
     override suspend fun getRestaurantsCollectionNameConfig() = withContext(Dispatchers.IO) {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("RESTAURANT_COLLECTION_DEV")
         } else {
@@ -45,8 +47,6 @@ object RemoteConfigRepositoryImpl: RemoteConfigRepository {
     }
 
     override suspend fun getMenuCollectionNameConfig() = withContext(Dispatchers.IO) {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
         if (BuildConfig.DEBUG) {
             remoteConfig.getString("MENU_COLLECTION_DEV")
         } else {
@@ -55,8 +55,6 @@ object RemoteConfigRepositoryImpl: RemoteConfigRepository {
     }
 
     override fun getFeedbackUrlConfig(): String {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
         return if (BuildConfig.DEBUG) {
             remoteConfig.getString("FEEDBACK_URL_DEV")
         } else {
@@ -71,8 +69,6 @@ object RemoteConfigRepositoryImpl: RemoteConfigRepository {
     }
 
     override fun getLatestAppVersionConfig(): Long {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
         return if (BuildConfig.DEBUG) {
             remoteConfig.getLong("LATEST_APP_VERSION_AOS_DEV")
         } else {
