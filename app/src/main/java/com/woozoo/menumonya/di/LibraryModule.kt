@@ -22,7 +22,7 @@ object LibraryModule {
 
     @Singleton
     @Provides
-    fun provideFirestoreDb(): FirebaseFirestore {
+    fun provideFirebaseFireStoreDb(): FirebaseFirestore {
         return Firebase.firestore
     }
 }
