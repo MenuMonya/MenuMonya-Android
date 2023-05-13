@@ -1,6 +1,7 @@
 package com.woozoo.menumonya.model
 
 data class Food(
+    val date: String = "",
     val main: String = "",
     val side: String = "",
     val dessert: String = "",
