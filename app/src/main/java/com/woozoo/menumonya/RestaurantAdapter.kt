@@ -16,13 +16,18 @@ import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
-class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
-
-    RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
+class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
+                        private val context: Context,
+                        private val remoteConfigRepository: RemoteConfigRepository
+) : RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding
 
-    class ItemViewHolder(val binding: ItemRestaurantBinding, private val context: Context): RecyclerView.ViewHolder(binding.root) {
+    class ItemViewHolder(val binding: ItemRestaurantBinding,
+                         private val context: Context,
+                         private val remoteConfigRepository: RemoteConfigRepository
+    ): RecyclerView.ViewHolder(binding.root) {
+
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
             binding.restaurantPriceTv.text = data.price.cardPrice + "원"
@@ -57,7 +62,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuLayout.visibility = View.GONE
                 binding.restaurantMenuMoreTv.visibility = View.GONE
                 binding.menuReportBtn.setOnClickListener {
-                    val menuReportUrl = RemoteConfigRepository.getReportMenuUrlConfig()
+                    val menuReportUrl = remoteConfigRepository.getReportMenuUrlConfig()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
                     context.startActivity(intent)
                 }
@@ -77,7 +82,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
         viewType: Int
     ): ItemViewHolder {
         binding = ItemRestaurantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding, context)
+        return ItemViewHolder(binding, context, remoteConfigRepository)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

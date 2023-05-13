@@ -19,18 +19,25 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.FireStoreRepository.getRestaurantInLocation
-import com.woozoo.menumonya.repository.RemoteConfigRepository.getFeedbackUrlConfig
-import com.woozoo.menumonya.repository.RemoteConfigRepository.getLatestAppVersionConfig
+import com.woozoo.menumonya.repository.FireStoreRepository
+import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.lang.Double.parseDouble
+import javax.inject.Inject
 
-class MainViewModel(application: Application): AndroidViewModel(Application()) {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    application: Application,
+    private val fireStoreRepository: FireStoreRepository,
+    private val remoteConfigRepository: RemoteConfigRepository
+): AndroidViewModel(Application()) {
+
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     private val _eventFlow = MutableSharedFlow<Event>()
@@ -131,7 +138,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
                 "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = getRestaurantInLocation(location)
+            mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
 
             setMarkers(mRestaurantInfoArray)
         }
@@ -203,7 +210,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     fun checkLatestAppVersion() {
-        val latestAppVersion = getLatestAppVersionConfig()
+        val latestAppVersion = remoteConfigRepository.getLatestAppVersionConfig()
         val currentAppVersion = BuildConfig.VERSION_CODE
 
         if (latestAppVersion.toInt() > currentAppVersion) {
@@ -212,7 +219,7 @@ class MainViewModel(application: Application): AndroidViewModel(Application()) {
     }
 
     fun getFeedbackUrl(): String {
-        return getFeedbackUrlConfig()
+        return remoteConfigRepository.getFeedbackUrlConfig()
     }
 
     private fun showToast(text: String) {
