@@ -14,6 +14,7 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
 class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
@@ -35,7 +36,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
             binding.restaurantPhoneNumberTv.text = data.phoneNumber
             binding.restaurantLocationDescriptionTv.text = data.location.description
 
-            if (data.todayMenu.main != "") {
+            if (data.todayMenu.date == getTodayDate()) { // 오늘 메뉴인 경우에만 표시함.
                 // (1) 메뉴 레이아웃 표시
                 binding.menuReportLayout.visibility = View.GONE
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
