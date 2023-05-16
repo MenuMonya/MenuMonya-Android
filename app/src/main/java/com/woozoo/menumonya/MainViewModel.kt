@@ -21,6 +21,10 @@ import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository
 import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.util.AnalyticsUtils
+import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
+import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
+import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_VIEW_PAGER
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -35,7 +39,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     application: Application,
     private val fireStoreRepository: FireStoreRepository,
-    private val remoteConfigRepository: RemoteConfigRepository
+    private val remoteConfigRepository: RemoteConfigRepository,
+    private val analyticsUtils: AnalyticsUtils
 ): AndroidViewModel(Application()) {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
@@ -106,6 +111,8 @@ class MainViewModel @Inject constructor(
 
             naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
+
+            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, mRestaurantInfoArray[markerIndex].name)
         }
     }
 
@@ -139,8 +146,9 @@ class MainViewModel @Inject constructor(
             }
 
             mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
-
             setMarkers(mRestaurantInfoArray)
+
+            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
         }
     }
 
@@ -165,6 +173,7 @@ class MainViewModel @Inject constructor(
                     icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
+                        analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_MARKER, restaurant.name)
                         true
                     }
                 }
