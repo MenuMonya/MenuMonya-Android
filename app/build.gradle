@@ -7,6 +7,10 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+def keystorePropertiesFile = rootProject.file("keystore/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
@@ -24,6 +28,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['appKeyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile rootProject.file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -35,6 +48,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
             manifestPlaceholders = [app_name: "@string/app_name"]
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
