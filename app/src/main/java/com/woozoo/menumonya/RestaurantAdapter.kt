@@ -14,15 +14,25 @@ import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.util.AnalyticsUtils
+import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_BUTTON
+import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
-class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, private val context: Context) :
-
-    RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
+class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
+                        private val context: Context,
+                        private val remoteConfigRepository: RemoteConfigRepository,
+                        private val analyticsUtils: AnalyticsUtils
+) : RecyclerView.Adapter<RestaurantAdapter.ItemViewHolder>() {
 
     private lateinit var binding: ItemRestaurantBinding
 
-    class ItemViewHolder(val binding: ItemRestaurantBinding, private val context: Context): RecyclerView.ViewHolder(binding.root) {
+    class ItemViewHolder(val binding: ItemRestaurantBinding,
+                         private val context: Context,
+                         private val remoteConfigRepository: RemoteConfigRepository,
+                         private val analyticsUtils: AnalyticsUtils
+    ): RecyclerView.ViewHolder(binding.root) {
+
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
             binding.restaurantPriceTv.text = data.price.cardPrice + "원"
@@ -30,7 +40,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
             binding.restaurantPhoneNumberTv.text = data.phoneNumber
             binding.restaurantLocationDescriptionTv.text = data.location.description
 
-            if (data.todayMenu.main != "") {
+            if (data.todayMenu.date == getTodayDate()) { // 오늘 메뉴인 경우에만 표시함.
                 // (1) 메뉴 레이아웃 표시
                 binding.menuReportLayout.visibility = View.GONE
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
@@ -57,7 +67,9 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
                 binding.restaurantMenuLayout.visibility = View.GONE
                 binding.restaurantMenuMoreTv.visibility = View.GONE
                 binding.menuReportBtn.setOnClickListener {
-                    val menuReportUrl = RemoteConfigRepository.getReportMenuUrlConfig()
+                    analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_REPORT_BUTTON, data.name)
+
+                    val menuReportUrl = remoteConfigRepository.getReportMenuUrlConfig()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
                     context.startActivity(intent)
                 }
@@ -77,7 +89,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>, 
         viewType: Int
     ): ItemViewHolder {
         binding = ItemRestaurantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding, context)
+        return ItemViewHolder(binding, context, remoteConfigRepository, analyticsUtils)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
