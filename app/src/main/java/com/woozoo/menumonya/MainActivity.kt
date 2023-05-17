@@ -221,28 +221,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.adapter = null
                 viewModel.showLocationInfo("강남")
                 
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-
-                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                binding.apply {
+                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
+                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
+                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                }
             }
             R.id.location_ys_btn -> {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("역삼")
                 
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
-                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-
-                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                binding.apply {
+                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
+                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
+                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                }
             }
             R.id.feedback_iv -> {
                 val feedbackUrl = viewModel.getFeedbackUrl()
