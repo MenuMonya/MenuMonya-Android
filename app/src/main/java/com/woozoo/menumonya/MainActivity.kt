@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.OnMarkerClicked -> {
             if (viewPager.adapter != null) {
-                viewPager.currentItem = event.markerIndex
+                viewPager.setCurrentItem(event.markerIndex, false)
             } else {
                 viewModel.showLocationViewPager(event.markerIndex)
             }
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.adapter =
                     RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
                 if (event.markerIndex != -1) {
-                    viewPager.currentItem = event.markerIndex
+                    viewPager.setCurrentItem(event.markerIndex, false)
                 } else { }
             } else { }
         }
