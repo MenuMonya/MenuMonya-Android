@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+            moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
             showLocationInfo("강남")
         }
     }
@@ -116,7 +116,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun moveCameraCoord(latitude: Double, longitude: Double) {
+    private fun moveCameraToCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
         val cameraUpdateParams = CameraUpdateParams().apply {
             scrollTo(coord)
@@ -141,8 +141,8 @@ class MainViewModel @Inject constructor(
             selectedLocation = location
 
             when (selectedLocation) {
-                "강남" -> moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-                "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
+                "강남" -> moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+                "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
             mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
@@ -206,7 +206,7 @@ class MainViewModel @Inject constructor(
                     locationManager,
                     LocationListener { location ->
                         // 내 위치로 카메라 이동, 내 위치 표시
-                        moveCameraCoord(location.latitude, location.longitude)
+                        moveCameraToCoord(location.latitude, location.longitude)
                         naverMap.apply {
                             locationSource = FusedLocationSource(activity, LOCATION_PERMISSION_REQUEST_CODE)
                             locationTrackingMode = LocationTrackingMode.Follow
