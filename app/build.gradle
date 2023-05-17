@@ -44,7 +44,7 @@ android {
             manifestPlaceholders = [app_name: "@string/app_name_debug"]
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
             manifestPlaceholders = [app_name: "@string/app_name"]
