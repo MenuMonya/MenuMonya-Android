@@ -54,6 +54,7 @@ class MainViewModel @Inject constructor(
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
     private var selectedLocation: String = ""
+    private var isInitialized: Boolean = false
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -79,6 +80,8 @@ class MainViewModel @Inject constructor(
 
             moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
             showLocationInfo("강남")
+
+            isInitialized = true
         }
     }
 
@@ -149,6 +152,24 @@ class MainViewModel @Inject constructor(
             setMarkers(mRestaurantInfoArray)
 
             analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
+        }
+    }
+
+    fun updateLocationInfo(currentViewPagerIndex: Int) {
+        if (isInitialized) {
+            showLoading(true)
+            viewModelScope.launch {
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(selectedLocation)
+                setMarkers(mRestaurantInfoArray)
+
+                markerList[currentViewPagerIndex].apply {
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                }
+
+                fetchRestaurantInfo(mRestaurantInfoArray)
+                showLoading(false)
+            }
         }
     }
 
@@ -262,6 +283,10 @@ class MainViewModel @Inject constructor(
         event(Event.ShowUpdateDialog(""))
     }
 
+    private fun fetchRestaurantInfo(data: ArrayList<Restaurant>) {
+        event(Event.FetchRestaurantInfo(data))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이곳에 정
@@ -276,5 +301,7 @@ class MainViewModel @Inject constructor(
         data class MoveToCurrentLocation(val data: String): Event()
         data class ShowLoading(val visibility: Boolean): Event()
         data class ShowUpdateDialog(val data: String): Event()
+
+        data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
     }
 }

@@ -19,7 +19,7 @@ import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_BU
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
-class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
+class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                         private val context: Context,
                         private val remoteConfigRepository: RemoteConfigRepository,
                         private val analyticsUtils: AnalyticsUtils
@@ -100,4 +100,7 @@ class RestaurantAdapter(private val restaurantInfoArray: ArrayList<Restaurant>,
         return restaurantInfoArray.size
     }
 
+    fun setData(data: ArrayList<Restaurant>) {
+        restaurantInfoArray = data
+    }
 }

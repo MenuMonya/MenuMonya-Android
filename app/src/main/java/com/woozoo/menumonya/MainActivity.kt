@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var viewPager: ViewPager2
+    private var restaurantAdapter: RestaurantAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,6 +101,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+        is Event.FetchRestaurantInfo -> {
+            if (restaurantAdapter != null) {
+                restaurantAdapter?.setData(event.data)
+                viewPager.adapter?.notifyDataSetChanged()
+            } else { }
+        }
         is Event.OnMarkerClicked -> {
             if (viewPager.adapter != null) {
                 viewPager.setCurrentItem(event.markerIndex, false)
@@ -109,8 +116,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                viewPager.adapter =
-                    RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                restaurantAdapter = RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                viewPager.adapter = restaurantAdapter
                 if (event.markerIndex != -1) {
                     viewPager.setCurrentItem(event.markerIndex, false)
                 } else { }
@@ -177,6 +184,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.naverMap.onResume()
 
         viewModel.checkLatestAppVersion()
+        if (viewPager != null && restaurantAdapter != null) {
+            viewModel.updateLocationInfo(viewPager.currentItem)
+        }
     }
 
     override fun onPause() {
