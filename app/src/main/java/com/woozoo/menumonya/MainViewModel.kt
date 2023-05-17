@@ -54,6 +54,7 @@ class MainViewModel @Inject constructor(
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
     private var selectedLocation: String = ""
+    private var isInitialized: Boolean = false
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
@@ -77,8 +78,10 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+            moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
             showLocationInfo("강남")
+
+            isInitialized = true
         }
     }
 
@@ -116,7 +119,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun moveCameraCoord(latitude: Double, longitude: Double) {
+    private fun moveCameraToCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
         val cameraUpdateParams = CameraUpdateParams().apply {
             scrollTo(coord)
@@ -141,8 +144,8 @@ class MainViewModel @Inject constructor(
             selectedLocation = location
 
             when (selectedLocation) {
-                "강남" -> moveCameraCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-                "역삼" -> moveCameraCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
+                "강남" -> moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
+                "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
             mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
@@ -152,7 +155,26 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setMarkers(restaurantInfo: ArrayList<Restaurant>) {
+    fun updateLocationInfo(currentViewPagerIndex: Int) {
+        if (isInitialized) {
+            showLoading(true)
+            viewModelScope.launch {
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(selectedLocation)
+                setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
+
+                fetchRestaurantInfo(mRestaurantInfoArray)
+                showLoading(false)
+            }
+        }
+    }
+
+    /**
+     * 지도에 식당 마커들을 표시함.
+     * selectedIndex 값을 지정할 경우, 해당 인덱스의 마커를 클릭된 아이콘(@drawable/restaurant_marker_selected)으로 표시함.
+     *
+     * @param selectedIndex  선택된 아이콘으로 변경할 마커의 인덱스.
+     */
+    private fun setMarkers(restaurantInfo: ArrayList<Restaurant>, selectedIndex: Int = -1) {
         if (restaurantInfo.size > 0) {
             // 마커 표시 초기화
             for (marker in markerList) {
@@ -181,6 +203,14 @@ class MainViewModel @Inject constructor(
                 markerList.add(marker)
             }
 
+            // 클릭된 아이콘으로 변경
+            if (selectedIndex != -1) {
+                markerList[selectedIndex].apply {
+                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                }
+            }
+
             markerList.forEach { marker ->
                 marker.map = naverMap
             }
@@ -206,7 +236,7 @@ class MainViewModel @Inject constructor(
                     locationManager,
                     LocationListener { location ->
                         // 내 위치로 카메라 이동, 내 위치 표시
-                        moveCameraCoord(location.latitude, location.longitude)
+                        moveCameraToCoord(location.latitude, location.longitude)
                         naverMap.apply {
                             locationSource = FusedLocationSource(activity, LOCATION_PERMISSION_REQUEST_CODE)
                             locationTrackingMode = LocationTrackingMode.Follow
@@ -262,9 +292,13 @@ class MainViewModel @Inject constructor(
         event(Event.ShowUpdateDialog(""))
     }
 
+    private fun fetchRestaurantInfo(data: ArrayList<Restaurant>) {
+        event(Event.FetchRestaurantInfo(data))
+    }
+
     sealed class Event {
         /**
-         * MainActivity에 전달할 이벤트를 이곳에 정
+         * MainActivity에 전달할 이벤트를 이 곳에 정의함.
          *
          * (ex) data class ShowToast(val text: String) : Event()
          */
@@ -276,5 +310,7 @@ class MainViewModel @Inject constructor(
         data class MoveToCurrentLocation(val data: String): Event()
         data class ShowLoading(val visibility: Boolean): Event()
         data class ShowUpdateDialog(val data: String): Event()
+
+        data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
     }
 }
