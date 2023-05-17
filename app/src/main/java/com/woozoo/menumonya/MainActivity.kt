@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var viewPager: ViewPager2
+    private var restaurantAdapter: RestaurantAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,19 +101,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
+        is Event.FetchRestaurantInfo -> {
+            if (restaurantAdapter != null) {
+                restaurantAdapter?.setData(event.data)
+                viewPager.adapter?.notifyDataSetChanged()
+            } else { }
+        }
         is Event.OnMarkerClicked -> {
             if (viewPager.adapter != null) {
-                viewPager.currentItem = event.markerIndex
+                viewPager.setCurrentItem(event.markerIndex, false)
             } else {
                 viewModel.showLocationViewPager(event.markerIndex)
             }
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                viewPager.adapter =
-                    RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                restaurantAdapter = RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                viewPager.adapter = restaurantAdapter
                 if (event.markerIndex != -1) {
-                    viewPager.currentItem = event.markerIndex
+                    viewPager.setCurrentItem(event.markerIndex, false)
                 } else { }
             } else { }
         }
@@ -177,6 +184,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.naverMap.onResume()
 
         viewModel.checkLatestAppVersion()
+        if (viewPager != null && restaurantAdapter != null) {
+            viewModel.updateLocationInfo(viewPager.currentItem)
+        }
     }
 
     override fun onPause() {
@@ -211,28 +221,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 viewPager.adapter = null
                 viewModel.showLocationInfo("강남")
                 
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-
-                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                binding.apply {
+                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
+                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
+                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                }
             }
             R.id.location_ys_btn -> {
                 viewPager.invalidate()
                 viewPager.adapter = null
                 viewModel.showLocationInfo("역삼")
                 
-                binding.locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                binding.locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
-                binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-
-                binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                binding.apply {
+                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
+                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
+                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
+                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
+                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
+                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
+                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
+                }
             }
             R.id.feedback_iv -> {
                 val feedbackUrl = viewModel.getFeedbackUrl()
