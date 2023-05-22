@@ -171,9 +171,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRegionList -> {
             // 지역 버튼 표시
-            binding.regionRecyclerView.layoutManager = LinearLayoutManager(this,
+            binding.regionRv.layoutManager = LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false)
-            binding.regionRecyclerView.adapter = RegionAdapter(event.data)
+            binding.regionRv.adapter = RegionAdapter(event.data)
         }
     }
 
