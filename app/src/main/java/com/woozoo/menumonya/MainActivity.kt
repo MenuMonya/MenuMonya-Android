@@ -287,13 +287,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 override fun onItemStateChanged(key: String, selected: Boolean) {
                     super.onItemStateChanged(key, selected)
 
-                    val selectedRegion = modifiedData.filter { it.name == key }[0]
+                    if (selected) {
+                        val selectedRegion = modifiedData.filter { it.name == key }[0]
 
-                    viewPager.invalidate()
-                    viewPager.adapter = null
+                        viewPager.invalidate()
+                        viewPager.adapter = null
 
-                    viewModel.showLocationInfo(key)
-                    viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                        viewModel.showLocationInfo(key)
+                        viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                    }
                 }
             }
         )
