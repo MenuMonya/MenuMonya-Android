@@ -267,7 +267,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = regionAdapter
 
-        //
         val tracker = SelectionTracker.Builder(
             "selection_id",
             recyclerView,
@@ -278,13 +277,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             SelectionPredicates.createSelectSingleAnything() // 하나만 클릭 활성화 할 수 있도록 설정
         ).build()
 
-        // 클릭 이벤트 리스터(key: 지역 이름값)
+        /**
+         * 클릭 이벤트 리스너(key: 지역 이름값)
+         * (1) ViewPager 초기화
+         * (2) 카메라 이동
+         * (3) 해당 지역의 식당 마커 표시
+         */
         tracker.addObserver(
             object: SelectionTracker.SelectionObserver<String>() {
                 override fun onItemStateChanged(key: String, selected: Boolean) {
                     super.onItemStateChanged(key, selected)
+                    val selectedRegion = data.filter {
+                        it.name == key
+                    }[0]
 
-                    // TODO: 카메라 이동 + 해당 지역의 식당 마커 표시
+                    viewPager.invalidate()
+                    viewPager.adapter = null
+
+                    viewModel.showLocationInfo(key)
+                    viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
                 }
             }
         )

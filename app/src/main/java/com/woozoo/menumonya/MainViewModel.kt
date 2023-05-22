@@ -128,7 +128,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun moveCameraToCoord(latitude: Double, longitude: Double) {
+    fun moveCameraToCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
         val cameraUpdateParams = CameraUpdateParams().apply {
             scrollTo(coord)
