@@ -18,7 +18,7 @@ class FireStoreRepositoryImpl @Inject constructor(
 
     private lateinit var restaurantCollectionName: String
 
-    override suspend fun getRestaurantInLocation(location: String) = withContext(Dispatchers.IO) {
+    override suspend fun getRestaurantInLocation(location: String): ArrayList<Restaurant> {
         restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionNameConfig()
 
         val restaurantInfo = ArrayList<Restaurant>()
@@ -40,7 +40,7 @@ class FireStoreRepositoryImpl @Inject constructor(
         }
         restaurantInfo.sortBy { it.locationCategoryOrder[0] }
 
-        restaurantInfo
+        return restaurantInfo
     }
 
     override suspend fun getRegionList(): ArrayList<Region> {

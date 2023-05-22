@@ -63,8 +63,6 @@ class RemoteConfigRepositoryImpl @Inject constructor(
     }
 
     override fun getReportMenuUrlConfig(): String {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
         return remoteConfig.getString("REPORT_MENU_URL")
     }
 
