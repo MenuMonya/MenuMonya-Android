@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -50,11 +51,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-        binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-        binding.locationGnBtn.setOnClickListener(this)
-        binding.locationYsBtn.setOnClickListener(this)
-        binding.feedbackIv.setOnClickListener(this)
         binding.currentLocationBtn.setOnClickListener(this)
         binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
 
@@ -97,6 +93,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.naverMap.onCreate(savedInstanceState)
 
         viewModel.initializeMapView(binding.naverMap)
+        viewModel.getRegionList()
     }
 
     private fun handleEvent(event: Event) = when (event) {
@@ -172,6 +169,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }.create().show()
         }
+        is Event.ShowRegionList -> {
+            // 지역 버튼 표시
+            binding.regionRecyclerView.layoutManager = LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false)
+            binding.regionRecyclerView.adapter = RegionAdapter(event.data)
+        }
     }
 
     override fun onStart() {
@@ -216,41 +219,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.location_gn_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
-                viewModel.showLocationInfo("강남")
-                
-                binding.apply {
-                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
-                }
-            }
-            R.id.location_ys_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
-                viewModel.showLocationInfo("역삼")
-                
-                binding.apply {
-                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
-                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
-                }
-            }
-            R.id.feedback_iv -> {
-                val feedbackUrl = viewModel.getFeedbackUrl()
-                val intent = Intent(ACTION_VIEW, Uri.parse(feedbackUrl))
-                startActivity(intent)
-            }
             // '내 주변' 버튼 클릭
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(this)

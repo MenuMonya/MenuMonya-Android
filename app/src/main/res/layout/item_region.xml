@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_location_button"
+    android:gravity="center"
+    android:padding="8dp"
+    >
+
+    <TextView
+        android:id="@+id/region_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지역명"
+        android:fontFamily="@font/pretendard_semibold"
+        android:textColor="@color/gray600"
+        android:textSize="@dimen/location_select_button_text"
+        android:textStyle="bold"
+        />
+
+</LinearLayout>

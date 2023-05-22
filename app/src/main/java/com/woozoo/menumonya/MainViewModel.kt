@@ -18,6 +18,7 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
+import com.woozoo.menumonya.model.Region
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository
 import com.woozoo.menumonya.repository.RemoteConfigRepository
@@ -82,6 +83,14 @@ class MainViewModel @Inject constructor(
             showLocationInfo("강남")
 
             isInitialized = true
+        }
+    }
+
+    fun getRegionList() {
+        viewModelScope.launch {
+            val regionList = fireStoreRepository.getRegionList()
+
+            showRegionList(regionList)
         }
     }
 
@@ -296,6 +305,10 @@ class MainViewModel @Inject constructor(
         event(Event.FetchRestaurantInfo(data))
     }
 
+    private fun showRegionList(data: ArrayList<Region>) {
+        event(Event.ShowRegionList(data))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이 곳에 정의함.
@@ -312,5 +325,6 @@ class MainViewModel @Inject constructor(
         data class ShowUpdateDialog(val data: String): Event()
 
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
+        data class ShowRegionList(val data: ArrayList<Region>): Event()
     }
 }
