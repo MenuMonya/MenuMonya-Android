@@ -13,12 +13,16 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
+import com.woozoo.menumonya.model.Region
 import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var viewPager: ViewPager2
     private var restaurantAdapter: RestaurantAdapter? = null
+    private var regionAdapter: RegionAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,10 +175,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }.create().show()
         }
         is Event.ShowRegionList -> {
-            // 지역 버튼 표시
-            binding.regionRv.layoutManager = LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false)
-            binding.regionRv.adapter = RegionAdapter(event.data)
+            initRegionRecyclerView(event.data)
         }
     }
 
@@ -250,5 +252,43 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (requestCode == GPS_ENABLE_REQUEST_CODE) {
             viewModel.getCurrentLocation(this)
         }
+    }
+
+    /**
+     * (1) 지역 리스트 버튼 표시(RecyclerView)
+     * (2) 클릭 로직 적용(RecyclerView-selection)
+     */
+    private fun initRegionRecyclerView(data: ArrayList<Region>) {
+        val recyclerView = binding.regionRv
+
+        // TODO: 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
+        // TODO: '지역건의' 버튼 추가
+        regionAdapter = RegionAdapter(data)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = regionAdapter
+
+        //
+        val tracker = SelectionTracker.Builder(
+            "selection_id",
+            recyclerView,
+            RegionAdapter.RegionKeyProvider(regionAdapter!!),
+            RegionAdapter.RegionDetailsLookup(recyclerView),
+            StorageStrategy.createStringStorage()
+        ).withSelectionPredicate(
+            SelectionPredicates.createSelectSingleAnything() // 하나만 클릭 활성화 할 수 있도록 설정
+        ).build()
+
+        // 클릭 이벤트 리스터(key: 지역 이름값)
+        tracker.addObserver(
+            object: SelectionTracker.SelectionObserver<String>() {
+                override fun onItemStateChanged(key: String, selected: Boolean) {
+                    super.onItemStateChanged(key, selected)
+
+                    // TODO: 카메라 이동 + 해당 지역의 식당 마커 표시
+                }
+            }
+        )
+
+        regionAdapter!!.tracker = tracker
     }
 }
