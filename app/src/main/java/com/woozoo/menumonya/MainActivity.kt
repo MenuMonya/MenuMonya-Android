@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val recyclerView = binding.regionRv
         val modifiedData = viewModel.modifyRegionData(data)
 
-        regionAdapter = RegionAdapter(modifiedData)
+        regionAdapter = RegionAdapter(modifiedData, this, remoteConfigRepository, analyticsUtils)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = regionAdapter
 

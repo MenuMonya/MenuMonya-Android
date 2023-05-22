@@ -1,6 +1,8 @@
 package com.woozoo.menumonya
 
-import android.util.Log
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -16,8 +18,14 @@ import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.databinding.ItemRegionBinding
 import com.woozoo.menumonya.model.Region
+import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.util.AnalyticsUtils
+import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_REGION_BUTTON
 
-class RegionAdapter(private var data: ArrayList<Region>)
+class RegionAdapter(private var data: ArrayList<Region>,
+                    private val context: Context,
+                    private val remoteConfigRepository: RemoteConfigRepository,
+                    private val analyticsUtils: AnalyticsUtils)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
@@ -71,6 +79,13 @@ class RegionAdapter(private var data: ArrayList<Region>)
     inner class RegionReportViewHolder(private val binding: ItemRegionBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             binding.regionTv.text = REGION_REPORT
+            binding.regionLayout.setOnClickListener {
+                analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_REPORT_REGION_BUTTON, CONTENT_TYPE_REPORT_REGION_BUTTON)
+
+                val regionReportUrl = remoteConfigRepository.getRegionReportUrlConfig()
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(regionReportUrl))
+                context.startActivity(intent)
+            }
         }
     }
 
