@@ -5,7 +5,7 @@ import com.woozoo.menumonya.model.Restaurant
 
 interface FireStoreRepository {
 
-    suspend fun getRestaurantInLocation(location: String): ArrayList<Restaurant>
+    suspend fun getRestaurantInRegion(region: String): ArrayList<Restaurant>
 
     suspend fun getRegionList(): ArrayList<Region>
 }

@@ -18,12 +18,12 @@ class FireStoreRepositoryImpl @Inject constructor(
 
     private lateinit var restaurantCollectionName: String
 
-    override suspend fun getRestaurantInLocation(location: String): ArrayList<Restaurant> {
+    override suspend fun getRestaurantInRegion(region: String): ArrayList<Restaurant> {
         restaurantCollectionName = remoteConfigRepository.getRestaurantsCollectionNameConfig()
 
         val restaurantInfo = ArrayList<Restaurant>()
         val restaurantRef = db.collection(restaurantCollectionName)
-        val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(location))
+        val query = restaurantRef.whereArrayContainsAny("locationCategory", listOf(region))
 
         val result = query.get().await()
         val documents = result.documents
@@ -36,7 +36,7 @@ class FireStoreRepositoryImpl @Inject constructor(
 
         // locationCategoryOrder값으로 순서 재정렬(가까운 블록에 위치한 순서대로)
         for (restaurant in restaurantInfo) {
-            restaurant.locationCategoryOrder.removeAll { !it.contains(location) }
+            restaurant.locationCategoryOrder.removeAll { !it.contains(region) }
         }
         restaurantInfo.sortBy { it.locationCategoryOrder[0] }
 

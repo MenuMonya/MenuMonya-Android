@@ -148,7 +148,7 @@ class MainViewModel @Inject constructor(
                 "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
+            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
             setMarkers(mRestaurantInfoArray)
 
             analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
@@ -159,7 +159,7 @@ class MainViewModel @Inject constructor(
         if (isInitialized) {
             showLoading(true)
             viewModelScope.launch {
-                mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(selectedLocation)
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedLocation)
                 setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
 
                 fetchRestaurantInfo(mRestaurantInfoArray)
