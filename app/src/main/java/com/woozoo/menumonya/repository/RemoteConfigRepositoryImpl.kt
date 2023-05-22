@@ -54,11 +54,11 @@ class RemoteConfigRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getFeedbackUrlConfig(): String {
+    override fun getLatestAppVersionConfig(): Long {
         return if (BuildConfig.DEBUG) {
-            remoteConfig.getString("FEEDBACK_URL_DEV")
+            remoteConfig.getLong("LATEST_APP_VERSION_AOS_DEV")
         } else {
-            remoteConfig.getString("FEEDBACK_URL_PROD")
+            remoteConfig.getLong("LATEST_APP_VERSION_AOS_PROD")
         }
     }
 
@@ -66,11 +66,7 @@ class RemoteConfigRepositoryImpl @Inject constructor(
         return remoteConfig.getString("REPORT_MENU_URL")
     }
 
-    override fun getLatestAppVersionConfig(): Long {
-        return if (BuildConfig.DEBUG) {
-            remoteConfig.getLong("LATEST_APP_VERSION_AOS_DEV")
-        } else {
-            remoteConfig.getLong("LATEST_APP_VERSION_AOS_PROD")
-        }
+    override fun getRegionReportUrlConfig(): String {
+        return remoteConfig.getString("REGION_REPORT_URL")
     }
 }

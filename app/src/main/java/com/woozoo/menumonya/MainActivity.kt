@@ -260,10 +260,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
+        val modifiedData = viewModel.modifyRegionData(data)
 
-        // TODO: 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
-        // TODO: '지역건의' 버튼 추가
-        regionAdapter = RegionAdapter(data)
+        regionAdapter = RegionAdapter(modifiedData)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = regionAdapter
 
@@ -287,9 +286,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             object: SelectionTracker.SelectionObserver<String>() {
                 override fun onItemStateChanged(key: String, selected: Boolean) {
                     super.onItemStateChanged(key, selected)
-                    val selectedRegion = data.filter {
-                        it.name == key
-                    }[0]
+
+                    val selectedRegion = modifiedData.filter { it.name == key }[0]
 
                     viewPager.invalidate()
                     viewPager.adapter = null

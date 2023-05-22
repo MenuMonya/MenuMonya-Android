@@ -8,7 +8,7 @@ interface RemoteConfigRepository {
 
     suspend fun getMenuCollectionNameConfig(): String
 
-    fun getFeedbackUrlConfig(): String
+    fun getRegionReportUrlConfig(): String
 
     fun getReportMenuUrlConfig(): String
 

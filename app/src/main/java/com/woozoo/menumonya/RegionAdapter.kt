@@ -1,5 +1,6 @@
 package com.woozoo.menumonya
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -10,11 +11,14 @@ import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.woozoo.menumonya.Application.Companion.context
+import com.woozoo.menumonya.Constants.Companion.REGION_BUTTON_TYPE
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.databinding.ItemRegionBinding
 import com.woozoo.menumonya.model.Region
 
 class RegionAdapter(private var data: ArrayList<Region>)
-    : RecyclerView.Adapter<RegionAdapter.RegionViewHolder>()
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
     private lateinit var binding: ItemRegionBinding
@@ -24,9 +28,14 @@ class RegionAdapter(private var data: ArrayList<Region>)
         setHasStableIds(true)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegionViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         binding = ItemRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return RegionViewHolder(binding)
+
+        return if (viewType == REGION_REPORT_TYPE) {
+            RegionReportViewHolder(binding)
+        } else {
+            RegionButtonViewHolder(binding)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -35,20 +44,37 @@ class RegionAdapter(private var data: ArrayList<Region>)
 
     override fun getItemId(position: Int): Long = position.toLong()
 
+    // 이 부분을 꼭 구현해주어야 내가 설정한 뷰타입대로 적용된다.
+    override fun getItemViewType(position: Int): Int {
+        return if (data[position].name == REGION_REPORT) {
+            REGION_REPORT_TYPE
+        } else {
+            REGION_BUTTON_TYPE
+        }
+    }
+
     /**
      * RecyclerView-selection을 활용한 RecyclerView의 아이템 클릭 이벤트 설정
      * (중요) Region의 name을 키 값으로 사용함.
      * (Ref) https://developer.android.com/guide/topics/ui/layout/recyclerview-custom?hl=ko#select
      */
-    override fun onBindViewHolder(holder: RegionViewHolder, position: Int) {
-        tracker?.let {
-            holder.bind(data[position], it.isSelected(data[position].name))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (data[position].viewType == REGION_BUTTON_TYPE) {
+            tracker?.let {
+                (holder as RegionButtonViewHolder).bind(data[position], it.isSelected(data[position].name))
+            }
+        } else {
+            (holder as RegionReportViewHolder).bind()
         }
     }
 
-    inner class RegionViewHolder(private val binding: ItemRegionBinding)
-        : RecyclerView.ViewHolder(binding.root)
-    {
+    inner class RegionReportViewHolder(private val binding: ItemRegionBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+            binding.regionTv.text = REGION_REPORT
+        }
+    }
+
+    inner class RegionButtonViewHolder(private val binding: ItemRegionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Region, isSelected: Boolean) {
             binding.regionTv.text = data.name
 
@@ -74,8 +100,8 @@ class RegionAdapter(private var data: ArrayList<Region>)
     class RegionDetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<String>() {
         override fun getItemDetails(event: MotionEvent): ItemDetails<String>? {
             val view = recyclerView.findChildViewUnder(event.x, event.y)
-            if (view != null) {
-                return (recyclerView.getChildViewHolder(view) as RegionAdapter.RegionViewHolder).getItemDetails()
+            if (view != null && recyclerView.getChildViewHolder(view) is RegionButtonViewHolder) {
+                return (recyclerView.getChildViewHolder(view) as RegionAdapter.RegionButtonViewHolder).getItemDetails()
             }
             return null
         }

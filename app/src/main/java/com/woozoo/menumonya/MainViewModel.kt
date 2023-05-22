@@ -18,6 +18,8 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.model.Region
 import com.woozoo.menumonya.model.Restaurant
 import com.woozoo.menumonya.repository.FireStoreRepository
@@ -264,6 +266,20 @@ class MainViewModel @Inject constructor(
         if (latestAppVersion.toInt() > currentAppVersion) {
             showUpdateDialog()
         }
+    }
+
+    /**
+     * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
+     * (2) '지역건의' 버튼 추가
+     */
+    fun modifyRegionData(data: ArrayList<Region>): ArrayList<Region> {
+        data.add(Region(REGION_REPORT, 0.0, 0.0, REGION_REPORT_TYPE))
+
+        return data
+    }
+
+    fun getRegionReportUrl(): String {
+        return remoteConfigRepository.getRegionReportUrlConfig()
     }
 
     private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
