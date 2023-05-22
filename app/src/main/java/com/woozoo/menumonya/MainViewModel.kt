@@ -266,14 +266,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getFeedbackUrl(): String {
-        return remoteConfigRepository.getFeedbackUrlConfig()
-    }
-
-    private fun showToast(text: String) {
-        event(Event.ShowToast(text))
-    }
-
     private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
         event(Event.ShowRestaurantView(data, markerIndex))
     }
