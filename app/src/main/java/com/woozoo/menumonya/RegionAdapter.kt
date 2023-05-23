@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -23,10 +24,19 @@ class RegionAdapter(private var data: ArrayList<Region>,
     : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
-    var selectedItemPos = -1
-    var lastItemSelectedPos = -1
+    var selectedItemPosition = -1
+    var lastItemSelectedPosition = -1
 
     private lateinit var binding: ItemRegionBinding
+    private lateinit var mListener: OnItemClickListener
+
+    interface OnItemClickListener {
+        fun onItemClick(view: View, position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        mListener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         binding = ItemRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -42,7 +52,7 @@ class RegionAdapter(private var data: ArrayList<Region>,
         return data.size
     }
 
-    // 이 부분을 꼭 구현해주어야 내가 설정한 뷰타입대로 적용된다.
+    // 이 부분을 꼭 구현해주어야 내가 설정한 뷰 타입대로 적용된다.
     override fun getItemViewType(position: Int): Int {
         return if (data[position].name == REGION_REPORT) {
             REGION_REPORT_TYPE
@@ -51,23 +61,22 @@ class RegionAdapter(private var data: ArrayList<Region>,
         }
     }
 
-    /**
-     * RecyclerView-selection을 활용한 RecyclerView의 아이템 클릭 이벤트 설정
-     * (중요) Region의 name을 키 값으로 사용함.
-     * (Ref) https://developer.android.com/guide/topics/ui/layout/recyclerview-custom?hl=ko#select
-     */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (data[position].viewType == REGION_BUTTON_TYPE) {
-            if(position == selectedItemPos)
-                (holder as RegionButtonViewHolder).selectedBg()
-            else
-                (holder as RegionButtonViewHolder).defaultBg()
+            if (position == selectedItemPosition) {
+                (holder as RegionButtonViewHolder).setSelectedBackground()
+            } else {
+                (holder as RegionButtonViewHolder).setDefaultBackground()
+            }
             holder.bind(data[position])
         } else {
             (holder as RegionReportViewHolder).bind()
         }
     }
 
+    /**
+     * '지역 건의' 버튼 ViewHolder
+     */
     inner class RegionReportViewHolder(private val binding: ItemRegionBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind() {
             binding.regionTv.text = REGION_REPORT
@@ -81,17 +90,30 @@ class RegionAdapter(private var data: ArrayList<Region>,
         }
     }
 
+    /**
+     * 지역 버튼 ViewHolder
+     */
     inner class RegionButtonViewHolder(private val binding: ItemRegionBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
-                selectedItemPos = adapterPosition
-                if (lastItemSelectedPos == -1)
-                    lastItemSelectedPos = selectedItemPos
-                else {
-                    notifyItemChanged(lastItemSelectedPos)
-                    lastItemSelectedPos = selectedItemPos
+                val position = adapterPosition
+
+                // 클릭 이벤트 리스너 적용
+                if (position != RecyclerView.NO_POSITION) {
+                    if (mListener != null) {
+                        mListener.onItemClick(it, position)
+                    }
                 }
-                notifyItemChanged(selectedItemPos)
+
+                // 클릭된 아이템이 하나만 표시되도록 설정
+                selectedItemPosition = position
+                if (lastItemSelectedPosition == -1)
+                    lastItemSelectedPosition = selectedItemPosition
+                else {
+                    notifyItemChanged(lastItemSelectedPosition)
+                    lastItemSelectedPosition = selectedItemPosition
+                }
+                notifyItemChanged(selectedItemPosition)
             }
         }
 
@@ -99,12 +121,12 @@ class RegionAdapter(private var data: ArrayList<Region>,
             binding.regionTv.text = data.name
         }
 
-        fun defaultBg() {
+        fun setDefaultBackground() {
             binding.regionLayout.background = context.getDrawable(R.drawable.selector_location_button)
             binding.regionTv.setTextColor(ContextCompat.getColor(context, R.color.gray600))
         }
 
-        fun selectedBg() {
+        fun setSelectedBackground() {
             binding.regionLayout.background = context.getDrawable(R.drawable.selector_location_button_selected)
             binding.regionTv.setTextColor(ContextCompat.getColor(context, R.color.white))
         }

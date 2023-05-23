@@ -261,6 +261,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val modifiedData = viewModel.modifyRegionData(data)
 
         regionAdapter = RegionAdapter(modifiedData, this, remoteConfigRepository, analyticsUtils)
+        regionAdapter!!.setOnItemClickListener(object: RegionAdapter.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val selectedRegion = modifiedData[position]
+
+                viewPager.invalidate()
+                viewPager.adapter = null
+
+                viewModel.showLocationInfo(selectedRegion.name)
+                viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+            }
+        })
+
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.adapter = regionAdapter
