@@ -70,7 +70,7 @@ class MainViewModel @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView) {
+    fun initializeMapView(mapView: MapView, initialRegion: Region) {
         mapView.getMapAsync {
             naverMap = it.apply {
                 locationTrackingMode = LocationTrackingMode.NoFollow
@@ -81,8 +81,8 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-            showLocationInfo("강남")
+            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
+            showLocationInfo(initialRegion.name)
 
             isInitialized = true
         }

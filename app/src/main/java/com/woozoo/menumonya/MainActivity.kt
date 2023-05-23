@@ -94,8 +94,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         binding.naverMap.onCreate(savedInstanceState)
-
-        viewModel.initializeMapView(binding.naverMap)
         viewModel.getRegionList()
     }
 
@@ -255,6 +253,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     /**
      * (1) 지역 리스트 버튼 표시(RecyclerView)
      * (2) 클릭 로직 적용(RecyclerView-selection)
+     * (3) 네이버 맵 초기화, 카메라 이동
      */
     private fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
@@ -276,5 +275,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.adapter = regionAdapter
+
+        viewModel.initializeMapView(binding.naverMap, modifiedData[0])
     }
 }
