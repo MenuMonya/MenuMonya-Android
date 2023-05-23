@@ -13,11 +13,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.MainViewModel.Event
@@ -264,42 +262,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         regionAdapter = RegionAdapter(modifiedData, this, remoteConfigRepository, analyticsUtils)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.adapter = regionAdapter
-
-        val tracker = SelectionTracker.Builder(
-            "selection_id",
-            recyclerView,
-            RegionAdapter.RegionKeyProvider(regionAdapter!!),
-            RegionAdapter.RegionDetailsLookup(recyclerView),
-            StorageStrategy.createStringStorage()
-        ).withSelectionPredicate(
-            SelectionPredicates.createSelectSingleAnything() // 하나만 클릭 활성화 할 수 있도록 설정
-        ).build()
-
-        /**
-         * 클릭 이벤트 리스너(key: 지역 이름값)
-         * (1) ViewPager 초기화
-         * (2) 카메라 이동
-         * (3) 해당 지역의 식당 마커 표시
-         */
-        tracker.addObserver(
-            object: SelectionTracker.SelectionObserver<String>() {
-                override fun onItemStateChanged(key: String, selected: Boolean) {
-                    super.onItemStateChanged(key, selected)
-
-                    if (selected) {
-                        val selectedRegion = modifiedData.filter { it.name == key }[0]
-
-                        viewPager.invalidate()
-                        viewPager.adapter = null
-
-                        viewModel.showLocationInfo(key)
-                        viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
-                    }
-                }
-            }
-        )
-
-        regionAdapter!!.tracker = tracker
     }
 }

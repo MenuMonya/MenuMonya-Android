@@ -4,15 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat.getColor
-import androidx.recyclerview.selection.ItemDetailsLookup
-import androidx.recyclerview.selection.ItemKeyProvider
-import androidx.recyclerview.selection.SelectionTracker
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.woozoo.menumonya.Application.Companion.context
 import com.woozoo.menumonya.Constants.Companion.REGION_BUTTON_TYPE
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
@@ -29,12 +23,10 @@ class RegionAdapter(private var data: ArrayList<Region>,
     : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 
-    private lateinit var binding: ItemRegionBinding
-    var tracker: SelectionTracker<String>? = null // 선택 여부를 추적(track)함.
+    var selectedItemPos = -1
+    var lastItemSelectedPos = -1
 
-    init {
-        setHasStableIds(true)
-    }
+    private lateinit var binding: ItemRegionBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         binding = ItemRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -49,8 +41,6 @@ class RegionAdapter(private var data: ArrayList<Region>,
     override fun getItemCount(): Int {
         return data.size
     }
-
-    override fun getItemId(position: Int): Long = position.toLong()
 
     // 이 부분을 꼭 구현해주어야 내가 설정한 뷰타입대로 적용된다.
     override fun getItemViewType(position: Int): Int {
@@ -68,9 +58,11 @@ class RegionAdapter(private var data: ArrayList<Region>,
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (data[position].viewType == REGION_BUTTON_TYPE) {
-            tracker?.let {
-                (holder as RegionButtonViewHolder).bind(data[position], it.isSelected(data[position].name))
-            }
+            if(position == selectedItemPos)
+                (holder as RegionButtonViewHolder).selectedBg()
+            else
+                (holder as RegionButtonViewHolder).defaultBg()
+            holder.bind(data[position])
         } else {
             (holder as RegionReportViewHolder).bind()
         }
@@ -90,45 +82,31 @@ class RegionAdapter(private var data: ArrayList<Region>,
     }
 
     inner class RegionButtonViewHolder(private val binding: ItemRegionBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Region, isSelected: Boolean) {
+        init {
+            itemView.setOnClickListener {
+                selectedItemPos = adapterPosition
+                if (lastItemSelectedPos == -1)
+                    lastItemSelectedPos = selectedItemPos
+                else {
+                    notifyItemChanged(lastItemSelectedPos)
+                    lastItemSelectedPos = selectedItemPos
+                }
+                notifyItemChanged(selectedItemPos)
+            }
+        }
+
+        fun bind(data: Region) {
             binding.regionTv.text = data.name
-
-            if (isSelected) {
-                binding.regionLayout.background = AppCompatResources.getDrawable(context(),
-                    R.drawable.selector_location_button_selected)
-                binding.regionTv.setTextColor(getColor(context(), R.color.white))
-            } else {
-                binding.regionLayout.background = AppCompatResources.getDrawable(context(),
-                    R.drawable.selector_location_button)
-                binding.regionTv.setTextColor(getColor(context(), R.color.gray600))
-            }
         }
 
-        fun getItemDetails(): ItemDetailsLookup.ItemDetails<String> =
-            object: ItemDetailsLookup.ItemDetails<String>() {
-                override fun getPosition(): Int = adapterPosition
-                override fun getSelectionKey(): String = data[adapterPosition].name
-                override fun inSelectionHotspot(e: MotionEvent): Boolean = true // 이게 있어야 클릭 이벤트 활성화됨.
-            }
-    }
-
-    class RegionDetailsLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<String>() {
-        override fun getItemDetails(event: MotionEvent): ItemDetails<String>? {
-            val view = recyclerView.findChildViewUnder(event.x, event.y)
-            if (view != null && recyclerView.getChildViewHolder(view) is RegionButtonViewHolder) {
-                return (recyclerView.getChildViewHolder(view) as RegionAdapter.RegionButtonViewHolder).getItemDetails()
-            }
-            return null
-        }
-    }
-
-    class RegionKeyProvider(private val adapter: RegionAdapter): ItemKeyProvider<String>(SCOPE_CACHED) {
-        override fun getKey(position: Int): String? {
-            return adapter.data[position].name
+        fun defaultBg() {
+            binding.regionLayout.background = context.getDrawable(R.drawable.selector_location_button)
+            binding.regionTv.setTextColor(ContextCompat.getColor(context, R.color.gray600))
         }
 
-        override fun getPosition(key: String): Int {
-            return adapter.data.indexOfFirst { it.name == key }
+        fun selectedBg() {
+            binding.regionLayout.background = context.getDrawable(R.drawable.selector_location_button_selected)
+            binding.regionTv.setTextColor(ContextCompat.getColor(context, R.color.white))
         }
     }
 }
