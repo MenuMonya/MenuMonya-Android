@@ -7,5 +7,7 @@ interface DataStoreRepository {
 
     suspend fun setLastSelectedRegion(region: String): Preferences
 
-    suspend fun isFirstOpen(): Boolean
+    suspend fun getIsFirstOpen(): Boolean
+
+    suspend fun setIsFirstOpen(isFirstOpen: Boolean): Preferences
 }

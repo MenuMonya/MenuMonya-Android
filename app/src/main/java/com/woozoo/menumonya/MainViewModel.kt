@@ -66,6 +66,7 @@ class MainViewModel @Inject constructor(
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
+        checkFirstOpen()
     }
 
     private fun event(event: Event) {
@@ -274,6 +275,20 @@ class MainViewModel @Inject constructor(
     }
 
     /**
+     * 최초 실행 여부 체크 및 다이얼로그 표시
+     */
+    private fun checkFirstOpen() {
+        viewModelScope.launch {
+            val isFirstOpen = dataStoreRepository.getIsFirstOpen()
+
+            if (isFirstOpen) {
+                showNoticeDialog()
+                dataStoreRepository.setIsFirstOpen(false)
+            }
+        }
+    }
+
+    /**
      * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
      * (2) '지역건의' 버튼 추가
      */
@@ -334,6 +349,10 @@ class MainViewModel @Inject constructor(
         event(Event.ShowRegionList(data))
     }
 
+    private fun showNoticeDialog() {
+        event(Event.ShowNoticeDialog(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이 곳에 정의함.
@@ -351,5 +370,6 @@ class MainViewModel @Inject constructor(
 
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
         data class ShowRegionList(val data: ArrayList<Region>): Event()
+        data class ShowNoticeDialog(val data: String): Event()
     }
 }

@@ -29,9 +29,16 @@ class DataStoreRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun isFirstOpen(): Boolean {
+    override suspend fun getIsFirstOpen() = withContext(Dispatchers.IO) {
         val isFirstOpenKey = booleanPreferencesKey("key_is_first_open")
         val preferences = dataStore.data.first()
-        return preferences[isFirstOpenKey] ?: true
+        preferences[isFirstOpenKey] ?: true
+    }
+
+    override suspend fun setIsFirstOpen(isFirstOpen: Boolean) = withContext(Dispatchers.IO) {
+        val isFirstOpenKey = booleanPreferencesKey("key_is_first_open")
+        dataStore.edit {
+            it[isFirstOpenKey] = isFirstOpen
+        }
     }
 }

@@ -173,6 +173,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         is Event.ShowRegionList -> {
             initRegionRecyclerView(event.data)
         }
+        is Event.ShowNoticeDialog -> {
+            NoticeDialog(this).show()
+
+        }
     }
 
     override fun onStart() {
