@@ -94,11 +94,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 지역 정보를 조회하고 화면에 표시하기 위한 형태로 리스트를 수정함.
+     */
     fun getRegionList() {
         viewModelScope.launch {
             val regionList = fireStoreRepository.getRegionList()
+            val modifiedRegionList = modifyRegionData(regionList)
 
-            showRegionList(regionList)
+            showRegionList(modifiedRegionList)
         }
     }
 

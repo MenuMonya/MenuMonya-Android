@@ -259,22 +259,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * (2) 클릭 로직 적용(RecyclerView-selection)
      * (3) 네이버 맵 초기화, 카메라 이동
      */
-    private suspend fun initRegionRecyclerView(data: ArrayList<Region>) {
+    private fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
-        val modifiedData = viewModel.modifyRegionData(data)
 
-        regionAdapter = RegionAdapter(modifiedData, this, remoteConfigRepository, analyticsUtils)
+        regionAdapter = RegionAdapter(data, this, remoteConfigRepository, analyticsUtils)
         regionAdapter!!.setOnItemClickListener(object: RegionAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val selectedRegion = modifiedData[position]
+                val selectedRegion = data[position]
 
                 viewPager.invalidate()
                 viewPager.adapter = null
 
-                viewModel.showLocationInfo(selectedRegion.name)
-                viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
-
-                viewModel.setLastRegionData(selectedRegion.name)
+                viewModel.apply {
+                    showLocationInfo(selectedRegion.name)
+                    moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                    setLastRegionData(selectedRegion.name)
+                }
             }
         })
 
@@ -282,6 +282,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.adapter = regionAdapter
 
-        viewModel.initializeMapView(binding.naverMap, modifiedData[0])
+        viewModel.initializeMapView(binding.naverMap, data[0])
     }
 }
