@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.Context.LOCATION_SERVICE
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -22,6 +23,7 @@ import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.model.Region
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.repository.DataStoreRepository
 import com.woozoo.menumonya.repository.FireStoreRepository
 import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
@@ -32,9 +34,11 @@ import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOn
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
 import javax.inject.Inject
 
@@ -43,6 +47,7 @@ class MainViewModel @Inject constructor(
     application: Application,
     private val fireStoreRepository: FireStoreRepository,
     private val remoteConfigRepository: RemoteConfigRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val analyticsUtils: AnalyticsUtils
 ): AndroidViewModel(Application()) {
 
@@ -272,10 +277,20 @@ class MainViewModel @Inject constructor(
      * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
      * (2) '지역건의' 버튼 추가
      */
-    fun modifyRegionData(data: ArrayList<Region>): ArrayList<Region> {
+    suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
+        // TODO: 내부 DB에 저장된 가장 마지막 지역을 맨 앞으로 이동(default는 강남)
+        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+        Log.d("zzanzu", "modifyRegionData: $lastSelectedRegion")
+
         data.add(Region(REGION_REPORT, 0.0, 0.0, REGION_REPORT_TYPE))
 
-        return data
+        data
+    }
+
+    fun setLastRegionData(region: String) {
+        viewModelScope.launch {
+            dataStoreRepository.setLastSelectedRegion(region)
+        }
     }
 
     fun getRegionReportUrl(): String {

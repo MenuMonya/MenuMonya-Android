@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         viewModel.getRegionList()
     }
 
-    private fun handleEvent(event: Event) = when (event) {
+    private suspend fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.FetchRestaurantInfo -> {
             if (restaurantAdapter != null) {
@@ -255,7 +255,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * (2) 클릭 로직 적용(RecyclerView-selection)
      * (3) 네이버 맵 초기화, 카메라 이동
      */
-    private fun initRegionRecyclerView(data: ArrayList<Region>) {
+    private suspend fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
         val modifiedData = viewModel.modifyRegionData(data)
 
@@ -269,6 +269,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 viewModel.showLocationInfo(selectedRegion.name)
                 viewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+
+                viewModel.setLastRegionData(selectedRegion.name)
             }
         })
 
