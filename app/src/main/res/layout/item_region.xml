@@ -8,7 +8,7 @@
     android:gravity="center"
     android:paddingVertical="@dimen/region_button_padding_vertical"
     android:paddingHorizontal="@dimen/region_button_padding_horizontal"
-    android:layout_marginEnd="@dimen/region_button_margin"
+    android:layout_marginStart="@dimen/region_button_margin"
     >
 
     <TextView
