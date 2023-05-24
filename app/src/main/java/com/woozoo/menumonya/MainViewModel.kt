@@ -6,7 +6,6 @@ import android.app.Application
 import android.content.Context.LOCATION_SERVICE
 import android.location.LocationListener
 import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -278,10 +278,12 @@ class MainViewModel @Inject constructor(
      * (2) '지역건의' 버튼 추가
      */
     suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
-        // TODO: 내부 DB에 저장된 가장 마지막 지역을 맨 앞으로 이동(default는 강남)
         val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
-        Log.d("zzanzu", "modifyRegionData: $lastSelectedRegion")
 
+        val lastSelectedRegionIndex = data.indexOfFirst {
+            it.name == lastSelectedRegion
+        }
+        Collections.swap(data, 0, lastSelectedRegionIndex)
         data.add(Region(REGION_REPORT, 0.0, 0.0, REGION_REPORT_TYPE))
 
         data
