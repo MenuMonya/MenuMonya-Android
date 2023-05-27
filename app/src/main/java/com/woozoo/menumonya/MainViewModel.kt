@@ -105,7 +105,11 @@ class MainViewModel @Inject constructor(
                 marker.apply {
                     width = Marker.SIZE_AUTO
                     height = Marker.SIZE_AUTO
-                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
+                    zIndex = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
                     icon = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
                         OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
                     } else {
@@ -199,6 +203,11 @@ class MainViewModel @Inject constructor(
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
+                    zIndex = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
                     icon = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
                         OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
                     } else {
