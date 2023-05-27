@@ -293,17 +293,19 @@ class MainViewModel @Inject constructor(
     }
 
     /**
+     * (0) regionId 값으로 데이터 정렬(보여주고싶은 순서로 활용함)
      * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
      * (2) '지역건의' 버튼 추가
      */
     suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
-        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+        data.sortBy { it.regionId } // (0)
 
-        val lastSelectedRegionIndex = data.indexOfFirst {
-            it.name == lastSelectedRegion
-        }
+        // (1)
+        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+        val lastSelectedRegionIndex = data.indexOfFirst { it.name == lastSelectedRegion }
         Collections.swap(data, 0, lastSelectedRegionIndex)
-        data.add(Region(REGION_REPORT, 0.0, 0.0, REGION_REPORT_TYPE))
+
+        data.add(Region(REGION_REPORT, 0.0, 0.0, 999, REGION_REPORT_TYPE)) // (2)
 
         data
     }
