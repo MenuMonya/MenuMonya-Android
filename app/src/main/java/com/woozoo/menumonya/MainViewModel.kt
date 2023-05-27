@@ -25,6 +25,7 @@ import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_VIEW_PAGER
+import com.woozoo.menumonya.util.DateUtils
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -87,8 +88,10 @@ class MainViewModel @Inject constructor(
 
     fun moveCameraToMarker(markerIndex: Int) {
         if (mRestaurantInfoArray.size > 0) {
-            val latitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.latitude)
-            val longitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.longitude)
+            val selectedRestaurant = mRestaurantInfoArray[markerIndex]
+
+            val latitude = parseDouble(selectedRestaurant.location.coord.latitude)
+            val longitude = parseDouble(selectedRestaurant.location.coord.longitude)
 
             val coord = LatLng(latitude, longitude)
 
@@ -98,12 +101,16 @@ class MainViewModel @Inject constructor(
             }
 
             // 마커 설정 초기화
-            for (marker in markerList) {
+            markerList.forEachIndexed { index, marker ->
                 marker.apply {
                     width = Marker.SIZE_AUTO
                     height = Marker.SIZE_AUTO
                     zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    icon = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    }
                 }
             }
             // 선택된 마커 아이콘 변경
@@ -115,7 +122,7 @@ class MainViewModel @Inject constructor(
             naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
 
-            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, mRestaurantInfoArray[markerIndex].name)
+            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, selectedRestaurant.name)
         }
     }
 
@@ -192,7 +199,11 @@ class MainViewModel @Inject constructor(
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    icon = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    }
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
                         analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_MARKER, restaurant.name)
