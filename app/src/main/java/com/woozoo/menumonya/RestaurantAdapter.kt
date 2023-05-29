@@ -20,6 +20,7 @@ import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayMenuDateText
 
 class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
+                        private var buttonTextList: ArrayList<String>,
                         private val context: Context,
                         private val remoteConfigRepository: RemoteConfigRepository,
                         private val analyticsUtils: AnalyticsUtils
@@ -30,7 +31,8 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
     class ItemViewHolder(val binding: ItemRestaurantBinding,
                          private val context: Context,
                          private val remoteConfigRepository: RemoteConfigRepository,
-                         private val analyticsUtils: AnalyticsUtils
+                         private val analyticsUtils: AnalyticsUtils,
+                         private var buttonTextList: ArrayList<String>
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(data: Restaurant) {
@@ -39,6 +41,7 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
             binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
             binding.restaurantPhoneNumberTv.text = data.phoneNumber
             binding.restaurantLocationDescriptionTv.text = data.location.description
+            binding.menuReportBtn.text = buttonTextList.random()
 
             if (data.todayMenu.date == getTodayDate()) { // 오늘 메뉴인 경우에만 표시함.
                 // (1) 메뉴 레이아웃 표시
@@ -89,7 +92,7 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
         viewType: Int
     ): ItemViewHolder {
         binding = ItemRestaurantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding, context, remoteConfigRepository, analyticsUtils)
+        return ItemViewHolder(binding, context, remoteConfigRepository, analyticsUtils, buttonTextList)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

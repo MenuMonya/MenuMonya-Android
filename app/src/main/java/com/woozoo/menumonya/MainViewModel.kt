@@ -171,7 +171,10 @@ class MainViewModel @Inject constructor(
      */
     fun showLocationViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
-            showRestaurantView(mRestaurantInfoArray, markerIndex)
+            viewModelScope.launch {
+                val buttonTextList = fireStoreRepository.getReportButtonText()
+                showRestaurantView(mRestaurantInfoArray, buttonTextList, markerIndex)
+            }
         }
     }
 
@@ -348,8 +351,9 @@ class MainViewModel @Inject constructor(
         return remoteConfigRepository.getRegionReportUrlConfig()
     }
 
-    private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
-        event(Event.ShowRestaurantView(data, markerIndex))
+    private fun showRestaurantView(data: ArrayList<Restaurant>,
+                                   buttonTextList: ArrayList<String>, markerIndex: Int) {
+        event(Event.ShowRestaurantView(data, buttonTextList, markerIndex))
     }
 
     private fun onMarkerClicked(markerIndex: Int, location: String) {
@@ -394,7 +398,8 @@ class MainViewModel @Inject constructor(
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
-        data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>,
+                                      val buttonTextList: ArrayList<String>, val markerIndex: Int): Event()
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
         data class RequestLocationPermission(val data: String): Event()
         data class ShowGpsPermissionAlert(val data: String): Event()

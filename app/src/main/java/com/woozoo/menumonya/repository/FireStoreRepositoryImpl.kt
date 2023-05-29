@@ -3,6 +3,7 @@ package com.woozoo.menumonya.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.woozoo.menumonya.model.Region
+import com.woozoo.menumonya.model.ReportButtonText
 import com.woozoo.menumonya.model.Restaurant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -57,5 +58,21 @@ class FireStoreRepositoryImpl @Inject constructor(
         }
 
         return regionInfo
+    }
+
+    override suspend fun getReportButtonText(): ArrayList<String> {
+        val reportButtonTextList = ArrayList<String>()
+        val reportButtonTextRef = db.collection("menu-report-text")
+
+        val result = reportButtonTextRef.get().await()
+        val documents = result.documents
+
+        for (document in documents) {
+            val text = document.toObject<ReportButtonText>()
+
+            if (text != null && text.description != "") reportButtonTextList.add(text.description)
+        }
+
+        return reportButtonTextList
     }
 }

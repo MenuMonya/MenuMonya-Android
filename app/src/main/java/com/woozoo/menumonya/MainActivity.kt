@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                restaurantAdapter = RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                restaurantAdapter = RestaurantAdapter(event.data, event.buttonTextList, this, remoteConfigRepository, analyticsUtils)
                 viewPager.adapter = restaurantAdapter
                 if (event.markerIndex != -1) {
                     viewPager.setCurrentItem(event.markerIndex, false)
