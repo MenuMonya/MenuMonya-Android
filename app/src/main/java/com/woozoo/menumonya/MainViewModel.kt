@@ -113,7 +113,7 @@ class MainViewModel @Inject constructor(
                     icon = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
                         OverlayImage.fromResource(R.drawable.restaurant_marker)
                     } else {
-                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
                     }
                 }
             }
@@ -211,7 +211,7 @@ class MainViewModel @Inject constructor(
                     icon = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
                         OverlayImage.fromResource(R.drawable.restaurant_marker)
                     } else {
-                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_added) // TODO: 이미지 교체
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
                     }
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
