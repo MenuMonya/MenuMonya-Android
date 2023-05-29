@@ -119,7 +119,11 @@ class MainViewModel @Inject constructor(
             }
             // 선택된 마커 아이콘 변경
             markerList[markerIndex].apply {
-                icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                icon = if (selectedRestaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                } else {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                }
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
@@ -182,7 +186,7 @@ class MainViewModel @Inject constructor(
     /**
      * 지도에 식당 마커들을 표시함.
      * selectedIndex 값을 지정할 경우, 해당 인덱스의 마커를 클릭된 아이콘(@drawable/restaurant_marker_selected)으로 표시함.
-     *
+     * 마커를 표시하려는 식당의 메뉴가 등록되지 않은 경우와 등록된 경우의 마커가 다름.
      * @param selectedIndex  선택된 아이콘으로 변경할 마커의 인덱스.
      */
     private fun setMarkers(restaurantInfo: ArrayList<Restaurant>, selectedIndex: Int = -1) {
@@ -226,7 +230,11 @@ class MainViewModel @Inject constructor(
             // 클릭된 아이콘으로 변경
             if (selectedIndex != -1) {
                 markerList[selectedIndex].apply {
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    icon = if (restaurantInfo[selectedIndex].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                    }
                     zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
                 }
             }
