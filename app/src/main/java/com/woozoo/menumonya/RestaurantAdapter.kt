@@ -41,7 +41,11 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
             binding.restaurantTimeTv.text = data.time.openTime + " ~ " + data.time.closeTime
             binding.restaurantPhoneNumberTv.text = data.phoneNumber
             binding.restaurantLocationDescriptionTv.text = data.location.description
-            binding.menuReportBtn.text = buttonTextList.random()
+            binding.menuReportDescriptionTv.text = if (data.menuAvailableOnline) {
+                context.resources.getString(R.string.restaurant_info_menu_report_description_online_available)
+            } else {
+                context.resources.getString(R.string.restaurant_info_menu_report_description)
+            }
 
             if (data.todayMenu.date == getTodayDate()) { // 오늘 메뉴인 경우에만 표시함.
                 // (1) 메뉴 레이아웃 표시
@@ -69,6 +73,7 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                 binding.menuReportLayout.visibility = View.VISIBLE
                 binding.restaurantMenuLayout.visibility = View.GONE
                 binding.restaurantMenuMoreTv.visibility = View.GONE
+                binding.menuReportBtn.text = buttonTextList.random()
                 binding.menuReportBtn.setOnClickListener {
                     analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_REPORT_BUTTON, data.name)
 
