@@ -3,6 +3,7 @@ package com.woozoo.menumonya
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,6 +81,9 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                     val menuReportUrl = remoteConfigRepository.getReportMenuUrlConfig()
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
                     context.startActivity(intent)
+                }
+                binding.menuReportInfoIv.setOnClickListener {
+                    // TODO: 메뉴 수집 관련 정보 다이얼로그 표시
                 }
             }
 
