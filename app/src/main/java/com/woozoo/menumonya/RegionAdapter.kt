@@ -80,7 +80,8 @@ class RegionAdapter(private var data: ArrayList<Region>,
             }
             holder.bind(data[position])
         } else {
-            (holder as RegionReportViewHolder).bind()
+            (holder as RegionReportViewHolder).setReportButtonBackground()
+            holder.bind()
         }
     }
 
@@ -97,6 +98,14 @@ class RegionAdapter(private var data: ArrayList<Region>,
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(regionReportUrl))
                 context.startActivity(intent)
             }
+        }
+
+        /**
+         * '지역건의' 버튼 디자인 적용
+         */
+        fun setReportButtonBackground() {
+            binding.regionLayout.background = context.getDrawable(R.drawable.selector_location_report_button)
+            binding.regionTv.setTextColor(ContextCompat.getColor(context, R.color.white))
         }
     }
 
