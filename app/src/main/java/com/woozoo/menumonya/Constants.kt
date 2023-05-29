@@ -4,6 +4,10 @@ import com.naver.maps.geometry.LatLng
 
 class Constants {
     companion object {
+        val REGION_REPORT = "지역건의"
+        val REGION_BUTTON_TYPE = 0
+        val REGION_REPORT_TYPE = 1
+
         val LATLNG_GN = LatLng(37.4981647, 127.0283079)
         val LATLNG_YS = LatLng(37.5007163, 127.0366182)
         val MAP_MIN_ZOOM = 13.0

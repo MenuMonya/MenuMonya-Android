@@ -8,53 +8,20 @@
     tools:context="com.woozoo.menumonya.MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/location_select_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/region_layout_height"
         android:background="@color/white"
-        android:paddingHorizontal="@dimen/location_select_layout_padding_horizontal"
-        android:paddingVertical="@dimen/location_select_layout_padding_vertical">
+        android:paddingVertical="@dimen/region_layout_padding_vertical">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/location_gn_btn"
-            android:layout_width="@dimen/location_select_button_width"
-            android:layout_height="@dimen/location_select_button_height"
-            android:background="@drawable/white_button_background"
-            android:stateListAnimator="@null"
-            android:text="강남"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textColor="@color/gray600"
-            android:textSize="@dimen/location_select_button_text"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/location_ys_btn"
-            android:layout_width="@dimen/location_select_button_width"
-            android:layout_height="@dimen/location_select_button_height"
-            android:layout_marginStart="@dimen/location_select_button_margin_start"
-            android:background="@drawable/white_button_background"
-            android:stateListAnimator="@null"
-            android:text="역삼"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textColor="@color/gray600"
-            android:textSize="@dimen/location_select_button_text"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/location_gn_btn"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/feedback_iv"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/region_rv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/location_select_layout_feedback_button_padding"
-            android:src="@drawable/icon_feedback"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

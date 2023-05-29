@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/region_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_location_button"
+    android:gravity="center"
+    android:paddingVertical="@dimen/region_button_padding_vertical"
+    android:paddingHorizontal="@dimen/region_button_padding_horizontal"
+    android:layout_marginStart="@dimen/region_button_margin"
+    >
+
+    <TextView
+        android:id="@+id/region_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지역명"
+        android:fontFamily="@font/pretendard_semibold"
+        android:textColor="@color/gray600"
+        android:textSize="@dimen/region_button_text"
+        android:textStyle="bold"
+        />
+
+</LinearLayout>

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <defaults>
   <entry>
-    <key>FEEDBACK_URL_DEV</key>
-    <value>https://bit.ly/3oDijQp</value>
-  </entry>
-  <entry>
-    <key>FEEDBACK_URL_PROD</key>
-    <value>https://bit.ly/3oDijQp</value>
-  </entry>
-  <entry>
     <key>MENU_COLLECTION_DEV</key>
     <value>menus-dev</value>
   </entry>
@@ -35,6 +27,10 @@
   <entry>
     <key>LATEST_APP_VERSION_AOS_PROD</key>
     <value>1</value>
+  </entry>
+  <entry>
+    <key>REGION_REPORT_URL</key>
+    <value>https://bit.ly/3oDijQp</value>
   </entry>
 
 </defaults>

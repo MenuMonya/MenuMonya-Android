@@ -15,6 +15,7 @@ class AnalyticsUtils @Inject constructor(@ApplicationContext val context: Contex
         const val CONTENT_TYPE_VIEW_PAGER = "view_pager"
         const val CONTENT_TYPE_LOCATION = "location"
         const val CONTENT_TYPE_REPORT_BUTTON = "report_button"
+        const val CONTENT_TYPE_REPORT_REGION_BUTTON = "report_region_button"
     }
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)

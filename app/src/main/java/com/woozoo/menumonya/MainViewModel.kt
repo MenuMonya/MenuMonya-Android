@@ -18,7 +18,11 @@ import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
+import com.woozoo.menumonya.model.Region
 import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.repository.DataStoreRepository
 import com.woozoo.menumonya.repository.FireStoreRepository
 import com.woozoo.menumonya.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
@@ -29,10 +33,13 @@ import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOn
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +47,7 @@ class MainViewModel @Inject constructor(
     application: Application,
     private val fireStoreRepository: FireStoreRepository,
     private val remoteConfigRepository: RemoteConfigRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val analyticsUtils: AnalyticsUtils
 ): AndroidViewModel(Application()) {
 
@@ -58,6 +66,7 @@ class MainViewModel @Inject constructor(
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
+        checkFirstOpen()
     }
 
     private fun event(event: Event) {
@@ -67,7 +76,7 @@ class MainViewModel @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView) {
+    fun initializeMapView(mapView: MapView, initialRegion: Region) {
         mapView.getMapAsync {
             naverMap = it.apply {
                 locationTrackingMode = LocationTrackingMode.NoFollow
@@ -78,10 +87,22 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-            showLocationInfo("강남")
+            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
+            showLocationInfo(initialRegion.name)
 
             isInitialized = true
+        }
+    }
+
+    /**
+     * 지역 정보를 조회하고 화면에 표시하기 위한 형태로 리스트를 수정함.
+     */
+    fun getRegionList() {
+        viewModelScope.launch {
+            val regionList = fireStoreRepository.getRegionList()
+            val modifiedRegionList = modifyRegionData(regionList)
+
+            showRegionList(modifiedRegionList)
         }
     }
 
@@ -119,7 +140,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun moveCameraToCoord(latitude: Double, longitude: Double) {
+    fun moveCameraToCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
         val cameraUpdateParams = CameraUpdateParams().apply {
             scrollTo(coord)
@@ -148,7 +169,7 @@ class MainViewModel @Inject constructor(
                 "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
+            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
             setMarkers(mRestaurantInfoArray)
 
             analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
@@ -159,7 +180,7 @@ class MainViewModel @Inject constructor(
         if (isInitialized) {
             showLoading(true)
             viewModelScope.launch {
-                mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(selectedLocation)
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedLocation)
                 setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
 
                 fetchRestaurantInfo(mRestaurantInfoArray)
@@ -257,12 +278,46 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getFeedbackUrl(): String {
-        return remoteConfigRepository.getFeedbackUrlConfig()
+    /**
+     * 최초 실행 여부 체크 및 다이얼로그 표시
+     */
+    private fun checkFirstOpen() {
+        viewModelScope.launch {
+            val isFirstOpen = dataStoreRepository.getIsFirstOpen()
+
+            if (isFirstOpen) {
+                showNoticeDialog()
+                dataStoreRepository.setIsFirstOpen(false)
+            }
+        }
     }
 
-    private fun showToast(text: String) {
-        event(Event.ShowToast(text))
+    /**
+     * (0) regionId 값으로 데이터 정렬(보여주고싶은 순서로 활용함)
+     * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
+     * (2) '지역건의' 버튼 추가
+     */
+    suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
+        data.sortBy { it.regionId } // (0)
+
+        // (1)
+        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+        val lastSelectedRegionIndex = data.indexOfFirst { it.name == lastSelectedRegion }
+        Collections.swap(data, 0, lastSelectedRegionIndex)
+
+        data.add(Region(REGION_REPORT, 0.0, 0.0, 999, REGION_REPORT_TYPE)) // (2)
+
+        data
+    }
+
+    fun setLastRegionData(region: String) {
+        viewModelScope.launch {
+            dataStoreRepository.setLastSelectedRegion(region)
+        }
+    }
+
+    fun getRegionReportUrl(): String {
+        return remoteConfigRepository.getRegionReportUrlConfig()
     }
 
     private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
@@ -296,6 +351,14 @@ class MainViewModel @Inject constructor(
         event(Event.FetchRestaurantInfo(data))
     }
 
+    private fun showRegionList(data: ArrayList<Region>) {
+        event(Event.ShowRegionList(data))
+    }
+
+    private fun showNoticeDialog() {
+        event(Event.ShowNoticeDialog(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이 곳에 정의함.
@@ -312,5 +375,7 @@ class MainViewModel @Inject constructor(
         data class ShowUpdateDialog(val data: String): Event()
 
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
+        data class ShowRegionList(val data: ArrayList<Region>): Event()
+        data class ShowNoticeDialog(val data: String): Event()
     }
 }

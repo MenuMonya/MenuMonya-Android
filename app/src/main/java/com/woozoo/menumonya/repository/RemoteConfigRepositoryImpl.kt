@@ -54,25 +54,19 @@ class RemoteConfigRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getFeedbackUrlConfig(): String {
-        return if (BuildConfig.DEBUG) {
-            remoteConfig.getString("FEEDBACK_URL_DEV")
-        } else {
-            remoteConfig.getString("FEEDBACK_URL_PROD")
-        }
-    }
-
-    override fun getReportMenuUrlConfig(): String {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
-        return remoteConfig.getString("REPORT_MENU_URL")
-    }
-
     override fun getLatestAppVersionConfig(): Long {
         return if (BuildConfig.DEBUG) {
             remoteConfig.getLong("LATEST_APP_VERSION_AOS_DEV")
         } else {
             remoteConfig.getLong("LATEST_APP_VERSION_AOS_PROD")
         }
+    }
+
+    override fun getReportMenuUrlConfig(): String {
+        return remoteConfig.getString("REPORT_MENU_URL")
+    }
+
+    override fun getRegionReportUrlConfig(): String {
+        return remoteConfig.getString("REGION_REPORT_URL")
     }
 }

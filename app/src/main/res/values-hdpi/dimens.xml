@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--지역 설정 레이아웃 관련-->
-    <dimen name="location_select_layout_padding_vertical">10dp</dimen>
-    <dimen name="location_select_layout_padding_horizontal">14dp</dimen>
-    <dimen name="location_select_layout_feedback_button_width">20dp</dimen>
-    <dimen name="location_select_layout_feedback_button_height">16dp</dimen>
-    <dimen name="location_select_layout_feedback_button_padding">10dp</dimen>
-    <dimen name="location_select_button_width">60dp</dimen>
-    <dimen name="location_select_button_height">30dp</dimen>
-    <dimen name="location_select_button_text">14dp</dimen>
-    <dimen name="location_select_button_margin_start">10dp</dimen>
+    <dimen name="region_layout_padding_vertical">10dp</dimen>
+    <dimen name="region_layout_padding_horizontal">14dp</dimen>
+    <dimen name="region_button_text">14dp</dimen>
+    <dimen name="region_layout_height">58dp</dimen>
+    <dimen name="region_button_margin">10dp</dimen>
+    <dimen name="region_button_padding_vertical">8dp</dimen>
+    <dimen name="region_button_padding_horizontal">16dp</dimen>
 
     <!--'내 주변' 버튼 관련-->
     <dimen name="current_location_width">66dp</dimen>
