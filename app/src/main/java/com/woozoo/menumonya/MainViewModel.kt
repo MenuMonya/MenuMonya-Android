@@ -29,6 +29,7 @@ import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_VIEW_PAGER
+import com.woozoo.menumonya.util.DateUtils
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
@@ -108,8 +109,10 @@ class MainViewModel @Inject constructor(
 
     fun moveCameraToMarker(markerIndex: Int) {
         if (mRestaurantInfoArray.size > 0) {
-            val latitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.latitude)
-            val longitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.longitude)
+            val selectedRestaurant = mRestaurantInfoArray[markerIndex]
+
+            val latitude = parseDouble(selectedRestaurant.location.coord.latitude)
+            val longitude = parseDouble(selectedRestaurant.location.coord.longitude)
 
             val coord = LatLng(latitude, longitude)
 
@@ -119,24 +122,36 @@ class MainViewModel @Inject constructor(
             }
 
             // 마커 설정 초기화
-            for (marker in markerList) {
+            markerList.forEachIndexed { index, marker ->
                 marker.apply {
                     width = Marker.SIZE_AUTO
                     height = Marker.SIZE_AUTO
-                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    zIndex = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
+                    icon = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
+                    }
                 }
             }
             // 선택된 마커 아이콘 변경
             markerList[markerIndex].apply {
-                icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                icon = if (selectedRestaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                } else {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                }
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
             naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
 
-            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, mRestaurantInfoArray[markerIndex].name)
+            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, selectedRestaurant.name)
         }
     }
 
@@ -192,7 +207,7 @@ class MainViewModel @Inject constructor(
     /**
      * 지도에 식당 마커들을 표시함.
      * selectedIndex 값을 지정할 경우, 해당 인덱스의 마커를 클릭된 아이콘(@drawable/restaurant_marker_selected)으로 표시함.
-     *
+     * 마커를 표시하려는 식당의 메뉴가 등록되지 않은 경우와 등록된 경우의 마커가 다름.
      * @param selectedIndex  선택된 아이콘으로 변경할 마커의 인덱스.
      */
     private fun setMarkers(restaurantInfo: ArrayList<Restaurant>, selectedIndex: Int = -1) {
@@ -213,7 +228,16 @@ class MainViewModel @Inject constructor(
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    zIndex = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
+                    icon = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
+                    }
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
                         analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_MARKER, restaurant.name)
@@ -227,7 +251,11 @@ class MainViewModel @Inject constructor(
             // 클릭된 아이콘으로 변경
             if (selectedIndex != -1) {
                 markerList[selectedIndex].apply {
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    icon = if (restaurantInfo[selectedIndex].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                    }
                     zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
                 }
             }
