@@ -15,6 +15,7 @@ import com.woozoo.menumonya.R
 import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.ui.dialog.ImageDialog
 import com.woozoo.menumonya.ui.dialog.MenuDialog
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_BUTTON
@@ -85,6 +86,8 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                 }
                 binding.menuReportInfoIv.setOnClickListener {
                     // TODO: 메뉴 수집 관련 정보 다이얼로그 표시
+                    val imageDialog = ImageDialog(context)
+                    imageDialog.show()
                 }
             }
 

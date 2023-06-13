@@ -44,6 +44,10 @@
     <dimen name="menu_content_text_size">14dp</dimen>
     <dimen name="menu_report_button_text_size">14dp</dimen>
     <dimen name="menu_report_description_text_size">12dp</dimen>
+    <dimen name="menu_report_info_image_width">200dp</dimen>
+    <dimen name="menu_report_info_image_height">265dp</dimen>
+    <dimen name="menu_report_info_image_viewport_width">200</dimen>
+    <dimen name="menu_report_info_image_viewport_height">265</dimen>
 
     <!--위치 권한 동의 다이얼로그 관련-->
     <dimen name="location_permission_description_text_size">12dp</dimen>

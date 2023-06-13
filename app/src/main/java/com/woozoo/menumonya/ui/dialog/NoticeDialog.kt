@@ -22,7 +22,7 @@ class NoticeDialog(context: Context): Dialog(context), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // xml의 background 적용되도록 함.
-        window?.setGravity(Gravity.CENTER) // 다이얼로그가 하단에 표시되도록 설정
+        window?.setGravity(Gravity.CENTER)
 
         super.onCreate(savedInstanceState)
         binding = DialogNoticeBinding.inflate(layoutInflater)
