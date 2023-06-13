@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.model
+package com.woozoo.menumonya.data.model
 
 import com.woozoo.menumonya.Constants.Companion.REGION_BUTTON_TYPE
 

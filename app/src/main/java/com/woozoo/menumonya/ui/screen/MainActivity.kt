@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.screen
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -18,10 +18,16 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumonya.MainViewModel.Event
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.ui.screen.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
-import com.woozoo.menumonya.model.Region
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.repeatOnStarted
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.ui.adapter.RegionAdapter
+import com.woozoo.menumonya.ui.adapter.RestaurantAdapter
+import com.woozoo.menumonya.ui.dialog.LocationPermissionDialog
+import com.woozoo.menumonya.ui.dialog.NoticeDialog
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
 import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission

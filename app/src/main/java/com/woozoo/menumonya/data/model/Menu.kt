@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.model
+package com.woozoo.menumonya.data.model
 
 data class Menu (
     val restaurantId: String = "",

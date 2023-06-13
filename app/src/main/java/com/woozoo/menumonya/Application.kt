@@ -2,7 +2,7 @@ package com.woozoo.menumonya
 
 import android.app.Application
 import android.content.Context
-import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl
+import com.woozoo.menumonya.data.repository.RemoteConfigRepositoryImpl
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 

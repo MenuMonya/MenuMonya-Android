@@ -1,10 +1,10 @@
-package com.woozoo.menumonya.repository
+package com.woozoo.menumonya.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.woozoo.menumonya.model.Region
-import com.woozoo.menumonya.model.ReportButtonText
-import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.data.model.ReportButtonText
+import com.woozoo.menumonya.data.model.Restaurant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext

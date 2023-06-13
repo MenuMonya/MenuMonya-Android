@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,17 +14,19 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumonya.Application.Companion.context
+import com.woozoo.menumonya.BuildConfig
 import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
-import com.woozoo.menumonya.model.Region
-import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.DataStoreRepository
-import com.woozoo.menumonya.repository.FireStoreRepository
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.data.model.Restaurant
+import com.woozoo.menumonya.data.repository.DataStoreRepository
+import com.woozoo.menumonya.data.repository.FireStoreRepository
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
