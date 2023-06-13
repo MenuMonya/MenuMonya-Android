@@ -1,4 +1,0 @@
-<vector android:height="@dimen/location_select_layout_feedback_button_height" android:viewportHeight="13"
-    android:viewportWidth="16" android:width="@dimen/location_select_layout_feedback_button_width" xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="#9E9E9E" android:pathData="M16,1.625C16,0.731 15.28,0 14.4,0H1.6C0.72,0 0,0.731 0,1.625V11.375C0,12.269 0.72,13 1.6,13H14.4C15.28,13 16,12.269 16,11.375V1.625ZM14.4,1.625L8,5.679L1.6,1.625H14.4ZM14.4,11.375H1.6V3.25L8,7.313L14.4,3.25V11.375Z"/>
-</vector>

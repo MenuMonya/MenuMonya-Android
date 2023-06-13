@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,25 +14,35 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumonya.Application.Companion.context
+import com.woozoo.menumonya.BuildConfig
 import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
-import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.FireStoreRepository
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
+import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.data.model.Restaurant
+import com.woozoo.menumonya.data.repository.DataStoreRepository
+import com.woozoo.menumonya.data.repository.FireStoreRepository
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_VIEW_PAGER
+import com.woozoo.menumonya.util.DateUtils
 import com.woozoo.menumonya.util.LocationUtils.Companion.requestLocationUpdateOnce
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowed
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +50,7 @@ class MainViewModel @Inject constructor(
     application: Application,
     private val fireStoreRepository: FireStoreRepository,
     private val remoteConfigRepository: RemoteConfigRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val analyticsUtils: AnalyticsUtils
 ): AndroidViewModel(Application()) {
 
@@ -58,6 +69,7 @@ class MainViewModel @Inject constructor(
 
     init {
         locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
+        checkFirstOpen()
     }
 
     private fun event(event: Event) {
@@ -67,7 +79,7 @@ class MainViewModel @Inject constructor(
     }
 
     @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView) {
+    fun initializeMapView(mapView: MapView, initialRegion: Region) {
         mapView.getMapAsync {
             naverMap = it.apply {
                 locationTrackingMode = LocationTrackingMode.NoFollow
@@ -78,17 +90,31 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-            showLocationInfo("강남")
+            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
+            showLocationInfo(initialRegion.name)
 
             isInitialized = true
         }
     }
 
+    /**
+     * 지역 정보를 조회하고 화면에 표시하기 위한 형태로 리스트를 수정함.
+     */
+    fun getRegionList() {
+        viewModelScope.launch {
+            val regionList = fireStoreRepository.getRegionList()
+            val modifiedRegionList = modifyRegionData(regionList)
+
+            showRegionList(modifiedRegionList)
+        }
+    }
+
     fun moveCameraToMarker(markerIndex: Int) {
         if (mRestaurantInfoArray.size > 0) {
-            val latitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.latitude)
-            val longitude = parseDouble(mRestaurantInfoArray[markerIndex].location.coord.longitude)
+            val selectedRestaurant = mRestaurantInfoArray[markerIndex]
+
+            val latitude = parseDouble(selectedRestaurant.location.coord.latitude)
+            val longitude = parseDouble(selectedRestaurant.location.coord.longitude)
 
             val coord = LatLng(latitude, longitude)
 
@@ -98,28 +124,40 @@ class MainViewModel @Inject constructor(
             }
 
             // 마커 설정 초기화
-            for (marker in markerList) {
+            markerList.forEachIndexed { index, marker ->
                 marker.apply {
                     width = Marker.SIZE_AUTO
                     height = Marker.SIZE_AUTO
-                    zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    zIndex = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
+                    icon = if (mRestaurantInfoArray[index].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
+                    }
                 }
             }
             // 선택된 마커 아이콘 변경
             markerList[markerIndex].apply {
-                icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                icon = if (selectedRestaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                } else {
+                    OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                }
                 zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
             }
 
             naverMap.setContentPadding(0, 0, 0, context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height))
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
 
-            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, mRestaurantInfoArray[markerIndex].name)
+            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_VIEW_PAGER, selectedRestaurant.name)
         }
     }
 
-    private fun moveCameraToCoord(latitude: Double, longitude: Double) {
+    fun moveCameraToCoord(latitude: Double, longitude: Double) {
         val coord = LatLng(latitude, longitude)
         val cameraUpdateParams = CameraUpdateParams().apply {
             scrollTo(coord)
@@ -135,7 +173,10 @@ class MainViewModel @Inject constructor(
      */
     fun showLocationViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
-            showRestaurantView(mRestaurantInfoArray, markerIndex)
+            viewModelScope.launch {
+                val buttonTextList = fireStoreRepository.getReportButtonText()
+                showRestaurantView(mRestaurantInfoArray, buttonTextList, markerIndex)
+            }
         }
     }
 
@@ -148,7 +189,7 @@ class MainViewModel @Inject constructor(
                 "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
             }
 
-            mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(location)
+            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
             setMarkers(mRestaurantInfoArray)
 
             analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
@@ -159,7 +200,7 @@ class MainViewModel @Inject constructor(
         if (isInitialized) {
             showLoading(true)
             viewModelScope.launch {
-                mRestaurantInfoArray = fireStoreRepository.getRestaurantInLocation(selectedLocation)
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedLocation)
                 setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
 
                 fetchRestaurantInfo(mRestaurantInfoArray)
@@ -171,7 +212,7 @@ class MainViewModel @Inject constructor(
     /**
      * 지도에 식당 마커들을 표시함.
      * selectedIndex 값을 지정할 경우, 해당 인덱스의 마커를 클릭된 아이콘(@drawable/restaurant_marker_selected)으로 표시함.
-     *
+     * 마커를 표시하려는 식당의 메뉴가 등록되지 않은 경우와 등록된 경우의 마커가 다름.
      * @param selectedIndex  선택된 아이콘으로 변경할 마커의 인덱스.
      */
     private fun setMarkers(restaurantInfo: ArrayList<Restaurant>, selectedIndex: Int = -1) {
@@ -192,7 +233,16 @@ class MainViewModel @Inject constructor(
                     position = latLng
                     captionText = restaurant.name
                     isHideCollidedSymbols = true
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    zIndex = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX + 1
+                    } else {
+                        Marker.DEFAULT_GLOBAL_Z_INDEX
+                    }
+                    icon = if (restaurant.todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
+                    }
                     setOnClickListener {
                         onMarkerClicked(index, selectedLocation)
                         analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_MARKER, restaurant.name)
@@ -206,7 +256,11 @@ class MainViewModel @Inject constructor(
             // 클릭된 아이콘으로 변경
             if (selectedIndex != -1) {
                 markerList[selectedIndex].apply {
-                    icon = OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    icon = if (restaurantInfo[selectedIndex].todayMenu.date == DateUtils.getTodayDate()) {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.restaurant_marker_selected_menu_not_added)
+                    }
                     zIndex = Marker.DEFAULT_GLOBAL_Z_INDEX + 1
                 }
             }
@@ -257,16 +311,51 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getFeedbackUrl(): String {
-        return remoteConfigRepository.getFeedbackUrlConfig()
+    /**
+     * 최초 실행 여부 체크 및 다이얼로그 표시
+     */
+    private fun checkFirstOpen() {
+        viewModelScope.launch {
+            val isFirstOpen = dataStoreRepository.getIsFirstOpen()
+
+            if (isFirstOpen) {
+                showNoticeDialog()
+                dataStoreRepository.setIsFirstOpen(false)
+            }
+        }
     }
 
-    private fun showToast(text: String) {
-        event(Event.ShowToast(text))
+    /**
+     * (0) regionId 값으로 데이터 정렬(보여주고싶은 순서로 활용함)
+     * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
+     * (2) '지역건의' 버튼 추가
+     */
+    suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
+        data.sortBy { it.regionId } // (0)
+
+        // (1)
+        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+        val lastSelectedRegionIndex = data.indexOfFirst { it.name == lastSelectedRegion }
+        Collections.swap(data, 0, lastSelectedRegionIndex)
+
+        data.add(Region(REGION_REPORT, 0.0, 0.0, 999, REGION_REPORT_TYPE)) // (2)
+
+        data
     }
 
-    private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
-        event(Event.ShowRestaurantView(data, markerIndex))
+    fun setLastRegionData(region: String) {
+        viewModelScope.launch {
+            dataStoreRepository.setLastSelectedRegion(region)
+        }
+    }
+
+    fun getRegionReportUrl(): String {
+        return remoteConfigRepository.getRegionReportUrlConfig()
+    }
+
+    private fun showRestaurantView(data: ArrayList<Restaurant>,
+                                   buttonTextList: ArrayList<String>, markerIndex: Int) {
+        event(Event.ShowRestaurantView(data, buttonTextList, markerIndex))
     }
 
     private fun onMarkerClicked(markerIndex: Int, location: String) {
@@ -296,6 +385,14 @@ class MainViewModel @Inject constructor(
         event(Event.FetchRestaurantInfo(data))
     }
 
+    private fun showRegionList(data: ArrayList<Region>) {
+        event(Event.ShowRegionList(data))
+    }
+
+    private fun showNoticeDialog() {
+        event(Event.ShowNoticeDialog(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이 곳에 정의함.
@@ -303,7 +400,8 @@ class MainViewModel @Inject constructor(
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
-        data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>,
+                                      val buttonTextList: ArrayList<String>, val markerIndex: Int): Event()
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
         data class RequestLocationPermission(val data: String): Event()
         data class ShowGpsPermissionAlert(val data: String): Event()
@@ -312,5 +410,7 @@ class MainViewModel @Inject constructor(
         data class ShowUpdateDialog(val data: String): Event()
 
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
+        data class ShowRegionList(val data: ArrayList<Region>): Event()
+        data class ShowNoticeDialog(val data: String): Event()
     }
 }

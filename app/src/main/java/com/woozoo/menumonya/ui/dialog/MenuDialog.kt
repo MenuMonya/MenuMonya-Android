@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.dialog
 
 import android.app.Dialog
 import android.content.Context
@@ -6,10 +6,13 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import com.woozoo.menumonya.R
 import com.woozoo.menumonya.databinding.DialogMenuBinding
-import com.woozoo.menumonya.model.Restaurant
+import com.woozoo.menumonya.data.model.Restaurant
 
-class MenuDialog(context: Context, val data: Restaurant) : Dialog(context, R.style.custom_style_dialog) {
+class MenuDialog(context: Context, val data: Restaurant) : Dialog(context,
+    R.style.custom_style_dialog
+) {
     private lateinit var binding: DialogMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

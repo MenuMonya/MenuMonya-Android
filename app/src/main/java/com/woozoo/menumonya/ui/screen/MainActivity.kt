@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.screen
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -13,12 +13,21 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.woozoo.menumonya.MainViewModel.Event
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.ui.screen.MainViewModel.Event
 import com.woozoo.menumonya.databinding.ActivityMainBinding
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.repeatOnStarted
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.ui.adapter.RegionAdapter
+import com.woozoo.menumonya.ui.adapter.RestaurantAdapter
+import com.woozoo.menumonya.ui.dialog.LocationPermissionDialog
+import com.woozoo.menumonya.ui.dialog.NoticeDialog
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
 import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
@@ -37,6 +46,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var viewPager: ViewPager2
     private var restaurantAdapter: RestaurantAdapter? = null
+    private var regionAdapter: RegionAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +60,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-        binding.locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-        binding.locationGnBtn.setOnClickListener(this)
-        binding.locationYsBtn.setOnClickListener(this)
-        binding.feedbackIv.setOnClickListener(this)
         binding.currentLocationBtn.setOnClickListener(this)
         binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
 
@@ -95,11 +100,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         binding.naverMap.onCreate(savedInstanceState)
-
-        viewModel.initializeMapView(binding.naverMap)
+        viewModel.getRegionList()
     }
 
-    private fun handleEvent(event: Event) = when (event) {
+    private suspend fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.FetchRestaurantInfo -> {
             if (restaurantAdapter != null) {
@@ -116,7 +120,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         is Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
-                restaurantAdapter = RestaurantAdapter(event.data, this, remoteConfigRepository, analyticsUtils)
+                restaurantAdapter = RestaurantAdapter(event.data, event.buttonTextList, this, remoteConfigRepository, analyticsUtils)
                 viewPager.adapter = restaurantAdapter
                 if (event.markerIndex != -1) {
                     viewPager.setCurrentItem(event.markerIndex, false)
@@ -172,6 +176,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }.create().show()
         }
+        is Event.ShowRegionList -> {
+            initRegionRecyclerView(event.data)
+        }
+        is Event.ShowNoticeDialog -> {
+            NoticeDialog(this).show()
+
+        }
     }
 
     override fun onStart() {
@@ -216,41 +227,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.location_gn_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
-                viewModel.showLocationInfo("강남")
-                
-                binding.apply {
-                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.white))
-                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
-                }
-            }
-            R.id.location_ys_btn -> {
-                viewPager.invalidate()
-                viewPager.adapter = null
-                viewModel.showLocationInfo("역삼")
-                
-                binding.apply {
-                    locationYsBtn.background = applicationContext.getDrawable(R.drawable.color_button_background)
-                    locationGnBtn.background = applicationContext.getDrawable(R.drawable.white_button_background)
-                    locationYsBtn.setTextColor(applicationContext.getColor(R.color.white))
-                    locationGnBtn.setTextColor(applicationContext.getColor(R.color.gray600))
-                    currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button)
-                    currentLocationTv.setTextColor(resources.getColor(R.color.colorPrimary))
-                    currentLocationIv.setColorFilter(resources.getColor(R.color.colorPrimary))
-                }
-            }
-            R.id.feedback_iv -> {
-                val feedbackUrl = viewModel.getFeedbackUrl()
-                val intent = Intent(ACTION_VIEW, Uri.parse(feedbackUrl))
-                startActivity(intent)
-            }
             // '내 주변' 버튼 클릭
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(this)
@@ -282,5 +258,36 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (requestCode == GPS_ENABLE_REQUEST_CODE) {
             viewModel.getCurrentLocation(this)
         }
+    }
+
+    /**
+     * (1) 지역 리스트 버튼 표시(RecyclerView)
+     * (2) 클릭 로직 적용(RecyclerView-selection)
+     * (3) 네이버 맵 초기화, 카메라 이동
+     */
+    private fun initRegionRecyclerView(data: ArrayList<Region>) {
+        val recyclerView = binding.regionRv
+
+        regionAdapter = RegionAdapter(data, this, remoteConfigRepository, analyticsUtils)
+        regionAdapter!!.setOnItemClickListener(object: RegionAdapter.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val selectedRegion = data[position]
+
+                viewPager.invalidate()
+                viewPager.adapter = null
+
+                viewModel.apply {
+                    showLocationInfo(selectedRegion.name)
+                    moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                    setLastRegionData(selectedRegion.name)
+                }
+            }
+        })
+
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        recyclerView.adapter = regionAdapter
+
+        viewModel.initializeMapView(binding.naverMap, data[0])
     }
 }

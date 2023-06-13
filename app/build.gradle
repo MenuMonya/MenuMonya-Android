@@ -22,8 +22,8 @@ android {
         applicationId "com.woozoo.menumonya"
         minSdk 24
         targetSdk 33
-        versionCode 9
-        versionName "0.0.9"
+        versionCode 10
+        versionName "0.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,19 +41,21 @@ android {
         debug {
             applicationIdSuffix ".debug"
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
+            manifestPlaceholders.put("gaEnabled", "false")
             manifestPlaceholders = [app_name: "@string/app_name_debug"]
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
+            manifestPlaceholders.put("gaEnabled", "true")
             manifestPlaceholders = [app_name: "@string/app_name"]
             signingConfig signingConfigs.release
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_1_9
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -106,6 +108,9 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:2.44"
     kapt "com.google.dagger:hilt-compiler:2.44"
+
+    // DataStore
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
 }
 
 // Allow references to generated code

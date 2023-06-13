@@ -1,9 +1,6 @@
 package com.woozoo.menumonya.di
 
-import com.woozoo.menumonya.repository.FireStoreRepository
-import com.woozoo.menumonya.repository.FireStoreRepositoryImpl
-import com.woozoo.menumonya.repository.RemoteConfigRepository
-import com.woozoo.menumonya.repository.RemoteConfigRepositoryImpl
+import com.woozoo.menumonya.data.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,4 +18,8 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindRemoteConfigRepository(impl: RemoteConfigRepositoryImpl): RemoteConfigRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindDataStoreRepository(impl: DataStoreRepositoryImpl): DataStoreRepository
 }

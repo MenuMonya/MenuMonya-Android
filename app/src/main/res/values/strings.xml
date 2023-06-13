@@ -10,7 +10,10 @@
     <string name="restaurant_info_location_description">위치</string>
 
     <string name="restaurant_info_menu_report_button">내가 먼저 메뉴 제보하기</string>
-    <string name="restaurant_info_menu_report_description">메뉴는 매일 11시에 업데이트됩니다.</string>
+    <string name="restaurant_info_menu_report_description_online_available">메뉴는 평일 오전 11시에 업데이트됩니다</string>
+    <string name="restaurant_info_menu_report_description">해당 식당의 메뉴는 여러분들의 제보로 업데이트 됩니다</string>
+
+    <string name="notice_dialog_description">원하시는 한식 뷔페의 지역을\n선택하시고, 메뉴를 확인해보세요!</string>
 
     <string name="location_permission_dialog_description">편리한 뷔페 검색을 위해 위치 서비스 사용에 동의 하시겠습니까?</string>
     <string name="location_permission_denied_toast">위치 권한을 허용해주세요</string>

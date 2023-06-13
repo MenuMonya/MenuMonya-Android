@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.dialog
 
 import android.app.Dialog
 import android.content.Context
@@ -11,45 +11,44 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
-import android.view.Gravity.BOTTOM
+import android.view.Gravity
 import android.view.View
 import android.view.View.OnClickListener
-import com.woozoo.menumonya.databinding.DialogLocationPermissionBinding
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.databinding.DialogNoticeBinding
 
-class LocationPermissionDialog(context: Context, private val listener: OnClickListener)
-    : Dialog(context), OnClickListener {
-    private lateinit var binding: DialogLocationPermissionBinding
+class NoticeDialog(context: Context): Dialog(context), OnClickListener {
+    private lateinit var binding: DialogNoticeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // xml의 background 적용되도록 함.
-        window?.setGravity(BOTTOM) // 다이얼로그가 하단에 표시되도록 설정
+        window?.setGravity(Gravity.CENTER)
 
         super.onCreate(savedInstanceState)
-        binding = DialogLocationPermissionBinding.inflate(layoutInflater)
+        binding = DialogNoticeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setCancelable(false)
 
-        binding.permissionDescriptionTv.text = getSpannableText()
-
-        binding.negativeBtn.setOnClickListener(this)
-        binding.positiveBtn.setOnClickListener(listener)
+        binding.noticeDescriptionTv.text = getSpannableText()
+        binding.positiveBtn.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.negative_btn -> {
+            R.id.positive_btn -> {
                 dismiss()
             }
         }
     }
 
     /**
-     * 위치 권한 다이얼로그의 '위치 서비스 사용' 텍스트에 스타일 적용
+     * 공지 다이얼로그의 강조하고자 하는 텍스트에 스타일 적용
      * - (주의) 텍스트 내용 수정시 setSpan()의 start, end 값도 수정해줘야 함.
      */
     private fun getSpannableText(): SpannableStringBuilder {
-        val locationPermissionString =
-            context.resources.getString(R.string.location_permission_dialog_description)
-        val spannable = SpannableStringBuilder(locationPermissionString)
+        val noticeString =
+            context.resources.getString(R.string.notice_dialog_description)
+        val spannable = SpannableStringBuilder(noticeString)
 
         val spans = listOf(
             ForegroundColorSpan(context.resources.getColor(R.color.colorPrimary)),
@@ -60,8 +59,8 @@ class LocationPermissionDialog(context: Context, private val listener: OnClickLi
         for (span in spans) {
             spannable.setSpan(
                 span,
+                5,
                 14,
-                23,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE
             )
         }

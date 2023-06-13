@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.repository
+package com.woozoo.menumonya.data.repository
 
 interface RemoteConfigRepository {
 
@@ -8,7 +8,7 @@ interface RemoteConfigRepository {
 
     suspend fun getMenuCollectionNameConfig(): String
 
-    fun getFeedbackUrlConfig(): String
+    fun getRegionReportUrlConfig(): String
 
     fun getReportMenuUrlConfig(): String
 
