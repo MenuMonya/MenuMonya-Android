@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,17 +14,19 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumonya.Application.Companion.context
+import com.woozoo.menumonya.BuildConfig
 import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
-import com.woozoo.menumonya.model.Region
-import com.woozoo.menumonya.model.Restaurant
-import com.woozoo.menumonya.repository.DataStoreRepository
-import com.woozoo.menumonya.repository.FireStoreRepository
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.R
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.data.model.Restaurant
+import com.woozoo.menumonya.data.repository.DataStoreRepository
+import com.woozoo.menumonya.data.repository.FireStoreRepository
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_LOCATION
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_MARKER
@@ -171,7 +173,10 @@ class MainViewModel @Inject constructor(
      */
     fun showLocationViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
-            showRestaurantView(mRestaurantInfoArray, markerIndex)
+            viewModelScope.launch {
+                val buttonTextList = fireStoreRepository.getReportButtonText()
+                showRestaurantView(mRestaurantInfoArray, buttonTextList, markerIndex)
+            }
         }
     }
 
@@ -348,8 +353,9 @@ class MainViewModel @Inject constructor(
         return remoteConfigRepository.getRegionReportUrlConfig()
     }
 
-    private fun showRestaurantView(data: ArrayList<Restaurant>, markerIndex: Int) {
-        event(Event.ShowRestaurantView(data, markerIndex))
+    private fun showRestaurantView(data: ArrayList<Restaurant>,
+                                   buttonTextList: ArrayList<String>, markerIndex: Int) {
+        event(Event.ShowRestaurantView(data, buttonTextList, markerIndex))
     }
 
     private fun onMarkerClicked(markerIndex: Int, location: String) {
@@ -394,7 +400,8 @@ class MainViewModel @Inject constructor(
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String): Event()
-        data class ShowRestaurantView(val data: ArrayList<Restaurant>, val markerIndex: Int): Event()
+        data class ShowRestaurantView(val data: ArrayList<Restaurant>,
+                                      val buttonTextList: ArrayList<String>, val markerIndex: Int): Event()
         data class OnMarkerClicked(val markerIndex: Int, val location: String): Event()
         data class RequestLocationPermission(val data: String): Event()
         data class ShowGpsPermissionAlert(val data: String): Event()

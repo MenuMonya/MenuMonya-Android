@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.repository
+package com.woozoo.menumonya.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

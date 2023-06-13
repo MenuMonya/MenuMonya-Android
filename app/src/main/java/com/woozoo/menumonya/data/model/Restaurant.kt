@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.model
+package com.woozoo.menumonya.data.model
 
 
 data class Restaurant(
@@ -12,7 +12,8 @@ data class Restaurant(
     val time: Time = Time(),
     val phoneNumber: String = "",
     var todayMenu: Food = Food(),
-    val updatedTime: String = ""
+    val updatedTime: String = "",
+    val menuAvailableOnline: Boolean = false,
 )
 
 data class Location(

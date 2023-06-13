@@ -1,4 +1,4 @@
-package com.woozoo.menumonya.repository
+package com.woozoo.menumonya.data.repository
 
 interface RemoteConfigRepository {
 

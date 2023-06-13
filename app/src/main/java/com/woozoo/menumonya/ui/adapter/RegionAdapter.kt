@@ -1,4 +1,4 @@
-package com.woozoo.menumonya
+package com.woozoo.menumonya.ui.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.woozoo.menumonya.Constants.Companion.REGION_BUTTON_TYPE
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
+import com.woozoo.menumonya.R
 import com.woozoo.menumonya.databinding.ItemRegionBinding
-import com.woozoo.menumonya.model.Region
-import com.woozoo.menumonya.repository.RemoteConfigRepository
+import com.woozoo.menumonya.data.model.Region
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_REGION_BUTTON
 

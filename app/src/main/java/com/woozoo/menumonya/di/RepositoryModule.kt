@@ -1,6 +1,6 @@
 package com.woozoo.menumonya.di
 
-import com.woozoo.menumonya.repository.*
+import com.woozoo.menumonya.data.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
