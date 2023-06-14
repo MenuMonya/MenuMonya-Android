@@ -37,6 +37,7 @@ import com.woozoo.menumonya.util.PermissionUtils.Companion.isGpsPermissionAllowe
 import com.woozoo.menumonya.util.PermissionUtils.Companion.isLocationPermissionAllowed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -44,6 +45,7 @@ import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -330,17 +332,19 @@ class MainViewModel @Inject constructor(
      * (1) 마지막으로 클릭한 지역을 가장 첫번째로 오도록 순서 변경
      * (2) '지역건의' 버튼 추가
      */
-    suspend fun modifyRegionData(data: ArrayList<Region>) = withContext(Dispatchers.IO) {
-        data.sortBy { it.regionId } // (0)
+    suspend fun modifyRegionData(data: ArrayList<Region>): ArrayList<Region> {
+        return viewModelScope.async {
+            data.sortBy { it.regionId } // (0)
 
-        // (1)
-        val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
-        val lastSelectedRegionIndex = data.indexOfFirst { it.name == lastSelectedRegion }
-        Collections.swap(data, 0, lastSelectedRegionIndex)
+            // (1)
+            val lastSelectedRegion = dataStoreRepository.getLastSelectedRegion()
+            val lastSelectedRegionIndex = data.indexOfFirst { it.name == lastSelectedRegion }
+            Collections.swap(data, 0, lastSelectedRegionIndex)
 
-        data.add(Region(REGION_REPORT, 0.0, 0.0, 999, REGION_REPORT_TYPE)) // (2)
+            data.add(Region(REGION_REPORT, 0.0, 0.0, 999, REGION_REPORT_TYPE)) // (2)
 
-        data
+            data
+        }.await()
     }
 
     fun setLastRegionData(region: String) {
