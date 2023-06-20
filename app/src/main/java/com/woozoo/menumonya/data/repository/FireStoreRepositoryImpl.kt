@@ -1,13 +1,13 @@
 package com.woozoo.menumonya.data.repository
 
+import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.woozoo.menumonya.data.model.Region
 import com.woozoo.menumonya.data.model.ReportButtonText
 import com.woozoo.menumonya.data.model.Restaurant
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,19 +46,29 @@ class FireStoreRepositoryImpl @Inject constructor(
 
     override suspend fun getRegionList(): ArrayList<Region> {
         val regionInfo = ArrayList<Region>()
-        val regionRef = db.collection("regions")
 
-        val result = regionRef.get().await()
-        val documents = result.documents
-
-        for (document in documents) {
-            val region = document.toObject<Region>()
-
-            if (region != null) regionInfo.add(region)
-        }
+        db.collection("regions")
+            .get()
+            .addOnSuccessListener {
+                for (document in it) {
+                    val region = document.toObject<Region>()
+                    regionInfo.add(region)
+                }
+            }
+            .addOnFailureListener {
+                Firebase.crashlytics.log(it.message.toString())
+            }
+            .await()
 
         return regionInfo
     }
+//override suspend fun getRegionList() = flow {
+//    val regionRef = db.collection("regions")
+//
+//    emit(regionRef.get().await().documents.mapNotNull { document ->
+//        document.toObject<Region>()
+//    })
+//}
 
     override suspend fun getReportButtonText(): ArrayList<String> {
         val reportButtonTextList = ArrayList<String>()

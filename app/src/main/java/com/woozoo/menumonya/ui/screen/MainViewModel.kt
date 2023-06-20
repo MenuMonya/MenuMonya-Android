@@ -103,9 +103,11 @@ class MainViewModel @Inject constructor(
     fun getRegionList() {
         viewModelScope.launch {
             val regionList = fireStoreRepository.getRegionList()
-            val modifiedRegionList = modifyRegionData(regionList)
+            if (regionList.size > 0) {
+                val modifiedRegionList = modifyRegionData(regionList)
 
-            showRegionList(modifiedRegionList)
+                showRegionList(modifiedRegionList)
+            }
         }
     }
 
@@ -412,5 +414,10 @@ class MainViewModel @Inject constructor(
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>): Event()
         data class ShowRegionList(val data: ArrayList<Region>): Event()
         data class ShowNoticeDialog(val data: String): Event()
+    }
+
+    sealed interface MainActivityUiState {
+        object Loading : MainActivityUiState
+        data class Success(val regionList: ArrayList<Region>) : MainActivityUiState
     }
 }
