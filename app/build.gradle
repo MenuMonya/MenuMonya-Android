@@ -22,8 +22,8 @@ android {
         applicationId "com.woozoo.menumonya"
         minSdk 24
         targetSdk 33
-        versionCode 10
-        versionName "0.1.0"
+        versionCode 19
+        versionName "0.1.0-hotfix"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
