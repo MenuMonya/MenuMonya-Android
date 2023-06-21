@@ -6,6 +6,7 @@ import android.app.Application
 import android.content.Context.LOCATION_SERVICE
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -22,6 +23,7 @@ import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.R
+import com.woozoo.menumonya.data.RegionListData
 import com.woozoo.menumonya.data.model.Region
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.DataStoreRepository
@@ -102,7 +104,7 @@ class MainViewModel @Inject constructor(
      */
     fun getRegionList() {
         viewModelScope.launch {
-            val regionList = fireStoreRepository.getRegionList()
+            val regionList = RegionListData.getLocalRegionList()
             if (regionList.size > 0) {
                 val modifiedRegionList = modifyRegionData(regionList)
 
@@ -183,25 +185,28 @@ class MainViewModel @Inject constructor(
     }
 
     fun showLocationInfo(location: String) {
-        viewModelScope.launch {
-            selectedLocation = location
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                selectedLocation = location
 
-            when (selectedLocation) {
-                "강남" -> moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-                "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
+                val regionList = RegionListData.regionList
+                val regionIndex = regionList.indexOfFirst { it.name == selectedLocation }
+                moveCameraToCoord(regionList[regionIndex].latitude, regionList[regionIndex].longitude)
+
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
+                setMarkers(mRestaurantInfoArray)
+
+                analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
+            } catch (e: java.lang.Exception) {
+                Log.d("zzanzu", "showLocationInfo: $e")
             }
-
-            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
-            setMarkers(mRestaurantInfoArray)
-
-            analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_LOCATION, location)
         }
     }
 
     fun updateLocationInfo(currentViewPagerIndex: Int) {
         if (isInitialized) {
             showLoading(true)
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.Main) {
                 mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedLocation)
                 setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
 

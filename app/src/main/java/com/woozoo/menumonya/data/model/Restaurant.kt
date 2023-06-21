@@ -2,39 +2,39 @@ package com.woozoo.menumonya.data.model
 
 
 data class Restaurant(
-    val type: String = "",
-    val imgUrl: String = "",
-    val name: String = "",
-    val location: Location = Location(),
-    val locationCategory: ArrayList<String> = ArrayList<String>(),
-    val locationCategoryOrder: ArrayList<String> = ArrayList<String>(),
-    val price: Price = Price(),
-    val time: Time = Time(),
-    val phoneNumber: String = "",
+    var type: String = "",
+    var imgUrl: String = "",
+    var name: String = "",
+    var location: Location = Location(),
+    var locationCategory: ArrayList<String> = ArrayList<String>(),
+    var locationCategoryOrder: ArrayList<String> = ArrayList<String>(),
+    var price: Price = Price(),
+    var time: Time = Time(),
+    var phoneNumber: String = "",
     var todayMenu: Food = Food(),
-    val updatedTime: String = "",
-    val menuAvailableOnline: Boolean = false,
+    var updatedTime: String = "",
+    var menuAvailableOnline: Boolean = false,
 )
 
 data class Location(
-    val coord: Coord = Coord(),
-    val description: String = "",
-    val name: String = ""
+    var coord: Coord = Coord(),
+    var description: String = "",
+    var name: String = ""
 )
 
 data class Coord(
-    val latitude: String = "",
-    val longitude: String = ""
+    var latitude: String = "",
+    var longitude: String = ""
 )
 
 data class Price(
-    val cardPrice: String = "",
-    val cashPrice: String = "",
-    val takeoutPrice: String = ""
+    var cardPrice: String = "",
+    var cashPrice: String = "",
+    var takeoutPrice: String = ""
 )
 
 data class Time(
-    val openTime: String = "00:00",
-    val closeTime: String = "00:00",
-    val breakTime: String = "00:00"
+    var openTime: String = "00:00",
+    var closeTime: String = "00:00",
+    var breakTime: String = "00:00"
 )

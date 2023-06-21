@@ -46,6 +46,7 @@ android {
         }
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "NAVER_CLIENT_ID", localProperties['NAVER_CLIENT_ID']
             manifestPlaceholders.put("gaEnabled", "true")
