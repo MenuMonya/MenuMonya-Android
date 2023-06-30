@@ -1,8 +1,6 @@
 package com.woozoo.menumonya.ui.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +10,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.R
-import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.ui.dialog.ImageDialog
 import com.woozoo.menumonya.ui.dialog.MenuDialog
+import com.woozoo.menumonya.ui.dialog.ReportDialog
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.AnalyticsUtils.Companion.CONTENT_TYPE_REPORT_BUTTON
 import com.woozoo.menumonya.util.DateUtils.Companion.getTodayDate
@@ -37,6 +36,8 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                          private val analyticsUtils: AnalyticsUtils,
                          private var buttonTextList: ArrayList<String>
     ): RecyclerView.ViewHolder(binding.root) {
+
+        private lateinit var reportDialog: ReportDialog
 
         fun bind(data: Restaurant) {
             binding.restaurantNameTv.text = data.name
@@ -80,9 +81,10 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                 binding.menuReportBtn.setOnClickListener {
                     analyticsUtils.saveContentSelectionLog(CONTENT_TYPE_REPORT_BUTTON, data.name)
 
-                    val menuReportUrl = remoteConfigRepository.getReportMenuUrlConfig()
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(menuReportUrl))
-                    context.startActivity(intent)
+                    reportDialog = ReportDialog(context, R.string.restaurant_info_menu_report_dialog_text) {
+                        reportDialog.dismiss()
+                    }
+                    reportDialog.show()
                 }
                 binding.menuReportInfoIv.setOnClickListener {
                     // TODO: 메뉴 수집 관련 정보 다이얼로그 표시
