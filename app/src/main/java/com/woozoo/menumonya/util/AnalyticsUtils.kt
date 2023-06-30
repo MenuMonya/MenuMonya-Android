@@ -10,6 +10,8 @@ import javax.inject.Singleton
 @Singleton
 class AnalyticsUtils @Inject constructor(@ApplicationContext val context: Context) {
 
+    @Inject lateinit var firebaseAnalytics: FirebaseAnalytics
+
     companion object {
         const val CONTENT_TYPE_MARKER = "marker"
         const val CONTENT_TYPE_VIEW_PAGER = "view_pager"
@@ -17,8 +19,6 @@ class AnalyticsUtils @Inject constructor(@ApplicationContext val context: Contex
         const val CONTENT_TYPE_REPORT_BUTTON = "report_button"
         const val CONTENT_TYPE_REPORT_REGION_BUTTON = "report_region_button"
     }
-
-    private val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     fun saveContentSelectionLog(contentType: String, content: String) {
         val param = Bundle().apply {

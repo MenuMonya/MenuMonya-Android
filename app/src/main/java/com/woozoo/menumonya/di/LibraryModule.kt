@@ -1,10 +1,12 @@
 package com.woozoo.menumonya.di
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -38,5 +40,11 @@ object LibraryModule {
         return PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("user_preferences") }
         )
+    }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAnalytics(application: Application): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(application)
     }
 }
