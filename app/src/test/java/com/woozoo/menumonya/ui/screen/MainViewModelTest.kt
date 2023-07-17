@@ -2,9 +2,9 @@ package com.woozoo.menumonya.ui.screen
 
 import com.google.common.truth.Truth.assertThat
 import com.woozoo.menumonya.data.model.Region
-import com.woozoo.menumonya.data.repository.DataStoreRepositoryImpl
-import com.woozoo.menumonya.data.repository.FireStoreRepositoryImpl
-import com.woozoo.menumonya.data.repository.RemoteConfigRepositoryImpl
+import com.woozoo.menumonya.data.repository.DataStoreRepository
+import com.woozoo.menumonya.data.repository.FireStoreRepository
+import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -21,11 +21,11 @@ import org.mockito.kotlin.verify
 class MainViewModelTest {
 
     @Mock
-    lateinit var fireStoreRepository: FireStoreRepositoryImpl
+    lateinit var fireStoreRepository: FireStoreRepository
     @Mock
-    lateinit var remoteConfigRepository: RemoteConfigRepositoryImpl
+    lateinit var remoteConfigRepository: RemoteConfigRepository
     @Mock
-    lateinit var dataStoreRepository: DataStoreRepositoryImpl
+    lateinit var dataStoreRepository: DataStoreRepository
     @Mock
     lateinit var analyticsUtils: AnalyticsUtils
 
