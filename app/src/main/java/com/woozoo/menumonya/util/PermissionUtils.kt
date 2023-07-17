@@ -12,7 +12,8 @@ import com.woozoo.menumonya.Application.Companion.context
 class PermissionUtils {
 
     companion object {
-        val ACCESS_FINE_LOCATION_REQUEST_CODE = 1000
+        const val ACCESS_FINE_LOCATION_REQUEST_CODE = 1000
+        const val ACCESS_CAMERA_REQUEST_CODE = 1001
 
         fun isLocationPermissionAllowed(): Boolean {
             return ContextCompat.checkSelfPermission(context(),
@@ -23,6 +24,13 @@ class PermissionUtils {
             ActivityCompat.requestPermissions(activity,
                 listOf(Manifest.permission.ACCESS_FINE_LOCATION).toTypedArray(),
                 ACCESS_FINE_LOCATION_REQUEST_CODE
+            )
+        }
+
+        fun requestCameraPermission(activity: Activity) {
+            ActivityCompat.requestPermissions(activity,
+                listOf(Manifest.permission.CAMERA).toTypedArray(),
+                ACCESS_CAMERA_REQUEST_CODE
             )
         }
 

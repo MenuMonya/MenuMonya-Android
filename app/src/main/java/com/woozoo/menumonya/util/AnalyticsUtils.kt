@@ -8,7 +8,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AnalyticsUtils @Inject constructor(@ApplicationContext val context: Context) {
+class AnalyticsUtils @Inject constructor(
+    @ApplicationContext val context: Context
+) {
 
     @Inject lateinit var firebaseAnalytics: FirebaseAnalytics
 
