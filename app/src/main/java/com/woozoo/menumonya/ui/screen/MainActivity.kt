@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         binding.naverMap.onCreate(savedInstanceState)
+        viewModel.initializeViewModel(applicationContext)
         viewModel.getRegionList()
     }
 

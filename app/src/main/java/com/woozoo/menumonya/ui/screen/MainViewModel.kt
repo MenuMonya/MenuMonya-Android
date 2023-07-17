@@ -2,11 +2,11 @@ package com.woozoo.menumonya.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
+import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.location.LocationListener
 import android.location.LocationManager
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -47,12 +47,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    application: Application,
     private val fireStoreRepository: FireStoreRepository,
     private val remoteConfigRepository: RemoteConfigRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val analyticsUtils: AnalyticsUtils
-): AndroidViewModel(Application()) {
+): ViewModel() {
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
@@ -60,22 +59,22 @@ class MainViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     lateinit var naverMap: NaverMap
-    private var locationManager: LocationManager
+    private lateinit var locationManager: LocationManager
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
     private var selectedLocation: String = ""
     private var isInitialized: Boolean = false
 
-    init {
-        locationManager = application.getSystemService(LOCATION_SERVICE) as LocationManager
-        checkFirstOpen()
-    }
-
     private fun event(event: Event) {
         viewModelScope.launch {
             _eventFlow.emit(event)
         }
+    }
+
+    fun initializeViewModel(applicationContext: Context) {
+        locationManager = applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager
+        checkFirstOpen()
     }
 
     @SuppressLint("MissingPermission")
