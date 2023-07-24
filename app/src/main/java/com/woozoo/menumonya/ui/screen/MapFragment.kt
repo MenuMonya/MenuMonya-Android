@@ -182,6 +182,11 @@ class MapFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        is MainViewModel.Event.InvalidateViewPager -> {
+            viewPager.invalidate()
+            viewPager.adapter = null
+        }
+
         else -> {}
     }
 

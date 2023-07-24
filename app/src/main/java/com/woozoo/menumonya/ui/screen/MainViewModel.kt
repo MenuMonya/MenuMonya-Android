@@ -89,8 +89,8 @@ class MainViewModel @Inject constructor(
                 minZoom = MAP_MIN_ZOOM
             }
 
-            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
-            showLocationInfo(initialRegion.name)
+//            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
+//            showLocationInfo(initialRegion.name)
 
             isInitialized = true
         }
@@ -392,26 +392,32 @@ class MainViewModel @Inject constructor(
         event(Event.ShowNoticeDialog(""))
     }
 
+    fun invalidateViewPager() {
+        event(Event.InvalidateViewPager(""))
+    }
+
     sealed class Event {
         /**
          * MainActivity에 전달할 이벤트를 이 곳에 정의함.
          *
          * (ex) data class ShowToast(val text: String) : Event()
          */
-        data class ShowToast(val text: String) : Event() // Activity
         data class RequestLocationPermission(val data: String) : Event() // Activity
+        data class ShowToast(val text: String) : Event() // Activity
         data class ShowGpsPermissionAlert(val data: String) : Event() // Activity
-        data class ShowLoading(val visibility: Boolean) : Event() // Activity
         data class ShowUpdateDialog(val data: String) : Event() // Activity
         data class ShowRegionList(val data: ArrayList<Region>) : Event() // Activity
         data class ShowNoticeDialog(val data: String) : Event() // Activity
         data class ShowRestaurantView(
             val data: ArrayList<Restaurant>,
-            val buttonTextList: ArrayList<String>, val markerIndex: Int
+            val buttonTextList: ArrayList<String>,
+            val markerIndex: Int
         ) : Event() // Fragment
 
         data class OnMarkerClicked(val markerIndex: Int, val location: String) : Event() // Fragment
         data class MoveToCurrentLocation(val data: String) : Event() // Fragment
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>) : Event() // Fragment
+        data class ShowLoading(val visibility: Boolean) : Event() // Fragment
+        data class InvalidateViewPager(val data: String) : Event()
     }
 }

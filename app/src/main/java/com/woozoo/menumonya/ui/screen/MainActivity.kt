@@ -156,8 +156,7 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClick(view: View, position: Int) {
                 val selectedRegion = data[position]
 
-                viewPager.invalidate()
-                viewPager.adapter = null
+                viewModel.invalidateViewPager()
 
                 viewModel.apply {
                     showLocationInfo(selectedRegion.name)
