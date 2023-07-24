@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.util.Properties
 
 plugins {
@@ -11,8 +12,15 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
-val keystoreProperties = Properties().apply {
-    load(FileInputStream(rootProject.file("keystore/keystore.properties")))
+// keystore 파일 조회
+var keystoreProperties: Properties = Properties()
+val keystoreFile = rootProject.file("keystore/keystore.properties")
+if (keystoreFile.exists()) {
+    keystoreProperties = Properties().apply {
+        load(FileInputStream(keystoreFile))
+    }
+} else {
+    throw FileNotFoundException()
 }
 
 val localProperties = gradleLocalProperties(rootDir)
