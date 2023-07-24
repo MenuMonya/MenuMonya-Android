@@ -14,17 +14,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.R
 import com.woozoo.menumonya.data.model.Region
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.repeatOnStarted
 import com.woozoo.menumonya.ui.adapter.RegionAdapter
-import com.woozoo.menumonya.ui.adapter.RestaurantAdapter
 import com.woozoo.menumonya.ui.dialog.LocationPermissionDialog
 import com.woozoo.menumonya.ui.dialog.NoticeDialog
 import com.woozoo.menumonya.ui.screen.MainViewModel.Event
@@ -35,17 +31,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), View.OnClickListener {
-    @Inject lateinit var remoteConfigRepository: RemoteConfigRepository
-    @Inject lateinit var analyticsUtils: AnalyticsUtils
+class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var remoteConfigRepository: RemoteConfigRepository
+
+    @Inject
+    lateinit var analyticsUtils: AnalyticsUtils
 
     private val GPS_ENABLE_REQUEST_CODE = 2000
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var viewPager: ViewPager2
-    private var restaurantAdapter: RestaurantAdapter? = null
     private var regionAdapter: RegionAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
 
@@ -54,80 +51,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewPager = binding.restaurantViewPager
-
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        binding.currentLocationBtn.setOnClickListener(this)
-        binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
-
-        // 좌우로 item이 보이도록 설정
-        viewPager.apply {
-            clipChildren = false
-            clipToPadding = false
-            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
-            (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
-
-            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
-            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
-            viewPager.setPageTransformer { page, position ->
-                val offset = position * -(2 * offsetPx + pageMarginPx)
-                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
-            }
-
-            registerOnPageChangeCallback(object: OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    // height를 wrap_content가 되도록 설정
-                    val view = (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
-                    view?.post {
-                        val wMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-                        val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                        view.measure(wMeasureSpec, hMeasureSpec)
-                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
-                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
-                                lp.height = view.measuredHeight
-                            }
-                        }
-                    }
-
-                    // 마커로 카메라 이동
-                    viewModel.moveCameraToMarker(position)
-                }
-            })
-        }
-
-        binding.naverMap.onCreate(savedInstanceState)
         viewModel.initializeViewModel(applicationContext)
         viewModel.getRegionList()
     }
 
     private suspend fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
-        is Event.FetchRestaurantInfo -> {
-            if (restaurantAdapter != null) {
-                restaurantAdapter?.setData(event.data)
-                viewPager.adapter?.notifyDataSetChanged()
-            } else { }
-        }
-        is Event.OnMarkerClicked -> {
-            if (viewPager.adapter != null) {
-                viewPager.setCurrentItem(event.markerIndex, false)
-            } else {
-                viewModel.showLocationViewPager(event.markerIndex)
-            }
-        }
-        is Event.ShowRestaurantView -> {
-            if (viewPager.adapter == null) {
-                restaurantAdapter = RestaurantAdapter(event.data, event.buttonTextList, this, remoteConfigRepository, analyticsUtils)
-                viewPager.adapter = restaurantAdapter
-                if (event.markerIndex != -1) {
-                    viewPager.setCurrentItem(event.markerIndex, false)
-                } else { }
-            } else { }
-        }
         is Event.RequestLocationPermission -> {
             locationPermissionDialog = LocationPermissionDialog(this) {
                 requestLocationPermission(this)
@@ -149,18 +82,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }.create().show()
         }
-        is Event.MoveToCurrentLocation -> {
-            binding.currentLocationBtn.background = resources.getDrawable(R.drawable.current_location_button_selected)
-            binding.currentLocationTv.setTextColor(resources.getColor(R.color.colorSecondary))
-            binding.currentLocationIv.setColorFilter(resources.getColor(R.color.colorSecondary))
-        }
-        is Event.ShowLoading -> {
-            if (event.visibility) {
-                binding.loadingView.visibility = View.VISIBLE
-            } else {
-                binding.loadingView.visibility = View.GONE
-            }
-        }
         is Event.ShowUpdateDialog -> {
             AlertDialog.Builder(this).apply {
                 setMessage(resources.getString(R.string.latest_app_version_update_message))
@@ -177,31 +98,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }.create().show()
         }
+
         is Event.ShowRegionList -> {
             initRegionRecyclerView(event.data)
         }
+
         is Event.ShowNoticeDialog -> {
             NoticeDialog(this).show()
-
         }
+
+        else -> {}
     }
 
     override fun onResume() {
         super.onResume()
 
         viewModel.checkLatestAppVersion()
-        if (viewPager != null && restaurantAdapter != null) {
-            viewModel.updateLocationInfo(viewPager.currentItem)
-        }
-    }
-
-    override fun onClick(v: View?) {
-        when (v!!.id) {
-            // '내 주변' 버튼 클릭
-            R.id.current_location_btn -> {
-                viewModel.getCurrentLocation(this)
-            }
-        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

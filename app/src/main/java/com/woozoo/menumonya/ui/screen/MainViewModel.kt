@@ -399,20 +399,19 @@ class MainViewModel @Inject constructor(
          * (ex) data class ShowToast(val text: String) : Event()
          */
         data class ShowToast(val text: String) : Event() // Activity
+        data class RequestLocationPermission(val data: String) : Event() // Activity
+        data class ShowGpsPermissionAlert(val data: String) : Event() // Activity
+        data class ShowLoading(val visibility: Boolean) : Event() // Activity
+        data class ShowUpdateDialog(val data: String) : Event() // Activity
+        data class ShowRegionList(val data: ArrayList<Region>) : Event() // Activity
+        data class ShowNoticeDialog(val data: String) : Event() // Activity
         data class ShowRestaurantView(
             val data: ArrayList<Restaurant>,
             val buttonTextList: ArrayList<String>, val markerIndex: Int
         ) : Event() // Fragment
 
         data class OnMarkerClicked(val markerIndex: Int, val location: String) : Event() // Fragment
-        data class RequestLocationPermission(val data: String) : Event() // Activity
-        data class ShowGpsPermissionAlert(val data: String) : Event() // Activity
         data class MoveToCurrentLocation(val data: String) : Event() // Fragment
-        data class ShowLoading(val visibility: Boolean) : Event() // Activity
-        data class ShowUpdateDialog(val data: String) : Event() // Activity
-
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>) : Event() // Fragment
-        data class ShowRegionList(val data: ArrayList<Region>) : Event() // Fragment
-        data class ShowNoticeDialog(val data: String) : Event() // Activity
     }
 }
