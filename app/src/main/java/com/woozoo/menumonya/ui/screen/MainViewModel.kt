@@ -1,15 +1,16 @@
 package com.woozoo.menumonya.ui.screen
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.Context.LOCATION_SERVICE
 import android.location.LocationListener
 import android.location.LocationManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.*
+import com.naver.maps.map.CameraAnimation
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.CameraUpdateParams
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
@@ -18,7 +19,6 @@ import com.woozoo.menumonya.BuildConfig
 import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
 import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
-import com.woozoo.menumonya.Constants.Companion.MAP_MIN_ZOOM
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
 import com.woozoo.menumonya.R
@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Double.parseDouble
-import java.util.*
+import java.util.Collections
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,40 +59,16 @@ class MainViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     lateinit var naverMap: NaverMap
-    private lateinit var locationManager: LocationManager
+    lateinit var locationManager: LocationManager
 
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
     private var selectedLocation: String = ""
-    private var isInitialized: Boolean = false
+    var isInitialized: Boolean = false
 
     private fun event(event: Event) {
         viewModelScope.launch {
             _eventFlow.emit(event)
-        }
-    }
-
-    fun initializeViewModel(applicationContext: Context) {
-        locationManager = applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager
-        checkFirstOpen()
-    }
-
-    @SuppressLint("MissingPermission")
-    fun initializeMapView(mapView: MapView, initialRegion: Region) {
-        mapView.getMapAsync {
-            naverMap = it.apply {
-                locationTrackingMode = LocationTrackingMode.NoFollow
-                uiSettings.apply {
-                    isLocationButtonEnabled = false
-                    isZoomControlEnabled = false
-                }
-                minZoom = MAP_MIN_ZOOM
-            }
-
-//            moveCameraToCoord(initialRegion.latitude, initialRegion.longitude)
-//            showLocationInfo(initialRegion.name)
-
-            isInitialized = true
         }
     }
 
@@ -105,6 +81,9 @@ class MainViewModel @Inject constructor(
             val modifiedRegionList = modifyRegionData(regionList)
 
             showRegionList(modifiedRegionList)
+
+            val region = modifiedRegionList[0]
+            initializeMapView(region)
         }
     }
 
@@ -313,7 +292,7 @@ class MainViewModel @Inject constructor(
     /**
      * 최초 실행 여부 체크 및 다이얼로그 표시
      */
-    private fun checkFirstOpen() {
+    fun checkFirstOpen() {
         viewModelScope.launch {
             val isFirstOpen = dataStoreRepository.getIsFirstOpen()
 
@@ -348,12 +327,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getRegionReportUrl(): String {
-        return remoteConfigRepository.getRegionReportUrlConfig()
+    private fun initializeMapView(data: Region) {
+        event(Event.InitializeMapView(data))
     }
 
-    private fun showRestaurantView(data: ArrayList<Restaurant>,
-                                   buttonTextList: ArrayList<String>, markerIndex: Int) {
+    private fun showRestaurantView(
+        data: ArrayList<Restaurant>,
+        buttonTextList: ArrayList<String>, markerIndex: Int
+    ) {
         event(Event.ShowRestaurantView(data, buttonTextList, markerIndex))
     }
 
@@ -408,6 +389,7 @@ class MainViewModel @Inject constructor(
         data class ShowUpdateDialog(val data: String) : Event() // Activity
         data class ShowRegionList(val data: ArrayList<Region>) : Event() // Activity
         data class ShowNoticeDialog(val data: String) : Event() // Activity
+        data class InitializeMapView(val data: Region) : Event()
         data class ShowRestaurantView(
             val data: ArrayList<Restaurant>,
             val buttonTextList: ArrayList<String>,

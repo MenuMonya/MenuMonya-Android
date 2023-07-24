@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -55,11 +56,12 @@ class MainActivity : AppCompatActivity() {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        viewModel.initializeViewModel(applicationContext)
+        viewModel.locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        viewModel.checkFirstOpen()
         viewModel.getRegionList()
     }
 
-    private suspend fun handleEvent(event: Event) = when (event) {
+    private fun handleEvent(event: Event) = when (event) {
         is Event.ShowToast -> Toast.makeText(this, event.text, Toast.LENGTH_SHORT).show()
         is Event.RequestLocationPermission -> {
             locationPermissionDialog = LocationPermissionDialog(this) {
@@ -68,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             }
             locationPermissionDialog.show()
         }
+
         is Event.ShowGpsPermissionAlert -> {
             AlertDialog.Builder(this).apply {
                 setMessage("현재 위치를 찾을 수 없습니다.\n위치 서비스를 켜주세요.")
@@ -169,7 +172,5 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         recyclerView.adapter = regionAdapter
-
-        viewModel.initializeMapView(binding.naverMap, data[0])
     }
 }

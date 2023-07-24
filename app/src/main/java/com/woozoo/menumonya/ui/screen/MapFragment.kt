@@ -1,5 +1,6 @@
 package com.woozoo.menumonya.ui.screen
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.naver.maps.map.LocationTrackingMode
+import com.woozoo.menumonya.Constants
 import com.woozoo.menumonya.R
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.databinding.FragmentMapBinding
@@ -41,9 +44,11 @@ class MapFragment : Fragment(), View.OnClickListener {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.naverMap.onCreate(savedInstanceState)
+
 
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
@@ -132,7 +137,27 @@ class MapFragment : Fragment(), View.OnClickListener {
         binding.naverMap.onLowMemory()
     }
 
-    private suspend fun handleEvent(event: MainViewModel.Event) = when (event) {
+    private fun handleEvent(event: MainViewModel.Event) = when (event) {
+        is MainViewModel.Event.InitializeMapView -> {
+            binding.naverMap.getMapAsync { map ->
+                map.apply {
+                    locationTrackingMode = LocationTrackingMode.NoFollow
+                    uiSettings.apply {
+                        isLocationButtonEnabled = false
+                        isZoomControlEnabled = false
+                    }
+                    minZoom = Constants.MAP_MIN_ZOOM
+                }
+
+                viewModel.naverMap = map
+                viewModel.isInitialized = true
+
+                val region = event.data
+                viewModel.moveCameraToCoord(region.latitude, region.longitude)
+                viewModel.showLocationInfo(region.name)
+            }
+        }
+
         is MainViewModel.Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
                 restaurantAdapter = RestaurantAdapter(
