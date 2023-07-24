@@ -98,10 +98,10 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // 지도 관련 라이브러리
-    implementation("com.naver.maps:map-sdk:3.16.2") {
+    implementation("com.naver.maps:map-sdk:3.17.0") {
         exclude(group = "com.android.support")
     }
-    implementation("com.google.android.gms:play-services-location:16.0.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:31.3.0"))
