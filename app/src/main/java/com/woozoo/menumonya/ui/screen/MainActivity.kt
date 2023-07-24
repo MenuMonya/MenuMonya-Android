@@ -186,44 +186,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        binding.naverMap.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
-        binding.naverMap.onResume()
 
         viewModel.checkLatestAppVersion()
         if (viewPager != null && restaurantAdapter != null) {
             viewModel.updateLocationInfo(viewPager.currentItem)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        binding.naverMap.onPause()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.naverMap.onSaveInstanceState(outState)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        binding.naverMap.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.naverMap.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        binding.naverMap.onLowMemory()
     }
 
     override fun onClick(v: View?) {
