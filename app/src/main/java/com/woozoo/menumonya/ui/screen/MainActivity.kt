@@ -148,9 +148,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * (1) 지역 리스트 버튼 표시(RecyclerView)
      * (2) 클릭 로직 적용(RecyclerView-selection)
-     * (3) 네이버 맵 초기화, 카메라 이동
      */
-    // FIXME: 너무 많은 일들을 하고있음. initvializeMapView()는 왜 여기서 하는거야? -_-
     private fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
 
@@ -159,9 +157,8 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClick(view: View, position: Int) {
                 val selectedRegion = data[position]
 
-                viewModel.invalidateViewPager()
-
                 viewModel.apply {
+                    invalidateViewPager()
                     showLocationInfo(selectedRegion.name)
                     moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
                     setLastRegionData(selectedRegion.name)

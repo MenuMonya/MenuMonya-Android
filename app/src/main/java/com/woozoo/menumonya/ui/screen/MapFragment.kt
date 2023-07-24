@@ -49,53 +49,14 @@ class MapFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         binding.naverMap.onCreate(savedInstanceState)
 
-
         repeatOnStarted {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        viewPager = binding.restaurantViewPager
+        setUpViewPager()
+
         binding.currentLocationBtn.setOnClickListener(this)
         binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
-
-        // 좌우로 item이 보이도록 설정
-        viewPager.apply {
-            clipChildren = false
-            clipToPadding = false
-            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
-            (getChildAt(0) as RecyclerView).overScrollMode =
-                RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
-
-            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
-            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
-            viewPager.setPageTransformer { page, position ->
-                val offset = position * -(2 * offsetPx + pageMarginPx)
-                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
-            }
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    // height를 wrap_content가 되도록 설정
-                    val view =
-                        (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
-                    view?.post {
-                        val wMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-                        val hMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                        view.measure(wMeasureSpec, hMeasureSpec)
-                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
-                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
-                                lp.height = view.measuredHeight
-                            }
-                        }
-                    }
-
-                    // 마커로 카메라 이동
-                    viewModel.moveCameraToMarker(position)
-                }
-            })
-        }
     }
 
     override fun onStart() {
@@ -153,8 +114,11 @@ class MapFragment : Fragment(), View.OnClickListener {
                 viewModel.isInitialized = true
 
                 val region = event.data
-                viewModel.moveCameraToCoord(region.latitude, region.longitude)
-                viewModel.showLocationInfo(region.name)
+                viewModel.apply {
+                    showLocationInfo(region.name)
+                    moveCameraToCoord(region.latitude, region.longitude)
+                    setLastRegionData(region.name)
+                }
             }
         }
 
@@ -221,6 +185,49 @@ class MapFragment : Fragment(), View.OnClickListener {
             R.id.current_location_btn -> {
                 viewModel.getCurrentLocation(requireActivity())
             }
+        }
+    }
+
+    private fun setUpViewPager() {
+        viewPager = binding.restaurantViewPager
+
+        // 좌우로 item이 보이도록 설정
+        viewPager.apply {
+            clipChildren = false
+            clipToPadding = false
+            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
+            (getChildAt(0) as RecyclerView).overScrollMode =
+                RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
+
+            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
+            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
+            viewPager.setPageTransformer { page, position ->
+                val offset = position * -(2 * offsetPx + pageMarginPx)
+                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
+            }
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    // height를 wrap_content가 되도록 설정
+                    val view =
+                        (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
+                    view?.post {
+                        val wMeasureSpec =
+                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
+                        val hMeasureSpec =
+                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                        view.measure(wMeasureSpec, hMeasureSpec)
+                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
+                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
+                                lp.height = view.measuredHeight
+                            }
+                        }
+                    }
+
+                    // 마커로 카메라 이동
+                    viewModel.moveCameraToMarker(position)
+                }
+            })
         }
     }
 }

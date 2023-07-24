@@ -16,8 +16,6 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.woozoo.menumonya.Application.Companion.context
 import com.woozoo.menumonya.BuildConfig
-import com.woozoo.menumonya.Constants.Companion.LATLNG_GN
-import com.woozoo.menumonya.Constants.Companion.LATLNG_YS
 import com.woozoo.menumonya.Constants.Companion.MAP_DEFAULT_ZOOM
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
 import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
@@ -158,15 +156,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * (1) 식당 마커 표시
+     * (2) 로그 저장(선택된 지역)
+     */
     fun showLocationInfo(location: String) {
         viewModelScope.launch {
-            selectedLocation = location
-
-            when (selectedLocation) {
-                "강남" -> moveCameraToCoord(LATLNG_GN.latitude, LATLNG_GN.longitude)
-                "역삼" -> moveCameraToCoord(LATLNG_YS.latitude, LATLNG_YS.longitude)
-            }
-
             mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
             setMarkers(mRestaurantInfoArray)
 
