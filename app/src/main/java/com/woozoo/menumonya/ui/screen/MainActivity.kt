@@ -19,15 +19,15 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.woozoo.menumonya.R
-import com.woozoo.menumonya.ui.screen.MainViewModel.Event
-import com.woozoo.menumonya.databinding.ActivityMainBinding
 import com.woozoo.menumonya.data.model.Region
-import com.woozoo.menumonya.repeatOnStarted
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.databinding.ActivityMainBinding
+import com.woozoo.menumonya.repeatOnStarted
 import com.woozoo.menumonya.ui.adapter.RegionAdapter
 import com.woozoo.menumonya.ui.adapter.RestaurantAdapter
 import com.woozoo.menumonya.ui.dialog.LocationPermissionDialog
 import com.woozoo.menumonya.ui.dialog.NoticeDialog
+import com.woozoo.menumonya.ui.screen.MainViewModel.Event
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.PermissionUtils.Companion.ACCESS_FINE_LOCATION_REQUEST_CODE
 import com.woozoo.menumonya.util.PermissionUtils.Companion.requestLocationPermission
@@ -266,6 +266,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * (2) 클릭 로직 적용(RecyclerView-selection)
      * (3) 네이버 맵 초기화, 카메라 이동
      */
+    // FIXME: 너무 많은 일들을 하고있음. initvializeMapView()는 왜 여기서 하는거야? -_-
     private fun initRegionRecyclerView(data: ArrayList<Region>) {
         val recyclerView = binding.regionRv
 
