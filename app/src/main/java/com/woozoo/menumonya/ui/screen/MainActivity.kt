@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
 
                 viewModel.setLastRegionData(selectedRegion.name)
 
+                mapViewModel.selectedLocation = selectedRegion.name
                 mapViewModel.invalidateViewPager()
                 mapViewModel.showLocationInfo(selectedRegion.name)
                 mapViewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)

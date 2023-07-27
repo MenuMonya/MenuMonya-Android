@@ -240,8 +240,6 @@ class MapFragment : Fragment(), View.OnClickListener {
             viewPager.invalidate()
             viewPager.adapter = null
         }
-
-        else -> {}
     }
 
     override fun onClick(v: View?) {

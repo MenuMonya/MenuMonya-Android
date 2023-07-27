@@ -49,7 +49,7 @@ class MapViewModel @Inject constructor(
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
 
-    private var selectedLocation: String = ""
+    var selectedLocation: String = ""
     var isInitialized: Boolean = false
 
     lateinit var locationManager: LocationManager
