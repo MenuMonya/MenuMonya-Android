@@ -134,7 +134,7 @@ class MapFragment : Fragment(), View.OnClickListener {
         binding.naverMap.onResume()
 
         if (viewPager != null && restaurantAdapter != null) {
-            viewModel.updateLocationInfo(viewPager.currentItem)
+            viewModel.updateRegionInfo(viewPager.currentItem)
         }
     }
 
@@ -209,7 +209,7 @@ class MapFragment : Fragment(), View.OnClickListener {
             if (viewPager.adapter != null) {
                 viewPager.setCurrentItem(event.markerIndex, false)
             } else {
-                viewModel.showLocationViewPager(event.markerIndex)
+                viewModel.showRestaurantViewPager(event.markerIndex)
             }
         }
 

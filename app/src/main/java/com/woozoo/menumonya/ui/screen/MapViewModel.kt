@@ -47,7 +47,7 @@ class MapViewModel @Inject constructor(
     private var mRestaurantInfoArray: ArrayList<Restaurant> = ArrayList()
     private var markerList: ArrayList<Marker> = ArrayList()
 
-    var selectedLocation: String = ""
+    var selectedRegion: String = ""
     var isInitialized: Boolean = false
 
     lateinit var locationManager: LocationManager
@@ -64,7 +64,7 @@ class MapViewModel @Inject constructor(
      * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
      * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
      */
-    fun showLocationViewPager(markerIndex: Int = -1) {
+    fun showRestaurantViewPager(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
             viewModelScope.launch {
                 val buttonTextList = fireStoreRepository.getReportButtonText()
@@ -243,22 +243,25 @@ class MapViewModel @Inject constructor(
      * (1) 식당 마커 표시
      * (2) 로그 저장(선택된 지역)
      */
-    fun showLocationInfo(location: String) {
+    fun showRegionMarkers(region: String) {
         viewModelScope.launch {
-            selectedLocation = location
+            selectedRegion = region
 
-            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
+            mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedRegion)
             setMarkers(mRestaurantInfoArray)
 
-            analyticsUtils.saveContentSelectionLog(AnalyticsUtils.CONTENT_TYPE_LOCATION, location)
+            analyticsUtils.saveContentSelectionLog(
+                AnalyticsUtils.CONTENT_TYPE_REGION,
+                selectedRegion
+            )
         }
     }
 
-    fun updateLocationInfo(currentViewPagerIndex: Int) {
+    fun updateRegionInfo(currentViewPagerIndex: Int) {
         if (isInitialized) {
             showLoading(true)
             viewModelScope.launch {
-                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedLocation)
+                mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedRegion)
                 setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
 
                 fetchRestaurantInfo(mRestaurantInfoArray)

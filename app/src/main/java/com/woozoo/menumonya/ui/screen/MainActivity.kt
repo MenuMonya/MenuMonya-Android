@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         is Event.InitRegionMapView -> {
             val region = event.data
-            mapViewModel.showLocationInfo(region.name)
+            mapViewModel.showRegionMarkers(region.name)
             mapViewModel.moveCameraToCoord(region.latitude, region.longitude)
         }
 
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setLastRegionData(selectedRegion.name)
 
                 mapViewModel.invalidateViewPager()
-                mapViewModel.showLocationInfo(selectedRegion.name)
+                mapViewModel.showRegionMarkers(selectedRegion.name)
                 mapViewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
             }
         })
