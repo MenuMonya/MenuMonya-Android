@@ -76,6 +76,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    // UI Test(Espresso)
+    configurations.forEach {
+        it.exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
+    testOptions {
+        animationsDisabled = true
+    }
 }
 
 dependencies {
@@ -96,6 +103,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
 
     // 지도 관련 라이브러리
     implementation("com.naver.maps:map-sdk:3.17.0") {
