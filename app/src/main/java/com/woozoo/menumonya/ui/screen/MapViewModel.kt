@@ -18,7 +18,6 @@ import com.woozoo.menumonya.Constants
 import com.woozoo.menumonya.R
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.FireStoreRepository
-import com.woozoo.menumonya.data.repository.RemoteConfigRepository
 import com.woozoo.menumonya.util.AnalyticsUtils
 import com.woozoo.menumonya.util.DateUtils
 import com.woozoo.menumonya.util.LocationUtils
@@ -37,7 +36,6 @@ import kotlin.apply
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val fireStoreRepository: FireStoreRepository,
-    private val remoteConfigRepository: RemoteConfigRepository,
     private val analyticsUtils: AnalyticsUtils
 ) : ViewModel() {
 
@@ -152,7 +150,7 @@ class MapViewModel @Inject constructor(
                         OverlayImage.fromResource(R.drawable.restaurant_marker_menu_not_added)
                     }
                     setOnClickListener {
-                        onMarkerClicked(index, selectedLocation)
+                        onMarkerClicked(index)
                         analyticsUtils.saveContentSelectionLog(
                             AnalyticsUtils.CONTENT_TYPE_MARKER,
                             restaurant.name
@@ -247,6 +245,8 @@ class MapViewModel @Inject constructor(
      */
     fun showLocationInfo(location: String) {
         viewModelScope.launch {
+            selectedLocation = location
+
             mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(location)
             setMarkers(mRestaurantInfoArray)
 
@@ -274,8 +274,8 @@ class MapViewModel @Inject constructor(
         event(MapViewEvent.ShowRestaurantView(data, buttonTextList, markerIndex))
     }
 
-    private fun onMarkerClicked(markerIndex: Int, location: String) {
-        event(MapViewEvent.OnMarkerClicked(markerIndex, location))
+    private fun onMarkerClicked(markerIndex: Int) {
+        event(MapViewEvent.OnMarkerClicked(markerIndex))
     }
 
     private fun moveToCurrentLocation() {
@@ -305,7 +305,7 @@ class MapViewModel @Inject constructor(
     sealed class MapViewEvent {
         data class RequestLocationPermission(val data: String) : MapViewEvent()
         data class ShowGpsPermissionAlert(val data: String) : MapViewEvent()
-        data class OnMarkerClicked(val markerIndex: Int, val location: String) : MapViewEvent()
+        data class OnMarkerClicked(val markerIndex: Int) : MapViewEvent()
         data class MoveToCurrentLocation(val data: String) : MapViewEvent()
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>) : MapViewEvent()
         data class ShowLoading(val visibility: Boolean) : MapViewEvent()

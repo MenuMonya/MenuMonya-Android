@@ -63,16 +63,26 @@ class MainActivity : AppCompatActivity() {
                         startActivity(Intent(ACTION_VIEW,
                             Uri.parse(resources.getString(R.string.google_play_store_link))))
                     } catch (e: ActivityNotFoundException) {
-                        startActivity(Intent(ACTION_VIEW,
-                            Uri.parse(resources.getString(R.string.google_play_store_link_web))))
+                        startActivity(
+                            Intent(
+                                ACTION_VIEW,
+                                Uri.parse(resources.getString(R.string.google_play_store_link_web))
+                            )
+                        )
                     }
                     dialog.dismiss()
                 }
             }.create().show()
         }
 
-        is Event.ShowRegionList -> {
+        is Event.InitRegionRecyclerView -> {
             initRegionRecyclerView(event.data)
+        }
+
+        is Event.InitRegionMapView -> {
+            val region = event.data
+            mapViewModel.showLocationInfo(region.name)
+            mapViewModel.moveCameraToCoord(region.latitude, region.longitude)
         }
 
         is Event.ShowNoticeDialog -> {
@@ -101,7 +111,6 @@ class MainActivity : AppCompatActivity() {
 
                 viewModel.setLastRegionData(selectedRegion.name)
 
-                mapViewModel.selectedLocation = selectedRegion.name
                 mapViewModel.invalidateViewPager()
                 mapViewModel.showLocationInfo(selectedRegion.name)
                 mapViewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)

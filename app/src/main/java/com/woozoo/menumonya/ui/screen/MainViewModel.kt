@@ -42,14 +42,10 @@ class MainViewModel @Inject constructor(
             val regionList = fireStoreRepository.getRegionList()
             val modifiedRegionList = modifyRegionData(regionList)
 
-            showRegionList(modifiedRegionList)
-
-//            val region = modifiedRegionList[0]
-//            showLocationInfo(region.name)
-//            moveCameraToCoord(region.latitude, region.longitude)
+            initRegionRecyclerView(modifiedRegionList)
+            initRegionMapView(modifiedRegionList[0])
         }
     }
-
 
     fun checkLatestAppVersion() {
         val latestAppVersion = remoteConfigRepository.getLatestAppVersionConfig()
@@ -102,8 +98,12 @@ class MainViewModel @Inject constructor(
         event(Event.ShowUpdateDialog(""))
     }
 
-    private fun showRegionList(data: ArrayList<Region>) {
-        event(Event.ShowRegionList(data))
+    private fun initRegionMapView(data: Region) {
+        event(Event.InitRegionMapView(data))
+    }
+
+    private fun initRegionRecyclerView(data: ArrayList<Region>) {
+        event(Event.InitRegionRecyclerView(data))
     }
 
     private fun showNoticeDialog() {
@@ -117,7 +117,8 @@ class MainViewModel @Inject constructor(
          *
          * (ex) data class ShowToast(val text: String) : Event()
          */
-        data class ShowRegionList(val data: ArrayList<Region>) : Event()
+        data class InitRegionRecyclerView(val data: ArrayList<Region>) : Event()
+        data class InitRegionMapView(val data: Region) : Event()
         data class ShowToast(val text: String) : Event()
         data class ShowUpdateDialog(val data: String) : Event()
         data class ShowNoticeDialog(val data: String) : Event()
