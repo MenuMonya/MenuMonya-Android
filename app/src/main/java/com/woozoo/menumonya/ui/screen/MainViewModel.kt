@@ -73,7 +73,7 @@ class MainViewModel @Inject constructor(
     /**
      * 지역 정보를 조회하고 화면에 표시하기 위한 형태로 리스트를 수정함.
      */
-    fun getRegionList() {
+    fun showRegionList() {
         viewModelScope.launch {
             val regionList = fireStoreRepository.getRegionList()
             val modifiedRegionList = modifyRegionData(regionList)
@@ -81,7 +81,8 @@ class MainViewModel @Inject constructor(
             showRegionList(modifiedRegionList)
 
             val region = modifiedRegionList[0]
-            initializeMapView(region)
+            showLocationInfo(region.name)
+            moveCameraToCoord(region.latitude, region.longitude)
         }
     }
 
@@ -320,10 +321,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             dataStoreRepository.setLastSelectedRegion(region)
         }
-    }
-
-    private fun initializeMapView(data: Region) {
-        event(Event.InitializeMapView(data))
     }
 
     private fun showRestaurantView(

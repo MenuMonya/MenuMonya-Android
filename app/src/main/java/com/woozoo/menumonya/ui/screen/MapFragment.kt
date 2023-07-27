@@ -41,6 +41,21 @@ class MapFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapBinding.inflate(inflater, container, false)
+
+        binding.naverMap.getMapAsync { map ->
+            map.apply {
+                locationTrackingMode = LocationTrackingMode.NoFollow
+                uiSettings.apply {
+                    isLocationButtonEnabled = false
+                    isZoomControlEnabled = false
+                }
+                minZoom = Constants.MAP_MIN_ZOOM
+            }
+
+            viewModel.naverMap = map
+            viewModel.isInitialized = true
+        }
+
         return binding.root
     }
 
@@ -99,29 +114,6 @@ class MapFragment : Fragment(), View.OnClickListener {
     }
 
     private fun handleEvent(event: MainViewModel.Event) = when (event) {
-        is MainViewModel.Event.InitializeMapView -> {
-            binding.naverMap.getMapAsync { map ->
-                map.apply {
-                    locationTrackingMode = LocationTrackingMode.NoFollow
-                    uiSettings.apply {
-                        isLocationButtonEnabled = false
-                        isZoomControlEnabled = false
-                    }
-                    minZoom = Constants.MAP_MIN_ZOOM
-                }
-
-                viewModel.naverMap = map
-                viewModel.isInitialized = true
-
-                val region = event.data
-                viewModel.apply {
-                    showLocationInfo(region.name)
-                    moveCameraToCoord(region.latitude, region.longitude)
-                    setLastRegionData(region.name)
-                }
-            }
-        }
-
         is MainViewModel.Event.ShowRestaurantView -> {
             if (viewPager.adapter == null) {
                 restaurantAdapter = RestaurantAdapter(

@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         viewModel.checkFirstOpen()
-        viewModel.getRegionList()
+        viewModel.showRegionList()
     }
 
     private fun handleEvent(event: Event) = when (event) {
