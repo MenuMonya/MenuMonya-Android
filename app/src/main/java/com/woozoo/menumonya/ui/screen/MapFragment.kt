@@ -15,8 +15,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.naver.maps.map.LocationTrackingMode
 import com.woozoo.menumonya.Constants
 import com.woozoo.menumonya.R
@@ -43,9 +45,10 @@ class MapFragment : Fragment(), View.OnClickListener {
     private val viewModel: MapViewModel by activityViewModels()
     private lateinit var binding: FragmentMapBinding
 
-    private lateinit var viewPager: ViewPager2
+    private lateinit var restaurantRv: RecyclerView
     private var restaurantAdapter: RestaurantAdapter? = null
     private lateinit var locationPermissionDialog: LocationPermissionDialog
+    private var currentRestaurantIndex = 0
 
     private val GPS_ENABLE_REQUEST_CODE = 2000
 
@@ -84,7 +87,7 @@ class MapFragment : Fragment(), View.OnClickListener {
             viewModel.eventFlow.collect { event -> handleEvent(event) }
         }
 
-        setUpViewPager()
+        setUpRecyclerView()
 
         binding.currentLocationBtn.setOnClickListener(this)
         binding.loadingView.setOnClickListener { } // 로딩 화면 아래의 뷰에 대한 터치를 막기 위함
@@ -133,8 +136,8 @@ class MapFragment : Fragment(), View.OnClickListener {
         super.onResume()
         binding.naverMap.onResume()
 
-        if (viewPager != null && restaurantAdapter != null) {
-            viewModel.updateRegionInfo(viewPager.currentItem)
+        if (restaurantAdapter != null) {
+            viewModel.updateRegionInfo(currentRestaurantIndex)
         }
     }
 
@@ -188,7 +191,7 @@ class MapFragment : Fragment(), View.OnClickListener {
         }
 
         is ShowRestaurantView -> {
-            if (viewPager.adapter == null) {
+            if (restaurantRv.adapter == null) {
                 restaurantAdapter = RestaurantAdapter(
                     event.data,
                     event.buttonTextList,
@@ -196,9 +199,9 @@ class MapFragment : Fragment(), View.OnClickListener {
                     remoteConfigRepository,
                     analyticsUtils
                 )
-                viewPager.adapter = restaurantAdapter
+                restaurantRv.adapter = restaurantAdapter
                 if (event.markerIndex != -1) {
-                    viewPager.setCurrentItem(event.markerIndex, false)
+                    restaurantRv.scrollToPosition(event.markerIndex)
                 } else {
                 }
             } else {
@@ -206,10 +209,10 @@ class MapFragment : Fragment(), View.OnClickListener {
         }
 
         is OnMarkerClicked -> {
-            if (viewPager.adapter != null) {
-                viewPager.setCurrentItem(event.markerIndex, false)
+            if (restaurantRv.adapter != null) {
+                restaurantRv.layoutManager?.scrollToPosition(event.markerIndex)
             } else {
-                viewModel.showRestaurantViewPager(event.markerIndex)
+                viewModel.showRestaurantRecyclerView(event.markerIndex)
             }
         }
 
@@ -223,7 +226,7 @@ class MapFragment : Fragment(), View.OnClickListener {
         is FetchRestaurantInfo -> {
             if (restaurantAdapter != null) {
                 restaurantAdapter?.setData(event.data)
-                viewPager.adapter?.notifyDataSetChanged()
+                restaurantRv.adapter?.notifyDataSetChanged()
             } else {
             }
         }
@@ -236,9 +239,9 @@ class MapFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        is InvalidateViewPager -> {
-            viewPager.invalidate()
-            viewPager.adapter = null
+        is InvalidateRecyclerView -> {
+            restaurantRv.invalidate()
+            restaurantRv.adapter = null
         }
     }
 
@@ -251,46 +254,32 @@ class MapFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setUpViewPager() {
-        viewPager = binding.restaurantViewPager
-
-        // 좌우로 item이 보이도록 설정
-        viewPager.apply {
-            clipChildren = false
-            clipToPadding = false
-            offscreenPageLimit = 3 // 한 화면에 3개의 item이 렌더링됨
-            (getChildAt(0) as RecyclerView).overScrollMode =
-                RecyclerView.OVER_SCROLL_NEVER // 스크롤뷰 효과 없앰
-
-            val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
-            val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
-            viewPager.setPageTransformer { page, position ->
-                val offset = position * -(2 * offsetPx + pageMarginPx)
-                page.translationX = offset // offset 만큼 왼쪽으로 이동시킴
-            }
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    // height를 wrap_content가 되도록 설정
-                    val view =
-                        (getChildAt(0) as RecyclerView).layoutManager?.findViewByPosition(position)
-                    view?.post {
-                        val wMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY)
-                        val hMeasureSpec =
-                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-                        view.measure(wMeasureSpec, hMeasureSpec)
-                        if (getChildAt(0).layoutParams.height != view.measuredHeight) {
-                            getChildAt(0).layoutParams = (getChildAt(0).layoutParams).also { lp ->
-                                lp.height = view.measuredHeight
-                            }
-                        }
-                    }
-
-                    // 마커로 카메라 이동
-                    viewModel.moveCameraToMarker(position)
-                }
-            })
+    private fun setUpRecyclerView() {
+        restaurantRv = binding.restaurantRv
+        restaurantRv.apply {
+            setHasFixedSize(false)
+            itemAnimator = null
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         }
+
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(restaurantRv)
+
+        restaurantRv.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val snapView = snapHelper.findSnapView(restaurantRv.layoutManager)
+                if (snapView != null) {
+                    val scrolledIndex =
+                        (restaurantRv.layoutManager as LinearLayoutManager).getPosition(snapView)
+                    if (scrolledIndex != currentRestaurantIndex) {
+                        currentRestaurantIndex = scrolledIndex
+
+                        viewModel.moveCameraToMarker(scrolledIndex)
+                    }
+                }
+            }
+        })
     }
 }
