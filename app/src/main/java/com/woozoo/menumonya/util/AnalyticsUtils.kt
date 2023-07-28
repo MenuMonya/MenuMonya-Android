@@ -13,7 +13,7 @@ class AnalyticsUtils @Inject constructor(@ApplicationContext val context: Contex
     companion object {
         const val CONTENT_TYPE_MARKER = "marker"
         const val CONTENT_TYPE_VIEW_PAGER = "view_pager"
-        const val CONTENT_TYPE_LOCATION = "location"
+        const val CONTENT_TYPE_REGION = "region"
         const val CONTENT_TYPE_REPORT_BUTTON = "report_button"
         const val CONTENT_TYPE_REPORT_REGION_BUTTON = "report_region_button"
     }

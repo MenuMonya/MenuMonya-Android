@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.naver.maps.map.MapView
+            android:id="@+id/naver_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--'내 주변' 버튼-->
+        <LinearLayout
+            android:id="@+id/current_location_btn"
+            android:layout_width="@dimen/current_location_width"
+            android:layout_height="@dimen/current_location_height"
+            android:layout_gravity="top|right"
+            android:layout_margin="16dp"
+            android:background="@drawable/current_location_button"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/current_location_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/current_location_image_margin_end"
+                android:src="@drawable/current_location_icon" />
+
+            <TextView
+                android:id="@+id/current_location_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="내 주변"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/current_location_text_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/restaurant_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="14dp" />
+
+        <!--로딩 화면(평상시에는 GONE)-->
+        <LinearLayout
+            android:id="@+id/loading_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/blackTransparent"
+            android:gravity="center">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/current_location_loading_icon_size"
+                android:layout_height="@dimen/current_location_loading_icon_size"
+                app:lottie_rawRes="@raw/loading"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

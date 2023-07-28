@@ -48,7 +48,6 @@ class MainViewModelTest {
             fireStoreRepository,
             remoteConfigRepository,
             dataStoreRepository,
-            analyticsUtils
         )
     }
 

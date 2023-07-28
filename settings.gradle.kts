@@ -11,10 +11,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
 
-        maven {
-            url 'https://naver.jfrog.io/artifactory/maven/'
-        }
+        maven("https://naver.jfrog.io/artifactory/maven/")
     }
 }
 rootProject.name = "Menu Monya"
-include ':app'
+include(":app")
