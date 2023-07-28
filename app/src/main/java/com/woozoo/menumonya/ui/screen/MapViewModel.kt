@@ -64,7 +64,7 @@ class MapViewModel @Inject constructor(
      * 하단의 식당 정보 가로 스크롤 뷰를 표시함.
      * - (중요) 지도에 마커를 표시하기 위한 식당 정보를 이미 fetch하였다는 전제 하에 작동함.
      */
-    fun showRestaurantViewPager(markerIndex: Int = -1) {
+    fun showRestaurantRecyclerView(markerIndex: Int = -1) {
         if (mRestaurantInfoArray.size > 0) {
             viewModelScope.launch {
                 val buttonTextList = fireStoreRepository.getReportButtonText()
@@ -233,7 +233,7 @@ class MapViewModel @Inject constructor(
             naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
 
             analyticsUtils.saveContentSelectionLog(
-                AnalyticsUtils.CONTENT_TYPE_VIEW_PAGER,
+                AnalyticsUtils.CONTENT_TYPE_LIST,
                 selectedRestaurant.name
             )
         }
@@ -257,12 +257,12 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun updateRegionInfo(currentViewPagerIndex: Int) {
+    fun updateRegionInfo(currentRestaurantIndex: Int) {
         if (isInitialized) {
             showLoading(true)
             viewModelScope.launch {
                 mRestaurantInfoArray = fireStoreRepository.getRestaurantInRegion(selectedRegion)
-                setMarkers(mRestaurantInfoArray, currentViewPagerIndex)
+                setMarkers(mRestaurantInfoArray, currentRestaurantIndex)
 
                 fetchRestaurantInfo(mRestaurantInfoArray)
                 showLoading(false)
@@ -293,8 +293,8 @@ class MapViewModel @Inject constructor(
         event(MapViewEvent.ShowLoading(visibility))
     }
 
-    fun invalidateViewPager() {
-        event(MapViewEvent.InvalidateViewPager(""))
+    fun invalidateRecyclerView() {
+        event(MapViewEvent.InvalidateRecyclerView(""))
     }
 
     private fun requestLocationPermission() {
@@ -312,7 +312,7 @@ class MapViewModel @Inject constructor(
         data class MoveToCurrentLocation(val data: String) : MapViewEvent()
         data class FetchRestaurantInfo(val data: ArrayList<Restaurant>) : MapViewEvent()
         data class ShowLoading(val visibility: Boolean) : MapViewEvent()
-        data class InvalidateViewPager(val data: String) : MapViewEvent()
+        data class InvalidateRecyclerView(val data: String) : MapViewEvent()
         data class ShowRestaurantView(
             val data: ArrayList<Restaurant>,
             val buttonTextList: ArrayList<String>,

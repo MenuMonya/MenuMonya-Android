@@ -125,9 +125,6 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.7.2")
     implementation("androidx.fragment:fragment-ktx:1.6.1")
 
-    // ViewPager
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
-
     // Glide
     implementation("com.github.bumptech.glide:glide:4.15.1")
 

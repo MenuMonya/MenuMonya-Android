@@ -12,9 +12,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
 import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.R
-import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository
+import com.woozoo.menumonya.databinding.ItemRestaurantBinding
 import com.woozoo.menumonya.ui.dialog.ImageDialog
 import com.woozoo.menumonya.ui.dialog.MenuDialog
 import com.woozoo.menumonya.util.AnalyticsUtils
@@ -54,6 +54,10 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                 // (1) 메뉴 레이아웃 표시
                 binding.menuReportLayout.visibility = View.GONE
                 binding.restaurantMenuLayout.visibility = View.VISIBLE
+                binding.restaurantMenuLayout.setOnClickListener {
+                    val menuDialog = MenuDialog(context, data)
+                    menuDialog.show()
+                }
                 binding.restaurantMenuMoreTv.visibility = View.VISIBLE
                 binding.restaurantMenuMoreTv.setOnClickListener {
                     val menuDialog = MenuDialog(context, data)
@@ -85,7 +89,6 @@ class RestaurantAdapter(private var restaurantInfoArray: ArrayList<Restaurant>,
                     context.startActivity(intent)
                 }
                 binding.menuReportInfoIv.setOnClickListener {
-                    // TODO: 메뉴 수집 관련 정보 다이얼로그 표시
                     val imageDialog = ImageDialog(context)
                     imageDialog.show()
                 }

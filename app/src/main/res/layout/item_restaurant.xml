@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="@dimen/restaurant_item_corner_radius"
     android:elevation="@dimen/restaurant_item_elevation"
@@ -30,12 +30,6 @@
             tool:visibility="visible"
             >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/borderGray"
-                />
-
             <Button
                 android:id="@+id/menu_report_btn"
                 android:layout_width="wrap_content"
@@ -48,8 +42,8 @@
                 android:background="@drawable/color_button_background"
                 android:paddingVertical="0dp"
                 android:paddingHorizontal="36dp"
-                android:layout_marginVertical="16dp"
-                />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -178,6 +172,8 @@
                     android:fontFamily="@font/pretendard_regular"
                     android:textColor="@color/gray900"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     tool:text="카레 염지 순살치킨, 제육볶음, 알리오 올리오 스파게티, 닭강정, 봉황 감자탕" />
 
             </LinearLayout>
@@ -215,6 +211,8 @@
                     android:fontFamily="@font/pretendard_regular"
                     android:textColor="@color/gray900"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     tool:text="반찬 3종, 김치, 샐러드\n반찬반찬반찬" />
 
             </LinearLayout>
@@ -253,6 +251,8 @@
                     android:fontFamily="@font/pretendard_regular"
                     android:textColor="@color/gray900"
                     android:textSize="@dimen/restaurant_info_menu_text_size"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     tool:text="토스트(누텔라, 딸기잼), 매실차\n디저트디저트디저트" />
 
             </LinearLayout>
