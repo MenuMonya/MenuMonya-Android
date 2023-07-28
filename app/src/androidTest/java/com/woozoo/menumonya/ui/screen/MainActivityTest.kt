@@ -59,6 +59,7 @@ class MainActivityTest {
     /**
      * 테스트 코드 TODO
      * - 클릭된 마커의 식당과 RecyclerView에 표시된 식당이 일치하는지 테스트
+     * - 메뉴가 많았을 때 제대로 표시되는지 테스트
      */
 
     private fun waitFor(delay: Long): ViewAction {
