@@ -12,7 +12,7 @@ import com.woozoo.menumonya.Application.Companion.context
 class PermissionUtils {
 
     companion object {
-        val ACCESS_FINE_LOCATION_REQUEST_CODE = 1000
+        const val ACCESS_FINE_LOCATION_REQUEST_CODE = 1000
 
         fun isLocationPermissionAllowed(): Boolean {
             return ContextCompat.checkSelfPermission(context(),
