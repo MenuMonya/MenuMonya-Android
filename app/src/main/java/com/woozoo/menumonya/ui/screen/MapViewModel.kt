@@ -39,7 +39,7 @@ class MapViewModel @Inject constructor(
     private val analyticsUtils: AnalyticsUtils
 ) : ViewModel() {
 
-    private val _eventFlow = MutableSharedFlow<MapViewEvent>()
+    private val _eventFlow = MutableSharedFlow<MapViewEvent>(1)
     val eventFlow = _eventFlow.asSharedFlow()
 
     lateinit var naverMap: NaverMap
@@ -230,7 +230,7 @@ class MapViewModel @Inject constructor(
                 0,
                 Application.context().resources.getDimensionPixelOffset(R.dimen.restaurant_item_height)
             )
-            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.None))
+            naverMap.moveCamera(CameraUpdate.scrollTo(coord).animate(CameraAnimation.Easing))
 
             analyticsUtils.saveContentSelectionLog(
                 AnalyticsUtils.CONTENT_TYPE_LIST,
