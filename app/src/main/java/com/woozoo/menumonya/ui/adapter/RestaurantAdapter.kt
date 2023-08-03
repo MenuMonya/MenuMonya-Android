@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_HEIGHT
-import com.woozoo.menumonya.Constants.Companion.GLIDE_IMAGE_SIZE_WIDTH
+import com.woozoo.menumonya.Constants.GLIDE_IMAGE_SIZE_HEIGHT
+import com.woozoo.menumonya.Constants.GLIDE_IMAGE_SIZE_WIDTH
 import com.woozoo.menumonya.R
 import com.woozoo.menumonya.data.model.Restaurant
 import com.woozoo.menumonya.data.repository.RemoteConfigRepository

@@ -23,9 +23,13 @@ class ImageDialog(context: Context): Dialog(context) {
 
         setCancelable(true)
 
-        binding.dialogIv.setImageResource(R.drawable.menu_report_info_image)
-        binding.dialogIv.layoutParams.width = context.resources.getDimension(R.dimen.menu_report_info_image_width).toInt()
-        binding.dialogIv.layoutParams.height = context.resources.getDimension(R.dimen.menu_report_info_image_height).toInt()
-        binding.dialogIv.requestLayout()
+        binding.dialogIv.apply {
+            setImageResource(R.drawable.menu_report_info_image)
+            layoutParams.width =
+                context.resources.getDimension(R.dimen.menu_report_info_image_width).toInt()
+            layoutParams.height =
+                context.resources.getDimension(R.dimen.menu_report_info_image_height).toInt()
+            requestLayout()
+        }
     }
 }

@@ -7,8 +7,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import com.woozoo.menumonya.R
-import com.woozoo.menumonya.databinding.DialogMenuBinding
 import com.woozoo.menumonya.data.model.Restaurant
+import com.woozoo.menumonya.databinding.DialogMenuBinding
 
 class MenuDialog(context: Context, val data: Restaurant) : Dialog(context,
     R.style.custom_style_dialog
@@ -33,7 +33,7 @@ class MenuDialog(context: Context, val data: Restaurant) : Dialog(context,
      * (#26)
      * 커스텀 다이얼로그 특성상 xml에서 width, height에 MATCH_PARENT가 적용되지 않아 코드로 적용함.
      */
-    fun setDialogWidthMatchParent() {
+    private fun setDialogWidthMatchParent() {
         val layoutParams = window?.attributes
         layoutParams?.width = MATCH_PARENT
     }

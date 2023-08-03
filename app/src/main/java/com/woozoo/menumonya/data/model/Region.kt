@@ -1,6 +1,6 @@
 package com.woozoo.menumonya.data.model
 
-import com.woozoo.menumonya.Constants.Companion.REGION_BUTTON_TYPE
+import com.woozoo.menumonya.Constants.REGION_BUTTON_TYPE
 
 data class Region(
     val name: String = "",

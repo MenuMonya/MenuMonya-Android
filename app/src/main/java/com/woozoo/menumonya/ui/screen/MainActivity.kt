@@ -111,9 +111,11 @@ class MainActivity : AppCompatActivity() {
 
                 viewModel.setLastRegionData(selectedRegion.name)
 
-                mapViewModel.invalidateRecyclerView()
-                mapViewModel.showRegionMarkers(selectedRegion.name)
-                mapViewModel.moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                mapViewModel.apply {
+                    invalidateRecyclerView()
+                    showRegionMarkers(selectedRegion.name)
+                    moveCameraToCoord(selectedRegion.latitude, selectedRegion.longitude)
+                }
             }
         })
 

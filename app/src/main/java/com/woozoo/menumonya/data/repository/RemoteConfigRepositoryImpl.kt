@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.woozoo.menumonya.BuildConfig
-import com.woozoo.menumonya.Constants.Companion.REMOTE_CONFIG_FETCH_INTERVAL
+import com.woozoo.menumonya.Constants.REMOTE_CONFIG_FETCH_INTERVAL
 import com.woozoo.menumonya.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

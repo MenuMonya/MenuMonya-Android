@@ -3,8 +3,8 @@ package com.woozoo.menumonya.ui.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woozoo.menumonya.BuildConfig
-import com.woozoo.menumonya.Constants.Companion.REGION_REPORT
-import com.woozoo.menumonya.Constants.Companion.REGION_REPORT_TYPE
+import com.woozoo.menumonya.Constants.REGION_REPORT
+import com.woozoo.menumonya.Constants.REGION_REPORT_TYPE
 import com.woozoo.menumonya.data.model.Region
 import com.woozoo.menumonya.data.repository.DataStoreRepository
 import com.woozoo.menumonya.data.repository.FireStoreRepository
